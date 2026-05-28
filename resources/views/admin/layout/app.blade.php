@@ -45,8 +45,18 @@
             $isCategory = ($currentMenu ?? '') === 'categories';
             $isProduct = ($currentMenu ?? '') === 'products';
             $isCustomer = ($currentMenu ?? '') === 'customers';
+            $isFeeShip = ($currentMenu ?? '') === 'feeships';
             $isStaff = ($currentMenu ?? '') === 'staffs';
             $isRole = ($currentMenu ?? '') === 'roles';
+            $canWriteFeeShips = in_array(Auth::guard('admin')->user()?->role, ['MANAGER', 'ADMIN'], true);
+            $feeShipChildren = [
+                ['label' => __('translate.list'), 'href' => route('admin.feeship.index'), 'active' => request()->routeIs('admin.feeship.index')],
+            ];
+
+            if ($canWriteFeeShips) {
+                $feeShipChildren[] = ['label' => __('translate.add'), 'href' => route('admin.feeship.create'), 'active' => request()->routeIs('admin.feeship.create')];
+            }
+
             $adminSidebarItems = [
                 [
                     'label' => __('translate.overview'),
@@ -122,10 +132,8 @@
                 [
                     'label' => __('translate.feeShips'),
                     'icon' => 'fas fa-shipping-fast',
-                    'children' => [
-                        ['label' => __('translate.list'), 'href' => '#'],
-                        ['label' => __('translate.add'), 'href' => '#'],
-                    ],
+                    'open' => $isFeeShip,
+                    'children' => $feeShipChildren,
                 ],
                 [
                     'label' => __('translate.staffs'),

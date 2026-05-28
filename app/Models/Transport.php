@@ -13,4 +13,14 @@ class Transport extends Model
         'province_id',
         'price',
     ];
+
+    protected $casts = [
+        'province_id' => 'integer',
+        'price' => 'integer',
+    ];
+
+    public function province()
+    {
+        return $this->belongsTo(Province::class);
+    }
 }

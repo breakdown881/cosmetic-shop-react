@@ -4,11 +4,13 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashBoardController;
+use App\Http\Controllers\Admin\FeeShipController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
+use App\Http\Controllers\Api\Admin\FeeShipController as ApiFeeShipController;
 use App\Http\Controllers\Api\Admin\RoleController as ApiRoleController;
 use App\Http\Controllers\Api\Admin\StaffController as ApiStaffController;
 use Illuminate\Support\Facades\Route;
@@ -88,10 +90,28 @@ Route::prefix('admin')->group(function () {
             Route::get('edit/{customer}', [CustomerController::class, 'index'])->name('admin.customer.edit');
         });
 
+        Route::prefix('feeships')->group(function () {
+            Route::get('/', [FeeShipController::class, 'index'])
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF')
+                ->name('admin.feeship.index');
+            Route::get('create', [FeeShipController::class, 'index'])
+                ->middleware('admin.role:MANAGER,ADMIN')
+                ->name('admin.feeship.create');
+            Route::get('edit/{feeship}', [FeeShipController::class, 'index'])
+                ->middleware('admin.role:MANAGER,ADMIN')
+                ->name('admin.feeship.edit');
+        });
+
         Route::prefix('api')->name('admin.api.')->group(function () {
             Route::apiResource('customers', ApiCustomerController::class)
                 ->only(['index', 'show', 'update', 'destroy'])
                 ->middleware('admin.role:MANAGER,ADMIN,STAFF');
+            Route::apiResource('feeships', ApiFeeShipController::class)
+                ->only(['index', 'show'])
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
+            Route::apiResource('feeships', ApiFeeShipController::class)
+                ->only(['store', 'update', 'destroy'])
+                ->middleware('admin.role:MANAGER,ADMIN');
             Route::apiResource('roles', ApiRoleController::class)->middleware('admin.role:MANAGER');
             Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER');
         });
