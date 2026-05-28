@@ -38,6 +38,62 @@ class AdminCatalogAndStaffApiTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_catalog_admin_pages_are_react_shells_backed_by_admin_api(): void
+    {
+        config(['scout.driver' => 'database']);
+        $admin = $this->admin('MANAGER');
+        $brand = Brand::create(['name' => 'Shell Brand', 'status' => 1, 'created_by' => $admin->id]);
+        $category = Category::create(['name' => 'Shell Category', 'status' => 1, 'created_by' => $admin->id]);
+        $product = Product::create($this->productData([
+            'name' => 'Shell Product',
+            'brand_id' => $brand->id,
+            'category_id' => $category->id,
+        ]));
+
+        foreach (['brands', 'categories', 'products'] as $resource) {
+            $this->actingAs($admin, 'admin')
+                ->get("/admin/{$resource}")
+                ->assertOk()
+                ->assertSee("admin\/api\/{$resource}", false)
+                ->assertSee('AdminApiResourceManager');
+        }
+
+        $this->actingAs($admin, 'admin')
+            ->postJson('/admin/api/brands', [
+                'name' => 'React API Brand',
+                'status' => 1,
+            ])->assertCreated()
+            ->assertJsonPath('data.name', 'React API Brand');
+
+        $this->actingAs($admin, 'admin')
+            ->postJson('/admin/api/categories', [
+                'name' => 'React API Category',
+                'status' => 1,
+            ])->assertCreated()
+            ->assertJsonPath('data.name', 'React API Category');
+
+        $this->actingAs($admin, 'admin')
+            ->postJson('/admin/api/products', $this->productData([
+                'code' => 'REACT-API-001',
+                'name' => 'React API Product',
+                'brand_id' => $brand->id,
+                'category_id' => $category->id,
+            ]))->assertCreated()
+            ->assertJsonPath('data.name', 'React API Product');
+
+        $this->actingAs($admin, 'admin')->post('/admin/brands/store', [])->assertNotFound();
+        $this->actingAs($admin, 'admin')->delete("/admin/brands/delete/{$brand->id}")->assertNotFound();
+        $this->actingAs($admin, 'admin')->post("/admin/brands/changeStatus/{$brand->id}", ['status' => 0])->assertNotFound();
+
+        $this->actingAs($admin, 'admin')->post('/admin/categories/store', [])->assertNotFound();
+        $this->actingAs($admin, 'admin')->delete("/admin/categories/delete/{$category->id}")->assertNotFound();
+        $this->actingAs($admin, 'admin')->post("/admin/categories/changeStatus/{$category->id}", ['status' => 0])->assertNotFound();
+
+        $this->actingAs($admin, 'admin')->post('/admin/products/store', [])->assertNotFound();
+        $this->actingAs($admin, 'admin')->delete("/admin/products/delete/{$product->id}")->assertNotFound();
+        $this->actingAs($admin, 'admin')->post("/admin/products/changeStatus/{$product->id}", ['status' => 0])->assertNotFound();
+    }
+
     public function test_products_can_be_searched_by_name_brand_and_category(): void
     {
         config(['scout.driver' => 'database']);

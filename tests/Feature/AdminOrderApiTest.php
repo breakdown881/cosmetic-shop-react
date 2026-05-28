@@ -105,10 +105,27 @@ class AdminOrderApiTest extends TestCase
 
         $this->postJson('/api/orders', $this->orderData($customer, [
             'payment_method' => 9,
-            'status' => 'CANCELLED',
+            'status' => 'UNKNOWN',
             'items' => [],
         ]))->assertUnprocessable()
             ->assertJsonValidationErrors(['payment_method', 'status', 'items']);
+    }
+
+    public function test_order_accepts_operational_statuses(): void
+    {
+        Sanctum::actingAs($this->admin('MANAGER'));
+        $customer = User::factory()->create();
+        $product = $this->product('Status Serum', 100000);
+
+        foreach (['SHIPPING', 'CANCELLED', 'REFUNDED', 'FAILED'] as $status) {
+            $this->postJson('/api/orders', $this->orderData($customer, [
+                'status' => $status,
+                'items' => [
+                    ['product_id' => $product->id, 'qty' => 1],
+                ],
+            ]))->assertCreated()
+                ->assertJsonPath('data.status', $status);
+        }
     }
 
     public function test_all_admin_roles_can_open_order_admin_pages(): void

@@ -8,10 +8,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        return view('admin.api-resource', [
-            'title' => 'Customers',
-            'currentMenu' => 'customers',
-            'componentProps' => [
+        return \App\Support\AdminReactShell::render('AdminApiResourceManager', [
                 'resourceName' => 'customers',
                 'apiUrl' => route('admin.api.customers.index'),
                 'title' => __('translate.customers'),
@@ -32,8 +29,7 @@ class CustomerController extends Controller
                     ['name' => 'email', 'label' => __('translate.email'), 'type' => 'email', 'required' => true],
                 ],
                 'labels' => $this->labels(),
-            ],
-        ]);
+        ], 'customers', 'Customers');
     }
 
     private function labels(): array

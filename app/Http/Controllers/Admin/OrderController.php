@@ -13,10 +13,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        return view('admin.orders.index', [
-            'title' => 'Orders',
-            'currentMenu' => 'orders',
-            'componentProps' => [
+        return \App\Support\AdminReactShell::render('AdminOrderManager', [
                 'apiUrl' => route('admin.api.orders.index'),
                 'canCreate' => true,
                 'canEdit' => true,
@@ -69,7 +66,6 @@ class OrderController extends Controller
                     ->all(),
                 'statusOptions' => Order::STATUSES,
                 'paymentMethods' => Order::PAYMENT_METHODS,
-            ],
-        ]);
+        ], 'orders', 'Orders');
     }
 }

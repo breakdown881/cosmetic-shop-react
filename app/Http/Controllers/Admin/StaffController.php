@@ -8,10 +8,7 @@ class StaffController extends Controller
 {
     public function index()
     {
-        return view('admin.api-resource', [
-            'title' => 'Staffs',
-            'currentMenu' => 'staffs',
-            'componentProps' => [
+        return \App\Support\AdminReactShell::render('AdminApiResourceManager', [
                 'resourceName' => 'staffs',
                 'apiUrl' => route('admin.api.staffs.index'),
                 'title' => __('translate.staffs'),
@@ -56,8 +53,7 @@ class StaffController extends Controller
                     ],
                 ],
                 'labels' => $this->labels(),
-            ],
-        ]);
+        ], 'staffs', 'Staffs');
     }
 
     private function labels(): array

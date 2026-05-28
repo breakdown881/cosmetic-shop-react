@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCategoryRequest;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
@@ -25,12 +26,100 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $productService = new ProductService($this->productRepository);
-        $products = $productService->getAll();
-        return view('admin.product.index', [
-            'products'    => $products,
-            'currentMenu'   => 'products'
-        ]);
+        return \App\Support\AdminReactShell::render('AdminApiResourceManager', [
+                'resourceName' => 'products',
+                'apiUrl' => route('admin.api.products.index'),
+                'title' => __('translate.products'),
+                'canCreate' => true,
+                'canEdit' => true,
+                'canDelete' => true,
+                'breadcrumbs' => [
+                    ['href' => route('admin.dashboard'), 'label' => __('translate.management')],
+                    ['active' => true, 'label' => __('translate.products')],
+                ],
+                'columns' => [
+                    ['key' => 'code', 'label' => __('translate.code')],
+                    ['key' => 'name', 'label' => __('translate.name')],
+                    ['key' => 'brand_id', 'label' => __('translate.brands')],
+                    ['key' => 'category_id', 'label' => __('translate.categories')],
+                    ['key' => 'price', 'label' => 'Price'],
+                    ['key' => 'inventory_qty', 'label' => 'Inventory'],
+                    ['key' => 'status', 'label' => __('translate.status'), 'type' => 'boolean'],
+                ],
+                'fields' => [
+                    ['name' => 'code', 'label' => __('translate.code'), 'type' => 'text', 'required' => true],
+                    ['name' => 'name', 'label' => __('translate.name'), 'type' => 'text', 'required' => true],
+                    [
+                        'name' => 'brand_id',
+                        'label' => __('translate.brands'),
+                        'type' => 'select',
+                        'required' => true,
+                        'options' => Brand::query()
+                            ->orderBy('name')
+                            ->get(['id', 'name'])
+                            ->map(fn (Brand $brand) => ['value' => $brand->id, 'label' => $brand->name])
+                            ->values()
+                            ->all(),
+                    ],
+                    [
+                        'name' => 'category_id',
+                        'label' => __('translate.categories'),
+                        'type' => 'select',
+                        'required' => true,
+                        'options' => Category::query()
+                            ->orderBy('name')
+                            ->get(['id', 'name'])
+                            ->map(fn (Category $category) => ['value' => $category->id, 'label' => $category->name])
+                            ->values()
+                            ->all(),
+                    ],
+                    ['name' => 'price', 'label' => 'Price', 'type' => 'number', 'required' => true, 'defaultValue' => 0],
+                    ['name' => 'discount_percentage', 'label' => 'Discount %', 'type' => 'number', 'required' => true, 'defaultValue' => 0],
+                    ['name' => 'discount_from_date', 'label' => 'Discount from', 'type' => 'date', 'required' => true],
+                    ['name' => 'discount_to_date', 'label' => 'Discount to', 'type' => 'date', 'required' => true],
+                    ['name' => 'media_id', 'label' => 'Media ID', 'type' => 'number', 'required' => true, 'defaultValue' => 1],
+                    ['name' => 'inventory_qty', 'label' => 'Inventory', 'type' => 'number', 'required' => true, 'defaultValue' => 0],
+                    ['name' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => true],
+                    ['name' => 'star', 'label' => 'Star', 'type' => 'number', 'required' => true, 'defaultValue' => 0],
+                    [
+                        'name' => 'featured',
+                        'label' => 'Featured',
+                        'type' => 'select',
+                        'required' => true,
+                        'defaultValue' => 0,
+                        'options' => [
+                            ['value' => 1, 'label' => 'Yes'],
+                            ['value' => 0, 'label' => 'No'],
+                        ],
+                    ],
+                    [
+                        'name' => 'status',
+                        'label' => __('translate.status'),
+                        'type' => 'select',
+                        'required' => true,
+                        'defaultValue' => 1,
+                        'options' => [
+                            ['value' => 1, 'label' => __('translate.active')],
+                            ['value' => 0, 'label' => __('translate.inactive')],
+                        ],
+                    ],
+                ],
+                'labels' => $this->labels(),
+        ], 'products', 'Products');
+    }
+
+    private function labels(): array
+    {
+        return [
+            'add' => __('translate.add'),
+            'edit' => __('translate.edit'),
+            'delete' => __('translate.delete'),
+            'save' => __('translate.save'),
+            'cancel' => __('translate.cancel'),
+            'management' => __('translate.management'),
+            'empty' => __('translate.noData') === 'translate.noData' ? 'Không có dữ liệu.' : __('translate.noData'),
+            'deleteConfirm' => __('translate.deleteConfirm') === 'translate.deleteConfirm' ? 'Bạn có chắc muốn xóa?' : __('translate.deleteConfirm'),
+        ];
     }
 
     public function list($id)
@@ -38,7 +127,7 @@ class ProductController extends Controller
         // $productService    = new ProductService($this->productRepository);
         // $products         = $productService->getChild($id);
         // $product           = $productService->get($id);
-        // return view('admin.product.list', [
+        // Legacy product list view was replaced by React API shell.
         //     'products'    => $products,
         //     'product'      => $product,
         //     'currentMenu'   => 'products'
@@ -52,18 +141,14 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('admin.product.create', ['currentMenu' => 'products']);
+        return $this->index();
     }
 
     public function createChild($id)
     {
         $productService    = new ProductService($this->productRepository);
         $product           = $productService->get($id);
-        return view('admin.product.create', [
-            'product'      => $product,
-            'isChild'       => true,
-            'currentMenu'   => 'products'
-        ]);
+        return $this->index();
     }
 
     /**
@@ -107,22 +192,14 @@ class ProductController extends Controller
     {
         $productService = new ProductService($this->productRepository);
         $product = $productService->get($id);
-        return view('admin.product.edit', [
-            'product'      => $product,
-            'currentMenu'   => 'products'
-        ]);
+        return $this->index();
     }
 
     public function editChild($id, Product $product)
     {
         $productService = new ProductService($this->productRepository);
         $parent = $productService->get($id);
-        return view('admin.product.edit', [
-            'product'      => $product,
-            'parent'        => $parent,
-            'isChild'       => true,
-            'currentMenu'   => 'products'
-        ]);
+        return $this->index();
     }
 
     /**

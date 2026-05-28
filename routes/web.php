@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\DashBoardController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\FeeShipController;
 use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCommentController;
@@ -15,10 +17,15 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
 use App\Http\Controllers\Api\Admin\FeeShipController as ApiFeeShipController;
+use App\Http\Controllers\Api\Admin\MediaController as ApiMediaController;
+use App\Http\Controllers\Api\Admin\NewsletterController as ApiNewsletterController;
 use App\Http\Controllers\Api\Admin\OrderController as ApiOrderController;
 use App\Http\Controllers\Api\Admin\ProductCommentController as ApiProductCommentController;
 use App\Http\Controllers\Api\Admin\RoleController as ApiRoleController;
 use App\Http\Controllers\Api\Admin\StaffController as ApiStaffController;
+use App\Http\Controllers\Api\BrandController as ApiBrandController;
+use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
+use App\Http\Controllers\Api\ProductController as ApiProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return \App\Support\PublicReactShell::welcome();
 });
 
 Route::prefix('admin')->group(function () {
@@ -47,43 +54,33 @@ Route::prefix('admin')->group(function () {
 
         Route::prefix('brands')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
             Route::get('/', [BrandController::class, 'index'])->name('admin.brand.index');
-            Route::get('create', [BrandController::class, 'create'])->name('admin.brand.create');
-            Route::post('store', [BrandController::class, 'store'])->name('admin.brand.store');
-            Route::get('edit/{id}', [BrandController::class, 'edit'])->name('admin.brand.edit');
-            Route::patch('update/{brand}', [BrandController::class, 'update'])->name('admin.brand.update');
-            Route::delete('delete/{brand}', [BrandController::class, 'destroy'])->name('admin.brand.destroy');
-            Route::post('changeStatus/{brand}', [BrandController::class, 'changeStatus'])->name('admin.brand.change_status');
+            Route::get('create', [BrandController::class, 'index'])->name('admin.brand.create');
+            Route::get('edit/{id}', [BrandController::class, 'index'])->name('admin.brand.edit');
         });
 
         Route::prefix('categories')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('admin.category.index');
-            Route::get('create', [CategoryController::class, 'create'])->name('admin.category.create');
-            Route::post('store', [CategoryController::class, 'store'])->name('admin.category.store');
-            Route::get('edit/{id}', [CategoryController::class, 'edit'])->name('admin.category.edit');
-            Route::patch('update/{category}', [CategoryController::class, 'update'])->name('admin.category.update');
-            Route::delete('delete/{category}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
-            Route::post('changeStatus/{category}', [CategoryController::class, 'changeStatus'])->name('admin.category.change_status');
-            Route::get('/{id}', [CategoryController::class, 'list'])->name('admin.category.list');
-            Route::get('/{id}/create', [CategoryController::class, 'createChild'])->name('admin.category.create.child');
-            Route::post('/{id}/store', [CategoryController::class, 'storeChild'])->name('admin.category.store.child');
-            Route::get('{id}/edit/{category}', [CategoryController::class, 'editChild'])->name('admin.category.edit.child');
-            Route::patch('{id}/update/{category}', [CategoryController::class, 'updateChild'])->name('admin.category.update.child');
+            Route::get('create', [CategoryController::class, 'index'])->name('admin.category.create');
+            Route::get('edit/{id}', [CategoryController::class, 'index'])->name('admin.category.edit');
         });
 
         Route::prefix('products')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
             Route::get('/', [ProductController::class, 'index'])->name('admin.product.index');
-            Route::get('create', [ProductController::class, 'create'])->name('admin.product.create');
-            Route::post('store', [ProductController::class, 'store'])->name('admin.product.store');
-            Route::get('edit/{id}', [ProductController::class, 'edit'])->name('admin.product.edit');
-            Route::patch('update/{product}', [ProductController::class, 'update'])->name('admin.product.update');
-            Route::delete('delete/{product}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
-            Route::post('changeStatus/{product}', [ProductController::class, 'changeStatus'])->name('admin.product.change_status');
-            Route::get('/{id}', [ProductController::class, 'list'])->name('admin.product.list');
-            Route::get('/{id}/create', [ProductController::class, 'createChild'])->name('admin.product.create.child');
-            Route::post('/{id}/store', [ProductController::class, 'storeChild'])->name('admin.product.store.child');
-            Route::get('{id}/edit/{product}', [ProductController::class, 'editChild'])->name('admin.product.edit.child');
-            Route::patch('{id}/update/{product}', [ProductController::class, 'updateChild'])->name('admin.product.update.child');
+            Route::get('create', [ProductController::class, 'index'])->name('admin.product.create');
+            Route::get('edit/{id}', [ProductController::class, 'index'])->name('admin.product.edit');
             Route::get('{product}/comments', [ProductCommentController::class, 'index'])->name('admin.product.comments.index');
+        });
+
+        Route::prefix('comments')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
+            Route::get('/', [ProductCommentController::class, 'all'])->name('admin.comments.index');
+        });
+
+        Route::prefix('images')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
+            Route::get('/', [MediaController::class, 'index'])->name('admin.media.index');
+        });
+
+        Route::prefix('newsletters')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
+            Route::get('/', [NewsletterController::class, 'index'])->name('admin.newsletter.index');
         });
 
         Route::prefix('roles')->middleware('admin.role:MANAGER')->group(function () {
@@ -128,6 +125,39 @@ Route::prefix('admin')->group(function () {
         });
 
         Route::prefix('api')->name('admin.api.')->group(function () {
+            Route::apiResource('brands', ApiBrandController::class)
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::patch('brands/{brand}/status', [ApiBrandController::class, 'updateStatus'])
+                ->name('brands.status')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::apiResource('categories', ApiCategoryController::class)
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::patch('categories/{category}/status', [ApiCategoryController::class, 'updateStatus'])
+                ->name('categories.status')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::get('products/search', [ApiProductController::class, 'search'])
+                ->name('products.search')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::apiResource('products', ApiProductController::class)
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::patch('products/{product}/status', [ApiProductController::class, 'updateStatus'])
+                ->name('products.status')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::get('media', [ApiMediaController::class, 'index'])
+                ->name('media.index')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::post('media', [ApiMediaController::class, 'store'])
+                ->name('media.store')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::delete('media/{media}', [ApiMediaController::class, 'destroy'])
+                ->name('media.destroy')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::get('newsletters', [ApiNewsletterController::class, 'index'])
+                ->name('newsletters.index')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::post('newsletters/send', [ApiNewsletterController::class, 'send'])
+                ->name('newsletters.send')
+                ->middleware('admin.role:MANAGER,ADMIN');
             Route::apiResource('orders', ApiOrderController::class)
                 ->middleware('admin.role:MANAGER,ADMIN,STAFF');
             Route::apiResource('customers', ApiCustomerController::class)
@@ -150,6 +180,12 @@ Route::prefix('admin')->group(function () {
                 ->middleware('admin.role:MANAGER,ADMIN');
             Route::patch('products/{product}/comments/{comment}', [ApiProductCommentController::class, 'update'])
                 ->name('products.comments.update')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::get('comments', [ApiProductCommentController::class, 'all'])
+                ->name('comments.index')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::patch('comments/{comment}', [ApiProductCommentController::class, 'updateAny'])
+                ->name('comments.update')
                 ->middleware('admin.role:MANAGER,ADMIN');
             Route::apiResource('roles', ApiRoleController::class)->middleware('admin.role:MANAGER');
             Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER');

@@ -10,6 +10,17 @@ use Illuminate\Http\JsonResponse;
 
 class ProductCommentController extends Controller
 {
+    public function all(): JsonResponse
+    {
+        return response()->json([
+            'data' => Comment::query()
+                ->with('product:id,name')
+                ->latest()
+                ->get()
+                ->map(fn (Comment $comment) => $this->formatComment($comment)),
+        ]);
+    }
+
     public function index(Product $product): JsonResponse
     {
         return response()->json([
@@ -25,6 +36,16 @@ class ProductCommentController extends Controller
     {
         abort_if((int) $comment->product_id !== (int) $product->id, 404);
 
+        return $this->updateComment($request, $comment);
+    }
+
+    public function updateAny(UpdateCommentActiveRequest $request, Comment $comment): JsonResponse
+    {
+        return $this->updateComment($request, $comment);
+    }
+
+    private function updateComment(UpdateCommentActiveRequest $request, Comment $comment): JsonResponse
+    {
         $comment->update($request->validated());
 
         return response()->json([

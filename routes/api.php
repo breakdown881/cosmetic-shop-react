@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('admin.role:MANAGER,ADMIN')->group(function () {
+        Route::get('comments', [ApiProductCommentController::class, 'all']);
+        Route::patch('comments/{comment}', [ApiProductCommentController::class, 'updateAny']);
         Route::get('products/{product}/comments', [ApiProductCommentController::class, 'index']);
         Route::patch('products/{product}/comments/{comment}', [ApiProductCommentController::class, 'update']);
 

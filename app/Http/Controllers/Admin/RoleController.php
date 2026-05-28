@@ -8,10 +8,7 @@ class RoleController extends Controller
 {
     public function index()
     {
-        return view('admin.api-resource', [
-            'title' => 'Roles',
-            'currentMenu' => 'roles',
-            'componentProps' => [
+        return \App\Support\AdminReactShell::render('AdminApiResourceManager', [
                 'resourceName' => 'roles',
                 'apiUrl' => route('admin.api.roles.index'),
                 'title' => __('translate.listRole'),
@@ -38,8 +35,7 @@ class RoleController extends Controller
                     ],
                 ],
                 'labels' => $this->labels(),
-            ],
-        ]);
+        ], 'roles', 'Roles');
     }
 
     private function labels(): array

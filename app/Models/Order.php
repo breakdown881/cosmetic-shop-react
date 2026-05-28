@@ -12,7 +12,11 @@ class Order extends Model
     public const STATUSES = [
         'PENDING',
         'PROCESSING',
+        'SHIPPING',
         'COMPLETE',
+        'CANCELLED',
+        'REFUNDED',
+        'FAILED',
     ];
 
     public const PAYMENT_METHODS = [

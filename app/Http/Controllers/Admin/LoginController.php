@@ -10,8 +10,26 @@ class LoginController extends Controller
 {
     public function index()
     {
-        $data = [];
-        return view('admin.login.index', $data);
+        $success = request()->session()->pull('success');
+        $error = request()->session()->pull('error');
+
+        return \App\Support\AdminReactShell::login([
+            'action' => route('admin.login'),
+            'csrfToken' => csrf_token(),
+            'logoUrl' => asset('adm/images/logo.jpg'),
+            'alerts' => [
+                'message' => $error ?: $success,
+                'type' => $error ? 'error' : 'success',
+                'errors' => [],
+            ],
+            'labels' => [
+                'email' => __('translate.email'),
+                'password' => __('translate.password'),
+                'rememberMe' => __('translate.rememberMe'),
+                'login' => __('translate.login'),
+                'logoAlt' => __('translate.brand'),
+            ],
+        ]);
     }
 
     public function login(Request $request)

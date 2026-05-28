@@ -24,12 +24,53 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brandService = new BrandService($this->brandRepository);
-        $brands = $brandService->getAll();
-        return view('admin.brand.index', [
-            'brands'        => $brands,
-            'currentMenu'   => 'brands'
-        ]);
+        return \App\Support\AdminReactShell::render('AdminApiResourceManager', [
+                'resourceName' => 'brands',
+                'apiUrl' => route('admin.api.brands.index'),
+                'title' => __('translate.brands'),
+                'canCreate' => true,
+                'canEdit' => true,
+                'canDelete' => true,
+                'breadcrumbs' => [
+                    ['href' => route('admin.dashboard'), 'label' => __('translate.management')],
+                    ['active' => true, 'label' => __('translate.brands')],
+                ],
+                'columns' => [
+                    ['key' => 'name', 'label' => __('translate.name')],
+                    ['key' => 'status', 'label' => __('translate.status'), 'type' => 'boolean'],
+                    ['key' => 'created_at', 'label' => __('translate.createdAt')],
+                    ['key' => 'updated_at', 'label' => __('translate.updatedAt')],
+                ],
+                'fields' => [
+                    ['name' => 'name', 'label' => __('translate.name'), 'type' => 'text', 'required' => true],
+                    [
+                        'name' => 'status',
+                        'label' => __('translate.status'),
+                        'type' => 'select',
+                        'required' => true,
+                        'defaultValue' => 1,
+                        'options' => [
+                            ['value' => 1, 'label' => __('translate.active')],
+                            ['value' => 0, 'label' => __('translate.inactive')],
+                        ],
+                    ],
+                ],
+                'labels' => $this->labels(),
+        ], 'brands', 'Brands');
+    }
+
+    private function labels(): array
+    {
+        return [
+            'add' => __('translate.add'),
+            'edit' => __('translate.edit'),
+            'delete' => __('translate.delete'),
+            'save' => __('translate.save'),
+            'cancel' => __('translate.cancel'),
+            'management' => __('translate.management'),
+            'empty' => __('translate.noData') === 'translate.noData' ? 'Không có dữ liệu.' : __('translate.noData'),
+            'deleteConfirm' => __('translate.deleteConfirm') === 'translate.deleteConfirm' ? 'Bạn có chắc muốn xóa?' : __('translate.deleteConfirm'),
+        ];
     }
 
     /**
@@ -39,7 +80,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        return view('admin.brand.create', ['currentMenu' => 'brands']);
+        return $this->index();
     }
 
     /**
@@ -70,10 +111,7 @@ class BrandController extends Controller
     {
         $brandService = new BrandService($this->brandRepository);
         $brand = $brandService->get($id);
-        return view('admin.brand.edit', [
-            'brand'         => $brand,
-            'currentMenu'   => 'brands'
-        ]);
+        return $this->index();
     }
 
     /**

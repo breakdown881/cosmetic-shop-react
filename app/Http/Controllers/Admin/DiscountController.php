@@ -11,10 +11,7 @@ class DiscountController extends Controller
     {
         $canWrite = in_array(Auth::guard('admin')->user()?->role, ['MANAGER', 'ADMIN'], true);
 
-        return view('admin.api-resource', [
-            'title' => 'Discounts',
-            'currentMenu' => 'discounts',
-            'componentProps' => [
+        return \App\Support\AdminReactShell::render('AdminApiResourceManager', [
                 'resourceName' => 'discounts',
                 'apiUrl' => route('admin.api.discounts.index'),
                 'title' => __('translate.discounts'),
@@ -51,8 +48,7 @@ class DiscountController extends Controller
                     ['name' => 'expires_at', 'label' => 'Expires at', 'type' => 'text'],
                 ],
                 'labels' => $this->labels(),
-            ],
-        ]);
+        ], 'discounts', 'Discounts');
     }
 
     private function labels(): array

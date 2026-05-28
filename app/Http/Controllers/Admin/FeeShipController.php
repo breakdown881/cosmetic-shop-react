@@ -11,10 +11,7 @@ class FeeShipController extends Controller
     {
         $canWrite = in_array(Auth::guard('admin')->user()?->role, ['MANAGER', 'ADMIN'], true);
 
-        return view('admin.api-resource', [
-            'title' => 'Fee Ships',
-            'currentMenu' => 'feeships',
-            'componentProps' => [
+        return \App\Support\AdminReactShell::render('AdminApiResourceManager', [
                 'resourceName' => 'feeships',
                 'apiUrl' => route('admin.api.feeships.index'),
                 'title' => __('translate.feeShips'),
@@ -38,8 +35,7 @@ class FeeShipController extends Controller
                     ['name' => 'price', 'label' => 'Price', 'type' => 'number', 'required' => true],
                 ],
                 'labels' => $this->labels(),
-            ],
-        ]);
+        ], 'feeships', 'Fee Ships');
     }
 
     private function labels(): array
