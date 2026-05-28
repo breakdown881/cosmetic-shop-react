@@ -25,7 +25,10 @@ class ProductController extends Controller
 
     public function store(CreateProductRequest $request): JsonResponse
     {
-        $product = Product::create($request->validated());
+        $data = $request->validated();
+        $data['created_by'] = $request->user('admin')?->id ?? $request->user()?->id ?? 1;
+
+        $product = Product::create($data);
 
         return response()->json([
             'message' => __('translate.createSuccess'),
@@ -57,6 +60,20 @@ class ProductController extends Controller
         return response()->json(null, 204);
     }
 
+    public function updateStatus(Request $request, Product $product): JsonResponse
+    {
+        $data = $request->validate([
+            'status' => ['required', 'integer', 'in:0,1'],
+        ]);
+
+        $product->update(['status' => $data['status']]);
+
+        return response()->json([
+            'message' => __('translate.changeStatusSuccess'),
+            'data' => $product->load(['brand:id,name,status', 'category:id,name,parent_id,status']),
+        ]);
+    }
+
     public function search(Request $request): JsonResponse
     {
         $query = Product::query()
@@ -86,6 +103,10 @@ class ProductController extends Controller
 
         if ($request->filled('featured')) {
             $query->where('featured', $request->boolean('featured'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->integer('status'));
         }
     }
 }

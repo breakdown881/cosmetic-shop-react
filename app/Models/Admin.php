@@ -48,8 +48,8 @@ class Admin extends Authenticatable
     ];
 
     const ROLE = [
-        'Manager'   => 'MANAGER',
-        'Staff'     => 'STAFF',
-        'Support'   => 'SUPPORT',
+        'Manager' => 'MANAGER',
+        'Admin' => 'ADMIN',
+        'Staff' => 'STAFF',
     ];
 }

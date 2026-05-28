@@ -16,8 +16,20 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('admin')->check()) {
+        $admin = Auth::guard('admin')->user();
+
+        if ($admin && $admin->is_active) {
             return $next($request);
+        }
+
+        if ($admin) {
+            Auth::guard('admin')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
         return redirect('/admin/login');

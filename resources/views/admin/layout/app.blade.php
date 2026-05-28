@@ -41,6 +41,8 @@
             $isBrand = ($currentMenu ?? '') === 'brands';
             $isCategory = ($currentMenu ?? '') === 'categories';
             $isProduct = ($currentMenu ?? '') === 'products';
+            $isStaff = ($currentMenu ?? '') === 'staffs';
+            $isRole = ($currentMenu ?? '') === 'roles';
             $adminSidebarItems = [
                 [
                     'label' => __('translate.overview'),
@@ -124,18 +126,19 @@
                 [
                     'label' => __('translate.staffs'),
                     'icon' => 'fas fa-users',
+                    'open' => $isStaff,
                     'children' => [
-                        ['label' => __('translate.list'), 'href' => '#'],
-                        ['label' => __('translate.add'), 'href' => '#'],
+                        ['label' => __('translate.list'), 'href' => route('admin.staff.index'), 'active' => request()->routeIs('admin.staff.index')],
+                        ['label' => __('translate.add'), 'href' => route('admin.staff.create'), 'active' => request()->routeIs('admin.staff.create')],
                     ],
                 ],
                 [
                     'label' => __('translate.authorizations'),
                     'icon' => 'fas fa-user-shield',
+                    'open' => $isRole,
                     'children' => [
-                        ['label' => __('translate.listRole'), 'href' => '#'],
-                        ['label' => __('translate.add'), 'href' => '#'],
-                        ['label' => __('translate.listAction'), 'href' => '#'],
+                        ['label' => __('translate.listRole'), 'href' => route('admin.role.index'), 'active' => request()->routeIs('admin.role.index')],
+                        ['label' => __('translate.add'), 'href' => route('admin.role.create'), 'active' => request()->routeIs('admin.role.create')],
                     ],
                 ],
                 [

@@ -1,6 +1,7 @@
 import './bootstrap';
 
 import AlertMessages from './components/common/AlertMessages.jsx';
+import AdminApiResourceManager from './components/admin/AdminApiResourceManager.jsx';
 import AdminDashboard from './components/admin/AdminDashboard.jsx';
 import AdminFooterLogout from './components/admin/AdminFooterLogout.jsx';
 import AdminLoginPage from './components/admin/AdminLoginPage.jsx';
@@ -12,6 +13,7 @@ import AdminTopNav from './components/admin/AdminTopNav.jsx';
 import { mountReactIslands } from './islands/mountReactIslands.jsx';
 
 mountReactIslands({
+    AdminApiResourceManager,
     AlertMessages,
     AdminDashboard,
     AdminFooterLogout,

@@ -7,6 +7,11 @@ use Illuminate\Validation\Rule;
 
 class CreateProductRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         $product = $this->route('product');
@@ -22,28 +27,12 @@ class CreateProductRequest extends FormRequest
             'discount_percentage' => [$required, 'integer', 'min:0', 'max:100'],
             'discount_from_date' => [$required, 'date'],
             'discount_to_date' => [$required, 'date', 'after_or_equal:discount_from_date'],
-            'media_id' => [$required, 'integer'],
+            'media_id' => [$required, 'integer', 'min:1'],
             'inventory_qty' => [$required, 'integer', 'min:0'],
             'description' => [$required, 'string', 'max:255'],
-            'star' => ['sometimes', 'numeric', 'min:0', 'max:5'],
-            'featured' => ['sometimes', 'boolean'],
+            'star' => [$required, 'numeric', 'min:0', 'max:5'],
+            'featured' => [$required, 'integer', 'in:0,1'],
+            'status' => [$required, 'integer', 'in:0,1'],
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        if ($this->isMethod('post')) {
-            $this->merge([
-                'discount_percentage' => $this->input('discount_percentage', 0),
-                'star' => $this->input('star', 0),
-                'featured' => $this->boolean('featured'),
-            ]);
-
-            return;
-        }
-
-        if ($this->has('featured')) {
-            $this->merge(['featured' => $this->boolean('featured')]);
-        }
     }
 }
