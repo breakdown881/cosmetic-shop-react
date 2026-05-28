@@ -29,7 +29,7 @@ Route::prefix('admin')->group(function () {
     Route::middleware(['admin'])->group(function () {
         Route::get('/', [DashBoardController::class, 'index'])->name('admin.dashboard');
 
-        Route::prefix('brands')->group(function () {
+        Route::prefix('brands')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
             Route::get('/', [BrandController::class, 'index'])->name('admin.brand.index');
             Route::get('create', [BrandController::class, 'create'])->name('admin.brand.create');
             Route::post('store', [BrandController::class, 'store'])->name('admin.brand.store');
@@ -39,7 +39,7 @@ Route::prefix('admin')->group(function () {
             Route::post('changeStatus/{brand}', [BrandController::class, 'changeStatus'])->name('admin.brand.change_status');
         });
 
-        Route::prefix('categories')->group(function () {
+        Route::prefix('categories')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('admin.category.index');
             Route::get('create', [CategoryController::class, 'create'])->name('admin.category.create');
             Route::post('store', [CategoryController::class, 'store'])->name('admin.category.store');
@@ -54,7 +54,7 @@ Route::prefix('admin')->group(function () {
             Route::patch('{id}/update/{category}', [CategoryController::class, 'updateChild'])->name('admin.category.update.child');
         });
 
-        Route::prefix('products')->group(function () {
+        Route::prefix('products')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
             Route::get('/', [ProductController::class, 'index'])->name('admin.product.index');
             Route::get('create', [ProductController::class, 'create'])->name('admin.product.create');
             Route::post('store', [ProductController::class, 'store'])->name('admin.product.store');
@@ -75,7 +75,7 @@ Route::prefix('admin')->group(function () {
             Route::get('edit/{role}', [RoleController::class, 'index'])->name('admin.role.edit');
         });
 
-        Route::prefix('staffs')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
+        Route::prefix('staffs')->middleware('admin.role:MANAGER')->group(function () {
             Route::get('/', [StaffController::class, 'index'])->name('admin.staff.index');
             Route::get('create', [StaffController::class, 'index'])->name('admin.staff.create');
             Route::get('edit/{staff}', [StaffController::class, 'index'])->name('admin.staff.edit');
@@ -83,7 +83,7 @@ Route::prefix('admin')->group(function () {
 
         Route::prefix('api')->name('admin.api.')->group(function () {
             Route::apiResource('roles', ApiRoleController::class)->middleware('admin.role:MANAGER');
-            Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER,ADMIN');
+            Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER');
         });
     });
 });

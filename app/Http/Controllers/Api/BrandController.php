@@ -12,18 +12,8 @@ class BrandController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Brand::query()->latest();
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->integer('status'));
-        }
-
-        if ($request->filled('q')) {
-            $query->where('name', 'like', '%' . $request->input('q') . '%');
-        }
-
         return response()->json([
-            'data' => $query->get()->map(fn (Brand $brand) => $this->formatBrand($brand)),
+            'data' => $this->brands($request)->map(fn (Brand $brand) => $this->formatBrand($brand)),
         ]);
     }
 
@@ -101,5 +91,33 @@ class BrandController extends Controller
             'created_at' => optional($brand->created_at)->toDateTimeString(),
             'updated_at' => optional($brand->updated_at)->toDateTimeString(),
         ];
+    }
+
+    private function brands(Request $request)
+    {
+        if (! $request->filled('q')) {
+            $query = Brand::query()->latest();
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->integer('status'));
+            }
+
+            return $query->get();
+        }
+
+        $search = Brand::search((string) $request->input('q'));
+
+        if ($request->filled('status')) {
+            $search->where('status', $request->integer('status'));
+        }
+
+        return $search->query(function ($query) use ($request) {
+            $query->latest()
+                ->where('name', 'like', '%' . $request->input('q') . '%');
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->integer('status'));
+            }
+        })->get();
     }
 }

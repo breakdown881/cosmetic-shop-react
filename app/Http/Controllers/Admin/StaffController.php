@@ -69,8 +69,8 @@ class StaffController extends Controller
             'save' => __('translate.save'),
             'cancel' => __('translate.cancel'),
             'management' => __('translate.management'),
-            'empty' => __('translate.noData') === 'translate.noData' ? 'Kh�ng c� d? li?u.' : __('translate.noData'),
-            'deleteConfirm' => __('translate.deleteConfirm') === 'translate.deleteConfirm' ? 'B?n c� ch?c mu?n x�a?' : __('translate.deleteConfirm'),
+            'empty' => __('translate.noData') === 'translate.noData' ? 'Không có dữ liệu.' : __('translate.noData'),
+            'deleteConfirm' => __('translate.deleteConfirm') === 'translate.deleteConfirm' ? 'Bạn có chắc muốn xóa?' : __('translate.deleteConfirm'),
         ];
     }
 }

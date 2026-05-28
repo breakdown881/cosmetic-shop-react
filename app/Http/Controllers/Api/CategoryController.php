@@ -12,26 +12,8 @@ class CategoryController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Category::query()->latest();
-
-        if ($request->boolean('parents_only')) {
-            $query->whereNull('parent_id');
-        }
-
-        if ($request->filled('parent_id')) {
-            $query->where('parent_id', $request->integer('parent_id'));
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->integer('status'));
-        }
-
-        if ($request->filled('q')) {
-            $query->where('name', 'like', '%' . $request->input('q') . '%');
-        }
-
         return response()->json([
-            'data' => $query->get(),
+            'data' => $this->categories($request),
         ]);
     }
 
@@ -84,5 +66,47 @@ class CategoryController extends Controller
             'message' => __('translate.changeStatusSuccess'),
             'data' => $category,
         ]);
+    }
+
+    private function categories(Request $request)
+    {
+        if (! $request->filled('q')) {
+            $query = Category::query()->latest();
+            $this->applyFilters($query, $request);
+
+            return $query->get();
+        }
+
+        $search = Category::search((string) $request->input('q'));
+
+        if ($request->filled('parent_id')) {
+            $search->where('parent_id', $request->integer('parent_id'));
+        }
+
+        if ($request->filled('status')) {
+            $search->where('status', $request->integer('status'));
+        }
+
+        return $search->query(function ($query) use ($request) {
+            $query->latest()
+                ->where('name', 'like', '%' . $request->input('q') . '%');
+
+            $this->applyFilters($query, $request);
+        })->get();
+    }
+
+    private function applyFilters($query, Request $request): void
+    {
+        if ($request->boolean('parents_only')) {
+            $query->whereNull('parent_id');
+        }
+
+        if ($request->filled('parent_id')) {
+            $query->where('parent_id', $request->integer('parent_id'));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->integer('status'));
+        }
     }
 }

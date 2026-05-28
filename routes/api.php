@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Authenticated CRUD API for the React frontend. Authorization matrix:
-| MANAGER: all CRUD; ADMIN: all except roles; STAFF: catalog CRUD only.
+| MANAGER: all CRUD; ADMIN: catalog CRUD; STAFF: order APIs only.
 |
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::middleware('admin.role:MANAGER,ADMIN,STAFF')->group(function () {
+    Route::middleware('admin.role:MANAGER,ADMIN')->group(function () {
         Route::apiResource('brands', BrandController::class);
         Route::patch('brands/{brand}/status', [BrandController::class, 'updateStatus']);
 
@@ -31,11 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('products', ProductController::class);
     });
 
-    Route::middleware('admin.role:MANAGER,ADMIN')->group(function () {
-        Route::apiResource('staffs', ApiStaffController::class);
-    });
-
     Route::middleware('admin.role:MANAGER')->group(function () {
+        Route::apiResource('staffs', ApiStaffController::class);
         Route::apiResource('roles', ApiRoleController::class);
     });
 

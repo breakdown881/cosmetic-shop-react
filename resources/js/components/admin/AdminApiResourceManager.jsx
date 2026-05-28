@@ -13,7 +13,7 @@ const formatCell = (row, column) => {
     const value = row[column.key];
 
     if (column.type === 'boolean') {
-        return value ? 'Ho?t d?ng' : 'Kh�ng ho?t d?ng';
+        return value ? 'Hoạt động' : 'Không hoạt động';
     }
 
     return value ?? '';
@@ -47,7 +47,7 @@ export default function AdminApiResourceManager({
             const payload = await get(apiUrl);
             setRows(normalizeRows(payload));
         } catch (error) {
-            setErrorMessage(error.response?.data?.message ?? 'Kh�ng t?i du?c d? li?u.');
+            setErrorMessage(error.response?.data?.message ?? 'Không tải được dữ liệu.');
         } finally {
             setIsLoading(false);
         }
@@ -119,18 +119,18 @@ export default function AdminApiResourceManager({
                 ? await patch(`${apiUrl}/${editingRow.id}`, payload)
                 : await post(apiUrl, payload);
 
-            setSuccessMessage(response.message ?? 'Luu th�nh c�ng.');
+            setSuccessMessage(response.message ?? 'Lưu thành công.');
             closeForm();
             await loadRows();
         } catch (error) {
             const errors = error.response?.data?.errors;
             const firstError = errors ? Object.values(errors).flat()[0] : null;
-            setErrorMessage(firstError ?? error.response?.data?.message ?? 'Kh�ng luu du?c d? li?u.');
+            setErrorMessage(firstError ?? error.response?.data?.message ?? 'Không lưu được dữ liệu.');
         }
     };
 
     const handleDelete = async (row) => {
-        if (!window.confirm(labels.deleteConfirm ?? 'B?n c� ch?c mu?n x�a?')) {
+        if (!window.confirm(labels.deleteConfirm ?? 'Bạn có chắc muốn xóa?')) {
             return;
         }
 
@@ -139,10 +139,10 @@ export default function AdminApiResourceManager({
 
         try {
             await destroyRequest(`${apiUrl}/${row.id}`);
-            setSuccessMessage('X�a th�nh c�ng.');
+            setSuccessMessage('Xóa thành công.');
             await loadRows();
         } catch (error) {
-            setErrorMessage(error.response?.data?.message ?? 'Kh�ng x�a du?c d? li?u.');
+            setErrorMessage(error.response?.data?.message ?? 'Không xóa được dữ liệu.');
         }
     };
 
@@ -159,7 +159,7 @@ export default function AdminApiResourceManager({
                     required={required}
                     onChange={(event) => handleChange(field, event)}
                 >
-                    <option value="">-- Ch?n --</option>
+                    <option value="">-- Chọn --</option>
                     {(field.options ?? []).map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
@@ -196,7 +196,7 @@ export default function AdminApiResourceManager({
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1 className="h4 mb-0">{title}</h1>
                 <button type="button" className="btn btn-primary btn-sm" onClick={openCreateForm}>
-                    {labels.add ?? 'Th�m'}
+                    {labels.add ?? 'Thêm'}
                 </button>
             </div>
 
@@ -205,7 +205,7 @@ export default function AdminApiResourceManager({
 
             {isFormOpen && (
                 <form className="card card-body mb-3" onSubmit={handleSubmit}>
-                    <h2 className="h5 mb-3">{editingRow ? labels.edit ?? 'S?a' : labels.add ?? 'Th�m'}</h2>
+                    <h2 className="h5 mb-3">{editingRow ? labels.edit ?? 'Sửa' : labels.add ?? 'Thêm'}</h2>
                     {fields.map((field) => (
                         <div className="form-group row" key={field.name}>
                             <label className="col-md-12 control-label" htmlFor={`${resourceName}-${field.name}`}>
@@ -217,10 +217,10 @@ export default function AdminApiResourceManager({
                     <div className="form-action row">
                         <div className="col-md-9 col-lg-6 d-flex justify-content-end">
                             <button type="submit" className="btn btn-primary btn-md mr-2">
-                                {labels.save ?? 'Luu'}
+                                {labels.save ?? 'Lưu'}
                             </button>
                             <button type="button" className="btn btn-secondary btn-md" onClick={closeForm}>
-                                {labels.cancel ?? 'H?y'}
+                                {labels.cancel ?? 'Hủy'}
                             </button>
                         </div>
                     </div>
@@ -236,7 +236,7 @@ export default function AdminApiResourceManager({
                                     {visibleColumns.map((column) => (
                                         <th key={column.key} className="text-center">{column.label}</th>
                                     ))}
-                                    <th className="text-center" width="120">{labels.management ?? 'Qu?n l�'}</th>
+                                    <th className="text-center" width="120">{labels.management ?? 'Quản lý'}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -259,8 +259,8 @@ export default function AdminApiResourceManager({
                         </table>
                     </div>
 
-                    {isLoading && <p>�ang t?i...</p>}
-                    {!isLoading && rows.length === 0 && <p className="react-empty-state">{labels.empty ?? 'Kh�ng c� d? li?u.'}</p>}
+                    {isLoading && <p>Đang tải...</p>}
+                    {!isLoading && rows.length === 0 && <p className="react-empty-state">{labels.empty ?? 'Không có dữ liệu.'}</p>}
                 </div>
             </div>
         </div>

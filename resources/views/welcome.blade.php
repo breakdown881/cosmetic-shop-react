@@ -20,20 +20,22 @@
                     }
                 }
             }
+
+            $publicWelcomeProps = [
+                'title' => 'Goda Shop React',
+                'description' => 'Frontend đã được chuyển sang React islands qua Laravel Vite.',
+                'authLinks' => $authLinks,
+                'cards' => [
+                    ['title' => 'Sản phẩm', 'description' => 'Khám phá danh sách sản phẩm mỹ phẩm.', 'href' => Route::has('product.index') ? route('product.index') : '#'],
+                    ['title' => 'Admin', 'description' => 'Quản trị thương hiệu, danh mục và sản phẩm.', 'href' => Route::has('admin.dashboard') ? route('admin.dashboard') : '#'],
+                    ['title' => 'React + Laravel', 'description' => 'Blade giữ vai trò shell/data payload, UI render bằng React.', 'href' => '#'],
+                ],
+                'version' => 'Laravel v' . Illuminate\Foundation\Application::VERSION . ' (PHP v' . PHP_VERSION . ')',
+            ];
         @endphp
         <div
             data-react-component="PublicWelcomePage"
-            data-props='@json([
-                "title" => "Goda Shop React",
-                "description" => "Frontend đã được chuyển sang React islands qua Laravel Vite.",
-                "authLinks" => $authLinks,
-                "cards" => [
-                    ["title" => "Sản phẩm", "description" => "Khám phá danh sách sản phẩm mỹ phẩm.", "href" => Route::has("product.index") ? route("product.index") : "#"],
-                    ["title" => "Admin", "description" => "Quản trị thương hiệu, danh mục và sản phẩm.", "href" => Route::has("admin.dashboard") ? route("admin.dashboard") : "#"],
-                    ["title" => "React + Laravel", "description" => "Blade giữ vai trò shell/data payload, UI render bằng React.", "href" => "#"],
-                ],
-                "version" => "Laravel v" . Illuminate\Foundation\Application::VERSION . " (PHP v" . PHP_VERSION . ")",
-            ])'
+            data-props='@json($publicWelcomeProps)'
         ></div>
     </body>
 </html>
