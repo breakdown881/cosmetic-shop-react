@@ -45,13 +45,22 @@
             $isCategory = ($currentMenu ?? '') === 'categories';
             $isProduct = ($currentMenu ?? '') === 'products';
             $isCustomer = ($currentMenu ?? '') === 'customers';
+            $isDiscount = ($currentMenu ?? '') === 'discounts';
             $isFeeShip = ($currentMenu ?? '') === 'feeships';
             $isStaff = ($currentMenu ?? '') === 'staffs';
             $isRole = ($currentMenu ?? '') === 'roles';
+            $canWriteDiscounts = in_array(Auth::guard('admin')->user()?->role, ['MANAGER', 'ADMIN'], true);
             $canWriteFeeShips = in_array(Auth::guard('admin')->user()?->role, ['MANAGER', 'ADMIN'], true);
+            $discountChildren = [
+                ['label' => __('translate.list'), 'href' => route('admin.discount.index'), 'active' => request()->routeIs('admin.discount.index')],
+            ];
             $feeShipChildren = [
                 ['label' => __('translate.list'), 'href' => route('admin.feeship.index'), 'active' => request()->routeIs('admin.feeship.index')],
             ];
+
+            if ($canWriteDiscounts) {
+                $discountChildren[] = ['label' => __('translate.add'), 'href' => route('admin.discount.create'), 'active' => request()->routeIs('admin.discount.create')];
+            }
 
             if ($canWriteFeeShips) {
                 $feeShipChildren[] = ['label' => __('translate.add'), 'href' => route('admin.feeship.create'), 'active' => request()->routeIs('admin.feeship.create')];
@@ -124,10 +133,8 @@
                 [
                     'label' => __('translate.discounts'),
                     'icon' => 'fas fa-percentage',
-                    'children' => [
-                        ['label' => __('translate.list'), 'href' => '#'],
-                        ['label' => __('translate.add'), 'href' => '#'],
-                    ],
+                    'open' => $isDiscount,
+                    'children' => $discountChildren,
                 ],
                 [
                     'label' => __('translate.feeShips'),

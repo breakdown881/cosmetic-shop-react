@@ -15,5 +15,16 @@ class Comment extends Model
         'fullname',
         'star',
         'description',
+        'active',
     ];
+
+    protected $casts = [
+        'star' => 'float',
+        'active' => 'integer',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

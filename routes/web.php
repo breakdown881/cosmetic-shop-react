@@ -4,13 +4,17 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashBoardController;
+use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\FeeShipController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductCommentController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
+use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
 use App\Http\Controllers\Api\Admin\FeeShipController as ApiFeeShipController;
+use App\Http\Controllers\Api\Admin\ProductCommentController as ApiProductCommentController;
 use App\Http\Controllers\Api\Admin\RoleController as ApiRoleController;
 use App\Http\Controllers\Api\Admin\StaffController as ApiStaffController;
 use Illuminate\Support\Facades\Route;
@@ -71,6 +75,7 @@ Route::prefix('admin')->group(function () {
             Route::post('/{id}/store', [ProductController::class, 'storeChild'])->name('admin.product.store.child');
             Route::get('{id}/edit/{product}', [ProductController::class, 'editChild'])->name('admin.product.edit.child');
             Route::patch('{id}/update/{product}', [ProductController::class, 'updateChild'])->name('admin.product.update.child');
+            Route::get('{product}/comments', [ProductCommentController::class, 'index'])->name('admin.product.comments.index');
         });
 
         Route::prefix('roles')->middleware('admin.role:MANAGER')->group(function () {
@@ -102,15 +107,39 @@ Route::prefix('admin')->group(function () {
                 ->name('admin.feeship.edit');
         });
 
+        Route::prefix('discounts')->group(function () {
+            Route::get('/', [DiscountController::class, 'index'])
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF')
+                ->name('admin.discount.index');
+            Route::get('create', [DiscountController::class, 'index'])
+                ->middleware('admin.role:MANAGER,ADMIN')
+                ->name('admin.discount.create');
+            Route::get('edit/{discount}', [DiscountController::class, 'index'])
+                ->middleware('admin.role:MANAGER,ADMIN')
+                ->name('admin.discount.edit');
+        });
+
         Route::prefix('api')->name('admin.api.')->group(function () {
             Route::apiResource('customers', ApiCustomerController::class)
                 ->only(['index', 'show', 'update', 'destroy'])
                 ->middleware('admin.role:MANAGER,ADMIN,STAFF');
+            Route::apiResource('discounts', ApiDiscountController::class)
+                ->only(['index', 'show'])
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
+            Route::apiResource('discounts', ApiDiscountController::class)
+                ->only(['store', 'update', 'destroy'])
+                ->middleware('admin.role:MANAGER,ADMIN');
             Route::apiResource('feeships', ApiFeeShipController::class)
                 ->only(['index', 'show'])
                 ->middleware('admin.role:MANAGER,ADMIN,STAFF');
             Route::apiResource('feeships', ApiFeeShipController::class)
                 ->only(['store', 'update', 'destroy'])
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::get('products/{product}/comments', [ApiProductCommentController::class, 'index'])
+                ->name('products.comments.index')
+                ->middleware('admin.role:MANAGER,ADMIN');
+            Route::patch('products/{product}/comments/{comment}', [ApiProductCommentController::class, 'update'])
+                ->name('products.comments.update')
                 ->middleware('admin.role:MANAGER,ADMIN');
             Route::apiResource('roles', ApiRoleController::class)->middleware('admin.role:MANAGER');
             Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER');

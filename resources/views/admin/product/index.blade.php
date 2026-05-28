@@ -14,6 +14,7 @@
                 'created_at' => optional($product->created_at)->format('Y-m-d H:i:s') ?? (string) $product->created_at,
                 'updated_at' => optional($product->updated_at)->format('Y-m-d H:i:s') ?? (string) $product->updated_at,
                 'editUrl' => route('admin.product.edit', ['id' => $product->id]),
+                'listUrl' => route('admin.product.comments.index', ['product' => $product->id]),
                 'deleteUrl' => route('admin.product.destroy', ['product' => $product->id]),
                 'changeStatusUrl' => route('admin.product.change_status', ['product' => $product->id]),
             ];
@@ -33,6 +34,7 @@
             "rows" => $productRows,
             "resourceName" => "products",
             "csrfToken" => csrf_token(),
+            "showListAction" => true,
             "columns" => [
                 ["key" => "code", "label" => "Mã", "width" => 100],
                 ["key" => "price", "label" => "Giá", "width" => 120, "type" => "currency"],
