@@ -24,4 +24,22 @@ class Product extends Model
         'star',
         'featured',
     ];
+
+    protected $casts = [
+        'featured' => 'boolean',
+        'price' => 'integer',
+        'discount_percentage' => 'integer',
+        'inventory_qty' => 'integer',
+        'star' => 'float',
+    ];
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
