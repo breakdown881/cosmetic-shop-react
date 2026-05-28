@@ -1,0 +1,302 @@
+[data-react-component] {
+    min-width: 0;
+}
+
+.react-empty-state {
+    color: #666;
+    margin: 1rem 0;
+}
+
+.react-home {
+    background: #fff7fb;
+    border: 1px solid #f7c7dd;
+    border-radius: 12px;
+    color: #4b1830;
+    margin: 1rem auto;
+    max-width: 960px;
+    padding: 1rem 1.25rem;
+}
+
+.react-home h2 {
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem;
+}
+
+.react-home p {
+    margin: 0;
+}
+
+.react-product-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.react-product-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.react-product-card__image {
+    aspect-ratio: 1;
+    background: #fafafa;
+    display: block;
+    overflow: hidden;
+}
+
+.react-product-card__image img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.react-product-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.react-product-card__name {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.react-product-card__price {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.react-product-card__regular-price {
+    color: #888;
+    text-decoration: line-through;
+}
+
+.react-product-card__sale-price {
+    color: #d71920;
+    font-weight: 700;
+}
+
+.react-product-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.react-product-list__filters {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-bottom: 1rem;
+}
+
+.react-product-list__filters input,
+.react-product-list__filters select {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+}
+
+.react-cart {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.react-cart-item {
+    align-items: center;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 64px 1fr auto 92px auto auto;
+}
+
+.react-cart-item__image {
+    border-radius: 6px;
+    height: 64px;
+    object-fit: cover;
+    width: 64px;
+}
+
+.react-cart-item input {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.375rem 0.5rem;
+}
+
+.react-cart-item button {
+    background: transparent;
+    border: 0;
+    color: #d71920;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.react-cart__total {
+    font-size: 1.125rem;
+    text-align: right;
+}
+
+.react-admin-resource {
+    display: grid;
+    gap: 1rem;
+}
+
+.react-admin-resource__toolbar {
+    align-items: center;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: minmax(220px, 1fr) repeat(2, minmax(160px, auto)) auto;
+}
+
+.react-admin-resource__toolbar input,
+.react-admin-resource__toolbar select {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    min-height: 34px;
+    padding: 0.375rem 0.75rem;
+}
+
+.react-admin-resource__summary {
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.react-admin-resource__logo {
+    max-height: 80px;
+    object-fit: contain;
+    width: 120px;
+}
+
+.react-admin-resource__actions {
+    display: inline-flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.react-admin-resource__table th,
+.react-admin-resource__table td {
+    vertical-align: middle;
+}
+
+.react-admin-form {
+    max-width: 100%;
+}
+
+.react-admin-form__current-image {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.react-admin-form__current-image img {
+    max-height: 180px;
+    object-fit: contain;
+    width: 200px;
+}
+
+.react-admin-media__table img {
+    max-height: 96px;
+    object-fit: contain;
+    width: 140px;
+}
+
+.react-admin-media__upload {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.react-admin-media__preview {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.react-admin-media__preview img {
+    max-height: 180px;
+    object-fit: contain;
+    width: 220px;
+}
+
+.react-admin-dashboard__periods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.react-admin-dashboard__date-range {
+    align-items: end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.react-admin-dashboard__date-range label {
+    margin-bottom: 0;
+}
+
+.react-admin-dashboard__actions {
+    display: flex;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.react-welcome {
+    background: #f7fafc;
+    color: #1a202c;
+}
+
+.react-welcome__auth {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+}
+
+.react-welcome__main {
+    margin: 0 auto;
+    max-width: 960px;
+    padding: 4rem 1.5rem;
+}
+
+.react-welcome__hero {
+    text-align: center;
+}
+
+.react-welcome__hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.react-welcome__cards {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: 2rem;
+}
+
+.react-welcome__card {
+    background: #fff;
+    border: 1px solid #edf2f7;
+    border-radius: 12px;
+    color: inherit;
+    padding: 1.25rem;
+}
+
+.react-welcome__version {
+    color: #718096;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+@media (max-width: 991px) {
+    .react-admin-resource__toolbar {
+        grid-template-columns: 1fr;
+    }
+}
