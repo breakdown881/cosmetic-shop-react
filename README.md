@@ -2,8 +2,6 @@
 
 Ứng dụng thương mại điện tử mỹ phẩm được xây dựng bằng **Laravel 11**, **Blade**, **React 19** và **Vite**. Dự án hiện có giao diện public dạng React islands, khu vực quản trị `/admin`, các module quản lý danh mục/nhãn hàng/sản phẩm, media upload, xác thực admin và nền tảng dữ liệu cho giỏ hàng, đơn hàng, địa chỉ giao hàng, khuyến mãi, bình luận và newsletter.
 
-> Ghi chú: README này được cập nhật theo mã nguồn hiện tại. Một số bảng/chức năng nghiệp vụ đã có model/migration nhưng chưa có đầy đủ controller/route public tương ứng.
-
 ## Mục lục
 
 - [Tính năng chính](#tính-năng-chính)
