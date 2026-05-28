@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
 use App\Http\Controllers\Api\Admin\FeeShipController as ApiFeeShipController;
+use App\Http\Controllers\Api\Admin\OrderController as ApiOrderController;
 use App\Http\Controllers\Api\Admin\ProductCommentController as ApiProductCommentController;
 use App\Http\Controllers\Api\Admin\RoleController as ApiRoleController;
 use App\Http\Controllers\Api\Admin\StaffController as ApiStaffController;
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('customers', ApiCustomerController::class)->only(['index', 'show', 'update', 'destroy']);
         Route::apiResource('discounts', ApiDiscountController::class)->only(['index', 'show']);
         Route::apiResource('feeships', ApiFeeShipController::class)->only(['index', 'show']);
+        Route::apiResource('orders', ApiOrderController::class);
     });
 
     Route::middleware('admin.role:MANAGER,ADMIN')->group(function () {

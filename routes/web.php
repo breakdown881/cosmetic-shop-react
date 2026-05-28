@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashBoardController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\FeeShipController;
 use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCommentController;
 use App\Http\Controllers\Admin\RoleController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
 use App\Http\Controllers\Api\Admin\FeeShipController as ApiFeeShipController;
+use App\Http\Controllers\Api\Admin\OrderController as ApiOrderController;
 use App\Http\Controllers\Api\Admin\ProductCommentController as ApiProductCommentController;
 use App\Http\Controllers\Api\Admin\RoleController as ApiRoleController;
 use App\Http\Controllers\Api\Admin\StaffController as ApiStaffController;
@@ -36,6 +38,12 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware(['admin'])->group(function () {
         Route::get('/', [DashBoardController::class, 'index'])->name('admin.dashboard');
+
+        Route::prefix('orders')->middleware('admin.role:MANAGER,ADMIN,STAFF')->group(function () {
+            Route::get('/', [OrderController::class, 'index'])->name('admin.order.index');
+            Route::get('create', [OrderController::class, 'index'])->name('admin.order.create');
+            Route::get('edit/{order}', [OrderController::class, 'index'])->name('admin.order.edit');
+        });
 
         Route::prefix('brands')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
             Route::get('/', [BrandController::class, 'index'])->name('admin.brand.index');
@@ -120,6 +128,8 @@ Route::prefix('admin')->group(function () {
         });
 
         Route::prefix('api')->name('admin.api.')->group(function () {
+            Route::apiResource('orders', ApiOrderController::class)
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
             Route::apiResource('customers', ApiCustomerController::class)
                 ->only(['index', 'show', 'update', 'destroy'])
                 ->middleware('admin.role:MANAGER,ADMIN,STAFF');

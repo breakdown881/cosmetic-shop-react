@@ -6,6 +6,7 @@ import AdminDashboard from './components/admin/AdminDashboard.jsx';
 import AdminFooterLogout from './components/admin/AdminFooterLogout.jsx';
 import AdminLoginPage from './components/admin/AdminLoginPage.jsx';
 import AdminMediaManager from './components/admin/AdminMediaManager.jsx';
+import AdminOrderManager from './components/admin/AdminOrderManager.jsx';
 import AdminResourceForm from './components/admin/AdminResourceForm.jsx';
 import AdminResourceTable from './components/admin/AdminResourceTable.jsx';
 import AdminSidebar from './components/admin/AdminSidebar.jsx';
@@ -19,6 +20,7 @@ mountReactIslands({
     AdminFooterLogout,
     AdminLoginPage,
     AdminMediaManager,
+    AdminOrderManager,
     AdminResourceForm,
     AdminResourceTable,
     AdminSidebar,

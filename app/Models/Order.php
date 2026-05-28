@@ -9,6 +9,17 @@ class Order extends Model
 {
     use HasFactory;
 
+    public const STATUSES = [
+        'PENDING',
+        'PROCESSING',
+        'COMPLETE',
+    ];
+
+    public const PAYMENT_METHODS = [
+        0 => 'Cash',
+        1 => 'Bank transfer',
+    ];
+
     protected $fillable = [
         'staff_id',
         'customer_id',
@@ -18,6 +29,7 @@ class Order extends Model
         'shipping_ward_id',
         'shipping_housenumber_street',
         'shipping_fee',
+        'feeship_id',
         'delivered_date',
         'price_total',
         'discount_code',
@@ -29,5 +41,42 @@ class Order extends Model
         'voucher_amount',
         'payment_total',
         'status',
+        'note',
     ];
+
+    protected $casts = [
+        'staff_id' => 'integer',
+        'customer_id' => 'integer',
+        'payment_method' => 'integer',
+        'shipping_fee' => 'integer',
+        'feeship_id' => 'integer',
+        'delivered_date' => 'date',
+        'price_total' => 'integer',
+        'discount_amount' => 'integer',
+        'sub_total' => 'integer',
+        'tax' => 'integer',
+        'price_inc_tax_total' => 'integer',
+        'voucher_amount' => 'integer',
+        'payment_total' => 'integer',
+    ];
+
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Admin::class, 'staff_id');
+    }
+
+    public function feeShip()
+    {
+        return $this->belongsTo(Transport::class, 'feeship_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

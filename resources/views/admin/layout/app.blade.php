@@ -41,6 +41,7 @@
     <div id="wrapper">
         @php
             $segments = request()->segments();
+            $isOrder = ($currentMenu ?? '') === 'orders';
             $isBrand = ($currentMenu ?? '') === 'brands';
             $isCategory = ($currentMenu ?? '') === 'categories';
             $isProduct = ($currentMenu ?? '') === 'products';
@@ -76,9 +77,10 @@
                 [
                     'label' => __('translate.orders'),
                     'icon' => 'fas fa-shopping-cart',
+                    'open' => $isOrder,
                     'children' => [
-                        ['label' => __('translate.list'), 'href' => '#'],
-                        ['label' => __('translate.add'), 'href' => '#'],
+                        ['label' => __('translate.list'), 'href' => route('admin.order.index'), 'active' => request()->routeIs('admin.order.index')],
+                        ['label' => __('translate.add'), 'href' => route('admin.order.create'), 'active' => request()->routeIs('admin.order.create')],
                     ],
                 ],
                 [
