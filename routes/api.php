@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\RoleController as ApiRoleController;
 use App\Http\Controllers\Api\Admin\StaffController as ApiStaffController;
 use App\Http\Controllers\Api\BrandController;
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('admin.role:MANAGER,ADMIN,STAFF')->group(function () {
+        Route::apiResource('customers', ApiCustomerController::class)->only(['index', 'show', 'update', 'destroy']);
+    });
+
     Route::middleware('admin.role:MANAGER,ADMIN')->group(function () {
         Route::apiResource('brands', BrandController::class);
         Route::patch('brands/{brand}/status', [BrandController::class, 'updateStatus']);

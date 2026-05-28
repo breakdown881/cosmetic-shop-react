@@ -23,17 +23,20 @@
 </head>
 
 <body id="page-top">
+    @php
+        $adminTopNavProps = [
+            'brandUrl' => route('admin.dashboard'),
+            'userName' => Auth::guard('admin')->check() ? Auth::guard('admin')->user()->name : 'Hoàng Hải',
+            'labels' => [
+                'brand' => __('translate.brand'),
+                'hello' => 'Chào',
+                'logout' => __('translate.logout'),
+            ],
+        ];
+    @endphp
     <div
         data-react-component="AdminTopNav"
-        data-props='@json([
-            "brandUrl" => route("admin.dashboard"),
-            "userName" => Auth::guard("admin")->check() ? Auth::guard("admin")->user()->name : "Ho?ng H?i",
-            "labels" => [
-                "brand" => __("translate.brand"),
-                "hello" => "Ch?o",
-                "logout" => __("translate.logout"),
-            ],
-        ])'
+        data-props='@json($adminTopNavProps)'
     ></div>
     <div id="wrapper">
         @php
@@ -41,6 +44,7 @@
             $isBrand = ($currentMenu ?? '') === 'brands';
             $isCategory = ($currentMenu ?? '') === 'categories';
             $isProduct = ($currentMenu ?? '') === 'products';
+            $isCustomer = ($currentMenu ?? '') === 'customers';
             $isStaff = ($currentMenu ?? '') === 'staffs';
             $isRole = ($currentMenu ?? '') === 'roles';
             $adminSidebarItems = [
@@ -84,9 +88,9 @@
                 [
                     'label' => __('translate.customers'),
                     'icon' => 'fas fa-user-alt',
+                    'open' => $isCustomer,
                     'children' => [
-                        ['label' => __('translate.list'), 'href' => '#'],
-                        ['label' => __('translate.add'), 'href' => '#'],
+                        ['label' => __('translate.list'), 'href' => route('admin.customer.index'), 'active' => request()->routeIs('admin.customer.index')],
                     ],
                 ],
                 [
@@ -155,10 +159,12 @@
                     ],
                 ],
             ];
+
+            $adminSidebarProps = ['items' => $adminSidebarItems];
         @endphp
         <div
             data-react-component="AdminSidebar"
-            data-props='@json(["items" => $adminSidebarItems])'
+            data-props='@json($adminSidebarProps)'
         ></div>
 
         <div id="content-wrapper">
@@ -166,18 +172,21 @@
             @yield('content')
         </div>
 
+        @php
+            $adminFooterLogoutProps = [
+                'logoutUrl' => route('admin.logout'),
+                'csrfToken' => csrf_token(),
+                'labels' => [
+                    'copyright' => 'Copyright Hoàng Hải',
+                    'exitConfirm' => __('translate.exitConfirm'),
+                    'cancel' => __('translate.cancel'),
+                    'exit' => __('translate.exit'),
+                ],
+            ];
+        @endphp
         <div
             data-react-component="AdminFooterLogout"
-            data-props='@json([
-                "logoutUrl" => route("admin.logout"),
-                "csrfToken" => csrf_token(),
-                "labels" => [
-                    "copyright" => "Copyright ? Ho?ng H?i",
-                    "exitConfirm" => __("translate.exitConfirm"),
-                    "cancel" => __("translate.cancel"),
-                    "exit" => __("translate.exit"),
-                ],
-            ])'
+            data-props='@json($adminFooterLogoutProps)'
         ></div>
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('') }}/adm/vendor/jquery/jquery.min.js"></script>

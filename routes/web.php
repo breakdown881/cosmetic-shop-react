@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashBoardController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\RoleController as ApiRoleController;
 use App\Http\Controllers\Api\Admin\StaffController as ApiStaffController;
 use Illuminate\Support\Facades\Route;
@@ -81,7 +83,15 @@ Route::prefix('admin')->group(function () {
             Route::get('edit/{staff}', [StaffController::class, 'index'])->name('admin.staff.edit');
         });
 
+        Route::prefix('customers')->middleware('admin.role:MANAGER,ADMIN,STAFF')->group(function () {
+            Route::get('/', [CustomerController::class, 'index'])->name('admin.customer.index');
+            Route::get('edit/{customer}', [CustomerController::class, 'index'])->name('admin.customer.edit');
+        });
+
         Route::prefix('api')->name('admin.api.')->group(function () {
+            Route::apiResource('customers', ApiCustomerController::class)
+                ->only(['index', 'show', 'update', 'destroy'])
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
             Route::apiResource('roles', ApiRoleController::class)->middleware('admin.role:MANAGER');
             Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER');
         });

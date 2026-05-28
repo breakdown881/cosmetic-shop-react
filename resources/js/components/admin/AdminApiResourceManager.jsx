@@ -22,13 +22,16 @@ const formatCell = (row, column) => {
 export default function AdminApiResourceManager({
     apiUrl,
     breadcrumbs = [],
+    canCreate = true,
+    canDelete = true,
+    canEdit = true,
     columns = [],
     fields = [],
     labels = {},
     resourceName = 'resources',
     title = '',
 }) {
-    const shouldOpenCreate = window.location.pathname.endsWith('/create');
+    const shouldOpenCreate = canCreate && window.location.pathname.endsWith('/create');
     const [rows, setRows] = useState([]);
     const [formValues, setFormValues] = useState(() => emptyValues(fields));
     const [editingRow, setEditingRow] = useState(null);
@@ -38,6 +41,7 @@ export default function AdminApiResourceManager({
     const [successMessage, setSuccessMessage] = useState('');
 
     const visibleColumns = useMemo(() => columns.filter((column) => column.key !== 'id'), [columns]);
+    const hasActions = canEdit || canDelete;
 
     const loadRows = async () => {
         setIsLoading(true);
@@ -58,6 +62,10 @@ export default function AdminApiResourceManager({
     }, [apiUrl]);
 
     const openCreateForm = () => {
+        if (!canCreate) {
+            return;
+        }
+
         setEditingRow(null);
         setFormValues(emptyValues(fields));
         setIsFormOpen(true);
@@ -195,9 +203,11 @@ export default function AdminApiResourceManager({
 
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1 className="h4 mb-0">{title}</h1>
-                <button type="button" className="btn btn-primary btn-sm" onClick={openCreateForm}>
-                    {labels.add ?? 'Thêm'}
-                </button>
+                {canCreate && (
+                    <button type="button" className="btn btn-primary btn-sm" onClick={openCreateForm}>
+                        {labels.add ?? 'Thêm'}
+                    </button>
+                )}
             </div>
 
             {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
@@ -236,7 +246,7 @@ export default function AdminApiResourceManager({
                                     {visibleColumns.map((column) => (
                                         <th key={column.key} className="text-center">{column.label}</th>
                                     ))}
-                                    <th className="text-center" width="120">{labels.management ?? 'Quản lý'}</th>
+                                    {hasActions && <th className="text-center" width="120">{labels.management ?? 'Quản lý'}</th>}
                                 </tr>
                             </thead>
                             <tbody>
@@ -245,14 +255,20 @@ export default function AdminApiResourceManager({
                                         {visibleColumns.map((column) => (
                                             <td key={column.key} className="text-center">{formatCell(row, column)}</td>
                                         ))}
-                                        <td className="text-center">
-                                            <button type="button" className="btn btn-warning btn-sm mr-1" onClick={() => openEditForm(row)}>
-                                                <i className="fas fa-edit" aria-hidden="true" />
-                                            </button>
-                                            <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>
-                                                <i className="fas fa-trash-alt" aria-hidden="true" />
-                                            </button>
-                                        </td>
+                                        {hasActions && (
+                                            <td className="text-center">
+                                                {canEdit && (
+                                                    <button type="button" className="btn btn-warning btn-sm mr-1" onClick={() => openEditForm(row)}>
+                                                        <i className="fas fa-edit" aria-hidden="true" />
+                                                    </button>
+                                                )}
+                                                {canDelete && (
+                                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>
+                                                        <i className="fas fa-trash-alt" aria-hidden="true" />
+                                                    </button>
+                                                )}
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
