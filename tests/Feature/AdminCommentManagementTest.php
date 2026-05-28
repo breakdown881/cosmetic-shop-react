@@ -34,10 +34,11 @@ class AdminCommentManagementTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->get('/admin/comments')
             ->assertOk()
-            ->assertSee('admin\/api\/comments', false)
-            ->assertSee('"canCreate":false', false)
-            ->assertSee('"canEdit":true', false)
-            ->assertSee('"canDelete":false', false);
+            ->assertSee('data-react-component="AdminSpaApp"', false)
+            ->assertDontSee('admin\/api\/comments', false)
+            ->assertDontSee('"canCreate":false', false)
+            ->assertDontSee('"canEdit":true', false)
+            ->assertDontSee('"canDelete":false', false);
 
         $this->actingAs($admin, 'admin')
             ->getJson('/admin/api/comments')

@@ -1,20 +1,9 @@
 <?php
 
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\DashBoardController;
-use App\Http\Controllers\Admin\DiscountController;
-use App\Http\Controllers\Admin\FeeShipController;
 use App\Http\Controllers\Admin\LoginController;
-use App\Http\Controllers\Admin\MediaController;
-use App\Http\Controllers\Admin\NewsletterController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\ProductCommentController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\SpaController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
+use App\Http\Controllers\Api\Admin\DashboardController as ApiDashboardController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
 use App\Http\Controllers\Api\Admin\FeeShipController as ApiFeeShipController;
 use App\Http\Controllers\Api\Admin\MediaController as ApiMediaController;
@@ -44,87 +33,10 @@ Route::prefix('admin')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('admin.logout');
 
     Route::middleware(['admin'])->group(function () {
-        Route::get('/', [DashBoardController::class, 'index'])->name('admin.dashboard');
-
-        Route::prefix('orders')->middleware('admin.role:MANAGER,ADMIN,STAFF')->group(function () {
-            Route::get('/', [OrderController::class, 'index'])->name('admin.order.index');
-            Route::get('create', [OrderController::class, 'index'])->name('admin.order.create');
-            Route::get('edit/{order}', [OrderController::class, 'index'])->name('admin.order.edit');
-        });
-
-        Route::prefix('brands')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
-            Route::get('/', [BrandController::class, 'index'])->name('admin.brand.index');
-            Route::get('create', [BrandController::class, 'index'])->name('admin.brand.create');
-            Route::get('edit/{id}', [BrandController::class, 'index'])->name('admin.brand.edit');
-        });
-
-        Route::prefix('categories')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
-            Route::get('/', [CategoryController::class, 'index'])->name('admin.category.index');
-            Route::get('create', [CategoryController::class, 'index'])->name('admin.category.create');
-            Route::get('edit/{id}', [CategoryController::class, 'index'])->name('admin.category.edit');
-        });
-
-        Route::prefix('products')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
-            Route::get('/', [ProductController::class, 'index'])->name('admin.product.index');
-            Route::get('create', [ProductController::class, 'index'])->name('admin.product.create');
-            Route::get('edit/{id}', [ProductController::class, 'index'])->name('admin.product.edit');
-            Route::get('{product}/comments', [ProductCommentController::class, 'index'])->name('admin.product.comments.index');
-        });
-
-        Route::prefix('comments')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
-            Route::get('/', [ProductCommentController::class, 'all'])->name('admin.comments.index');
-        });
-
-        Route::prefix('images')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
-            Route::get('/', [MediaController::class, 'index'])->name('admin.media.index');
-        });
-
-        Route::prefix('newsletters')->middleware('admin.role:MANAGER,ADMIN')->group(function () {
-            Route::get('/', [NewsletterController::class, 'index'])->name('admin.newsletter.index');
-        });
-
-        Route::prefix('roles')->middleware('admin.role:MANAGER')->group(function () {
-            Route::get('/', [RoleController::class, 'index'])->name('admin.role.index');
-            Route::get('create', [RoleController::class, 'index'])->name('admin.role.create');
-            Route::get('edit/{role}', [RoleController::class, 'index'])->name('admin.role.edit');
-        });
-
-        Route::prefix('staffs')->middleware('admin.role:MANAGER')->group(function () {
-            Route::get('/', [StaffController::class, 'index'])->name('admin.staff.index');
-            Route::get('create', [StaffController::class, 'index'])->name('admin.staff.create');
-            Route::get('edit/{staff}', [StaffController::class, 'index'])->name('admin.staff.edit');
-        });
-
-        Route::prefix('customers')->middleware('admin.role:MANAGER,ADMIN,STAFF')->group(function () {
-            Route::get('/', [CustomerController::class, 'index'])->name('admin.customer.index');
-            Route::get('edit/{customer}', [CustomerController::class, 'index'])->name('admin.customer.edit');
-        });
-
-        Route::prefix('feeships')->group(function () {
-            Route::get('/', [FeeShipController::class, 'index'])
-                ->middleware('admin.role:MANAGER,ADMIN,STAFF')
-                ->name('admin.feeship.index');
-            Route::get('create', [FeeShipController::class, 'index'])
-                ->middleware('admin.role:MANAGER,ADMIN')
-                ->name('admin.feeship.create');
-            Route::get('edit/{feeship}', [FeeShipController::class, 'index'])
-                ->middleware('admin.role:MANAGER,ADMIN')
-                ->name('admin.feeship.edit');
-        });
-
-        Route::prefix('discounts')->group(function () {
-            Route::get('/', [DiscountController::class, 'index'])
-                ->middleware('admin.role:MANAGER,ADMIN,STAFF')
-                ->name('admin.discount.index');
-            Route::get('create', [DiscountController::class, 'index'])
-                ->middleware('admin.role:MANAGER,ADMIN')
-                ->name('admin.discount.create');
-            Route::get('edit/{discount}', [DiscountController::class, 'index'])
-                ->middleware('admin.role:MANAGER,ADMIN')
-                ->name('admin.discount.edit');
-        });
-
         Route::prefix('api')->name('admin.api.')->group(function () {
+            Route::get('dashboard', [ApiDashboardController::class, 'index'])
+                ->name('dashboard')
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
             Route::apiResource('brands', ApiBrandController::class)
                 ->middleware('admin.role:MANAGER,ADMIN');
             Route::patch('brands/{brand}/status', [ApiBrandController::class, 'updateStatus'])
@@ -158,6 +70,9 @@ Route::prefix('admin')->group(function () {
             Route::post('newsletters/send', [ApiNewsletterController::class, 'send'])
                 ->name('newsletters.send')
                 ->middleware('admin.role:MANAGER,ADMIN');
+            Route::get('order-options', [ApiOrderController::class, 'options'])
+                ->name('orders.options')
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
             Route::apiResource('orders', ApiOrderController::class)
                 ->middleware('admin.role:MANAGER,ADMIN,STAFF');
             Route::apiResource('customers', ApiCustomerController::class)
@@ -190,5 +105,9 @@ Route::prefix('admin')->group(function () {
             Route::apiResource('roles', ApiRoleController::class)->middleware('admin.role:MANAGER');
             Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER');
         });
+
+        Route::get('{path?}', [SpaController::class, 'index'])
+            ->where('path', '.*')
+            ->name('admin.spa');
     });
 });

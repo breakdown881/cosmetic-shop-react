@@ -52,7 +52,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('admin.dashboard');
+        return redirect('/admin');
     }
 
     public function logout(Request $request)

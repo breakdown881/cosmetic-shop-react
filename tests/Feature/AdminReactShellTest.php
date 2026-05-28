@@ -20,12 +20,50 @@ class AdminReactShellTest extends TestCase
             'is_active' => true,
         ]);
 
-        foreach (['/admin', '/admin/brands', '/admin/orders', '/admin/images', '/admin/newsletters'] as $path) {
+        foreach ([
+            '/admin',
+            '/admin/brands',
+            '/admin/brands/create',
+            '/admin/orders',
+            '/admin/orders/create',
+            '/admin/images',
+            '/admin/newsletters',
+            '/admin/products/123/comments',
+        ] as $path) {
             $this->actingAs($admin, 'admin')
                 ->get($path)
                 ->assertOk()
                 ->assertSee('id="react-admin-shell"', false)
-                ->assertSee('data-react-component="AdminAppShell"', false);
+                ->assertSee('data-react-component="AdminSpaApp"', false)
+                ->assertDontSee('AdminApiResourceManager')
+                ->assertDontSee('"page":', false);
+        }
+    }
+
+    public function test_legacy_admin_page_routes_are_replaced_by_a_single_spa_route(): void
+    {
+        $routeNames = collect(app('router')->getRoutes())
+            ->map(fn ($route) => $route->getName())
+            ->filter()
+            ->values();
+
+        $this->assertTrue($routeNames->contains('admin.spa'));
+
+        foreach ([
+            'admin.dashboard',
+            'admin.brand.index',
+            'admin.category.index',
+            'admin.product.index',
+            'admin.order.index',
+            'admin.customer.index',
+            'admin.discount.index',
+            'admin.feeship.index',
+            'admin.role.index',
+            'admin.staff.index',
+            'admin.media.index',
+            'admin.newsletter.index',
+        ] as $legacyRouteName) {
+            $this->assertFalse($routeNames->contains($legacyRouteName), "{$legacyRouteName} should be owned by React routing.");
         }
     }
 

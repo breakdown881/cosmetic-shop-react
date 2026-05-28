@@ -78,10 +78,14 @@ class AdminProductCommentApiTest extends TestCase
         $this->actingAs($this->admin('MANAGER'), 'admin')
             ->get("/admin/products/{$product->id}/comments")
             ->assertOk()
-            ->assertSee($product->name)
-            ->assertSee('"canCreate":false', false)
-            ->assertSee('"canEdit":true', false)
-            ->assertSee('"canDelete":false', false);
+            ->assertSee('data-react-component="AdminSpaApp"', false)
+            ->assertDontSee($product->name)
+            ->assertDontSee('"canCreate":false', false);
+
+        $this->actingAs($this->admin('MANAGER'), 'admin')
+            ->getJson("/admin/api/products/{$product->id}/comments")
+            ->assertOk()
+            ->assertJsonPath('data.0.product_name', $product->name);
 
         $this->actingAs($this->admin('MANAGER'), 'admin')
             ->patchJson("/admin/api/products/{$product->id}/comments/{$comment->id}", [

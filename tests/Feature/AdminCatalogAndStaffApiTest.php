@@ -54,8 +54,9 @@ class AdminCatalogAndStaffApiTest extends TestCase
             $this->actingAs($admin, 'admin')
                 ->get("/admin/{$resource}")
                 ->assertOk()
-                ->assertSee("admin\/api\/{$resource}", false)
-                ->assertSee('AdminApiResourceManager');
+                ->assertSee('data-react-component="AdminSpaApp"', false)
+                ->assertDontSee('AdminApiResourceManager')
+                ->assertDontSee("admin\/api\/{$resource}", false);
         }
 
         $this->actingAs($admin, 'admin')
@@ -81,17 +82,17 @@ class AdminCatalogAndStaffApiTest extends TestCase
             ]))->assertCreated()
             ->assertJsonPath('data.name', 'React API Product');
 
-        $this->actingAs($admin, 'admin')->post('/admin/brands/store', [])->assertNotFound();
-        $this->actingAs($admin, 'admin')->delete("/admin/brands/delete/{$brand->id}")->assertNotFound();
-        $this->actingAs($admin, 'admin')->post("/admin/brands/changeStatus/{$brand->id}", ['status' => 0])->assertNotFound();
+        $this->actingAs($admin, 'admin')->post('/admin/brands/store', [])->assertStatus(405);
+        $this->actingAs($admin, 'admin')->delete("/admin/brands/delete/{$brand->id}")->assertStatus(405);
+        $this->actingAs($admin, 'admin')->post("/admin/brands/changeStatus/{$brand->id}", ['status' => 0])->assertStatus(405);
 
-        $this->actingAs($admin, 'admin')->post('/admin/categories/store', [])->assertNotFound();
-        $this->actingAs($admin, 'admin')->delete("/admin/categories/delete/{$category->id}")->assertNotFound();
-        $this->actingAs($admin, 'admin')->post("/admin/categories/changeStatus/{$category->id}", ['status' => 0])->assertNotFound();
+        $this->actingAs($admin, 'admin')->post('/admin/categories/store', [])->assertStatus(405);
+        $this->actingAs($admin, 'admin')->delete("/admin/categories/delete/{$category->id}")->assertStatus(405);
+        $this->actingAs($admin, 'admin')->post("/admin/categories/changeStatus/{$category->id}", ['status' => 0])->assertStatus(405);
 
-        $this->actingAs($admin, 'admin')->post('/admin/products/store', [])->assertNotFound();
-        $this->actingAs($admin, 'admin')->delete("/admin/products/delete/{$product->id}")->assertNotFound();
-        $this->actingAs($admin, 'admin')->post("/admin/products/changeStatus/{$product->id}", ['status' => 0])->assertNotFound();
+        $this->actingAs($admin, 'admin')->post('/admin/products/store', [])->assertStatus(405);
+        $this->actingAs($admin, 'admin')->delete("/admin/products/delete/{$product->id}")->assertStatus(405);
+        $this->actingAs($admin, 'admin')->post("/admin/products/changeStatus/{$product->id}", ['status' => 0])->assertStatus(405);
     }
 
     public function test_products_can_be_searched_by_name_brand_and_category(): void

@@ -15,7 +15,7 @@ class PublicReactShell
             'authLinks' => [],
             'cards' => [
                 ['title' => 'Sản phẩm', 'description' => 'Khám phá danh sách sản phẩm mỹ phẩm.', 'href' => Route::has('product.index') ? route('product.index') : '#'],
-                ['title' => 'Admin', 'description' => 'Quản trị thương hiệu, danh mục và sản phẩm.', 'href' => Route::has('admin.dashboard') ? route('admin.dashboard') : '#'],
+                ['title' => 'Admin', 'description' => 'Quản trị thương hiệu, danh mục và sản phẩm.', 'href' => '/admin'],
                 ['title' => 'React + Laravel', 'description' => 'Laravel cung cấp API, UI render bằng React.', 'href' => '#'],
             ],
             'version' => 'Laravel v' . app()->version() . ' (PHP v' . PHP_VERSION . ')',

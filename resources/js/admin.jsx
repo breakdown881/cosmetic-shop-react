@@ -1,7 +1,6 @@
 import './bootstrap';
 
 import AlertMessages from './components/common/AlertMessages.jsx';
-import AdminAppShell from './components/admin/AdminAppShell.jsx';
 import AdminApiResourceManager from './components/admin/AdminApiResourceManager.jsx';
 import AdminDashboard from './components/admin/AdminDashboard.jsx';
 import AdminFooterLogout from './components/admin/AdminFooterLogout.jsx';
@@ -12,11 +11,11 @@ import AdminOrderManager from './components/admin/AdminOrderManager.jsx';
 import AdminResourceForm from './components/admin/AdminResourceForm.jsx';
 import AdminResourceTable from './components/admin/AdminResourceTable.jsx';
 import AdminSidebar from './components/admin/AdminSidebar.jsx';
+import AdminSpaApp from './components/admin/AdminSpaApp.jsx';
 import AdminTopNav from './components/admin/AdminTopNav.jsx';
 import { mountReactIslands } from './islands/mountReactIslands.jsx';
 
 mountReactIslands({
-    AdminAppShell,
     AdminApiResourceManager,
     AlertMessages,
     AdminDashboard,
@@ -28,5 +27,6 @@ mountReactIslands({
     AdminResourceForm,
     AdminResourceTable,
     AdminSidebar,
+    AdminSpaApp,
     AdminTopNav,
 });

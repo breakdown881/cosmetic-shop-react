@@ -134,13 +134,33 @@ class AdminOrderApiTest extends TestCase
             $this->actingAs($this->admin($role), 'admin')
                 ->get('/admin/orders')
                 ->assertOk()
-                ->assertSee('"canCreate":true', false)
-                ->assertSee('"canEdit":true', false)
-                ->assertSee('"canDelete":true', false);
+                ->assertSee('data-react-component="AdminSpaApp"', false)
+                ->assertDontSee('"canCreate":true', false);
 
             $this->actingAs($this->admin($role), 'admin')
                 ->get('/admin/orders/create')
-                ->assertOk();
+                ->assertOk()
+                ->assertSee('data-react-component="AdminSpaApp"', false);
+        }
+    }
+
+    public function test_all_admin_roles_can_load_order_form_options_for_react_spa(): void
+    {
+        $customer = User::factory()->create(['name' => 'Order Options Customer']);
+        $product = $this->product('Order Options Serum', 100000);
+        $discount = Discount::create($this->discountData(['code' => 'OPTIONS-FIXED']));
+        $feeShip = $this->feeShip(15000);
+
+        foreach (['MANAGER', 'ADMIN', 'STAFF'] as $role) {
+            $this->actingAs($this->admin($role), 'admin')
+                ->getJson('/admin/api/order-options')
+                ->assertOk()
+                ->assertJsonFragment(['name' => $customer->name])
+                ->assertJsonFragment(['name' => $product->name])
+                ->assertJsonFragment(['code' => $discount->code])
+                ->assertJsonFragment(['id' => $feeShip->id])
+                ->assertJsonPath('statusOptions.0', Order::STATUSES[0])
+                ->assertJsonPath('paymentMethods.0', Order::PAYMENT_METHODS[0]);
         }
     }
 

@@ -22,8 +22,9 @@ class AdminMediaManagementTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->get('/admin/images')
             ->assertOk()
-            ->assertSee('existing.jpg')
-            ->assertSee('admin\/api\/media', false);
+            ->assertSee('data-react-component="AdminSpaApp"', false)
+            ->assertDontSee('existing.jpg')
+            ->assertDontSee('admin\/api\/media', false);
 
         $this->actingAs($admin, 'admin')
             ->getJson('/admin/api/media')

@@ -108,21 +108,20 @@ class AdminFeeShipApiTest extends TestCase
             $this->actingAs($this->admin($role), 'admin')
                 ->get('/admin/feeships')
                 ->assertOk()
-                ->assertSee('"canCreate":true', false)
-                ->assertSee('"canEdit":true', false)
-                ->assertSee('"canDelete":true', false);
+                ->assertSee('data-react-component="AdminSpaApp"', false)
+                ->assertDontSee('"canCreate":true', false);
 
             $this->actingAs($this->admin($role), 'admin')
                 ->get('/admin/feeships/create')
-                ->assertOk();
+                ->assertOk()
+                ->assertSee('data-react-component="AdminSpaApp"', false);
         }
 
         $this->actingAs($this->admin('STAFF'), 'admin')
             ->get('/admin/feeships')
             ->assertOk()
-            ->assertSee('"canCreate":false', false)
-            ->assertSee('"canEdit":false', false)
-            ->assertSee('"canDelete":false', false);
+            ->assertSee('data-react-component="AdminSpaApp"', false)
+            ->assertDontSee('"canCreate":false', false);
 
         $this->actingAs($this->admin('STAFF'), 'admin')
             ->get('/admin/feeships/create')

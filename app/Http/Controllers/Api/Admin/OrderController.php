@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Transport;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,51 @@ class OrderController extends Controller
                 ->latest()
                 ->get()
                 ->map(fn (Order $order) => $this->formatOrder($order)),
+        ]);
+    }
+
+    public function options(): JsonResponse
+    {
+        return response()->json([
+            'customers' => User::query()
+                ->orderBy('name')
+                ->get(['id', 'name', 'email'])
+                ->map(fn (User $customer) => [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                ])
+                ->values(),
+            'products' => Product::query()
+                ->orderBy('name')
+                ->get(['id', 'name', 'price'])
+                ->map(fn (Product $product) => [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                ])
+                ->values(),
+            'discounts' => Discount::query()
+                ->orderBy('code')
+                ->get(['code', 'is_fixed', 'discount_amount'])
+                ->map(fn (Discount $discount) => [
+                    'code' => $discount->code,
+                    'is_fixed' => (int) $discount->is_fixed,
+                    'discount_amount' => (int) $discount->discount_amount,
+                ])
+                ->values(),
+            'feeships' => Transport::query()
+                ->with('province:id,name,type')
+                ->latest()
+                ->get()
+                ->map(fn (Transport $feeShip) => [
+                    'id' => $feeShip->id,
+                    'label' => trim(($feeShip->province?->type ? $feeShip->province->type . ' ' : '') . ($feeShip->province?->name ?? 'Fee ship #' . $feeShip->id)),
+                    'price' => $feeShip->price,
+                ])
+                ->values(),
+            'statusOptions' => Order::STATUSES,
+            'paymentMethods' => Order::PAYMENT_METHODS,
         ]);
     }
 

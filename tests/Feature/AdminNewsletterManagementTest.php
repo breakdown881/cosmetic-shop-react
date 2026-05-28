@@ -25,8 +25,9 @@ class AdminNewsletterManagementTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->get('/admin/newsletters')
             ->assertOk()
-            ->assertSee('AdminNewsletterManager')
-            ->assertSee('admin\/api\/newsletters', false);
+            ->assertSee('data-react-component="AdminSpaApp"', false)
+            ->assertDontSee('AdminNewsletterManager')
+            ->assertDontSee('admin\/api\/newsletters', false);
 
         $this->actingAs($admin, 'admin')
             ->getJson('/admin/api/newsletters')
@@ -50,7 +51,7 @@ class AdminNewsletterManagementTest extends TestCase
             ->post('/admin/newsletters/send', [
                 'subject' => 'Legacy',
                 'body' => 'Legacy body',
-            ])->assertNotFound();
+            ])->assertStatus(405);
     }
 
     public function test_staff_cannot_manage_newsletters(): void
