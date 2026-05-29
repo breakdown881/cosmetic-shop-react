@@ -36,17 +36,48 @@ class CustomerOrderService
         ];
     }
 
+    public function detailProps(User $customer, int|string $orderId): array
+    {
+        $order = $this->orderRepository->findForCustomer($customer->id, $orderId);
+
+        return [
+            'title' => 'Order #' . $order->id,
+            'csrfToken' => csrf_token(),
+            'navItems' => $this->navigationService->navItems(),
+            'order' => $this->formatOrder($order),
+        ];
+    }
+
+    public function cancel(User $customer, int|string $orderId): Order
+    {
+        $order = $this->orderRepository->findForCustomer($customer->id, $orderId);
+
+        abort_unless($order->status === 'PENDING', 422, 'Only pending orders can be cancelled.');
+
+        return $this->orderRepository->cancel($order);
+    }
+
     private function formatOrder(Order $order): array
     {
         return [
             'id' => $order->id,
             'status' => $order->status,
+            'canCancel' => $order->status === 'PENDING',
+            'detailUrl' => '/orders/' . $order->id,
+            'cancelUrl' => '/orders/' . $order->id . '/cancel',
             'shipping_fullname' => $order->shipping_fullname,
             'shipping_mobile' => $order->shipping_mobile,
+            'shipping_address' => $order->shipping_housenumber_street,
+            'payment_method' => match ((int) $order->payment_method) {
+                0 => 'Cash',
+                1 => 'Bank transfer',
+                default => 'Unknown',
+            },
             'shipping_fee' => (int) $order->shipping_fee,
             'discount_amount' => (int) $order->discount_amount,
             'sub_total' => (int) $order->sub_total,
             'payment_total' => (int) $order->payment_total,
+            'note' => $order->note,
             'created_at' => optional($order->created_at)->toDateTimeString(),
             'items' => $order->items->map(fn (OrderItem $item) => [
                 'product_id' => $item->product_id,

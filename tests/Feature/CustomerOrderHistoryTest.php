@@ -88,7 +88,72 @@ class CustomerOrderHistoryTest extends TestCase
             ->assertDontSee((string) $order->id);
     }
 
-    private function order(User $customer, string $shippingName, int $paymentTotal): Order
+
+
+    public function test_authenticated_customer_can_view_order_detail(): void
+    {
+        $customer = User::factory()->create(['name' => 'Detail Owner']);
+        $otherCustomer = User::factory()->create(['name' => 'Other Detail Owner']);
+        $product = $this->product('Detail Serum');
+        $order = $this->order($customer, 'Detail Shipping Name', 210000);
+        OrderItem::create([
+            'order_id' => $order->id,
+            'product_id' => $product->id,
+            'qty' => 3,
+            'unit_price' => 70000,
+            'total_price' => 210000,
+        ]);
+        $otherOrder = $this->order($otherCustomer, 'Forbidden Shipping Name', 100000);
+
+        $this->actingAs($customer)
+            ->get("/orders/{$order->id}")
+            ->assertOk()
+            ->assertSee('data-react-component="CustomerOrderDetailPage"', false)
+            ->assertSee('Detail Shipping Name')
+            ->assertSee('Detail Serum')
+            ->assertSee('&quot;canCancel&quot;:true', false)
+            ->assertDontSee('Forbidden Shipping Name');
+
+        $this->actingAs($customer)
+            ->get("/orders/{$otherOrder->id}")
+            ->assertNotFound();
+    }
+
+    public function test_guest_must_login_before_viewing_or_cancelling_order_detail(): void
+    {
+        $customer = User::factory()->create();
+        $order = $this->order($customer, 'Private Detail Order', 99000);
+
+        $this->get("/orders/{$order->id}")->assertRedirect('/login');
+        $this->patch("/orders/{$order->id}/cancel")->assertRedirect('/login');
+    }
+
+    public function test_customer_can_cancel_only_pending_own_order(): void
+    {
+        $customer = User::factory()->create();
+        $pendingOrder = $this->order($customer, 'Pending Cancel Order', 120000);
+        $processingOrder = $this->order($customer, 'Processing Order', 150000, 'PROCESSING');
+
+        $this->actingAs($customer)
+            ->patch("/orders/{$pendingOrder->id}/cancel")
+            ->assertRedirect("/orders/{$pendingOrder->id}");
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $pendingOrder->id,
+            'status' => 'CANCELLED',
+        ]);
+
+        $this->actingAs($customer)
+            ->patch("/orders/{$processingOrder->id}/cancel")
+            ->assertUnprocessable();
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $processingOrder->id,
+            'status' => 'PROCESSING',
+        ]);
+    }
+
+    private function order(User $customer, string $shippingName, int $paymentTotal, string $status = 'PENDING'): Order
     {
         return Order::create([
             'staff_id' => 1,
@@ -110,7 +175,7 @@ class CustomerOrderHistoryTest extends TestCase
             'voucher_code' => '',
             'voucher_amount' => 0,
             'payment_total' => $paymentTotal,
-            'status' => 'PENDING',
+            'status' => $status,
             'note' => null,
         ]);
     }

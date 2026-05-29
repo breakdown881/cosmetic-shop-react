@@ -15,6 +15,7 @@ import CustomerAccountPage from './pages/customer/CustomerAccountPage.jsx';
 import CustomerCartPage from './pages/customer/CustomerCartPage.jsx';
 import CustomerCheckoutPage from './pages/customer/CustomerCheckoutPage.jsx';
 import CustomerLoginPage from './pages/customer/CustomerLoginPage.jsx';
+import CustomerOrderDetailPage from './pages/customer/CustomerOrderDetailPage.jsx';
 import CustomerOrderHistoryPage from './pages/customer/CustomerOrderHistoryPage.jsx';
 import CustomerPlaceholderPage from './pages/customer/CustomerPlaceholderPage.jsx';
 import CustomerProductIndex from './pages/customer/CustomerProductIndex.jsx';
@@ -32,6 +33,7 @@ mountReactIslands({
     CustomerCartPage,
     CustomerCheckoutPage,
     CustomerLoginPage,
+    CustomerOrderDetailPage,
     CustomerOrderHistoryPage,
     CustomerPlaceholderPage,
     CustomerProductIndex,

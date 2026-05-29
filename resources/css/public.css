@@ -1389,3 +1389,100 @@
 .react-customer-wishlist__card strong {
     color: #d81b72;
 }
+
+.react-customer-order-detail {
+    display: grid;
+    gap: 1rem;
+}
+
+.react-customer-order-detail__header,
+.react-customer-order-detail__grid article,
+.react-customer-order-detail__items {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #f7d5e5;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(138, 33, 88, 0.08);
+    padding: 1rem;
+}
+
+.react-customer-order-detail__header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.react-customer-order-detail__eyebrow {
+    color: #8d6078;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.25rem;
+    text-transform: uppercase;
+}
+
+.react-customer-order-detail__header strong {
+    color: #d81b72;
+    font-size: 1.2rem;
+}
+
+.react-customer-order-detail__header form {
+    margin: 0;
+}
+
+.react-customer-order-detail__header button,
+.react-customer-order-detail__back {
+    background: #d81b72;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-weight: 900;
+    padding: 0.7rem 1rem;
+}
+
+.react-customer-order-detail__grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.react-customer-order-detail__grid dl {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.react-customer-order-detail__grid dl div,
+.react-customer-order-detail__items li {
+    align-items: center;
+    border-bottom: 1px solid #f7d8e4;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.react-customer-order-detail__items ul {
+    display: grid;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.react-customer-order-detail__items strong,
+.react-customer-order-detail__grid dd {
+    color: #d81b72;
+    font-weight: 900;
+}
+
+@media (max-width: 640px) {
+    .react-customer-order-detail__header,
+    .react-customer-order-detail__items li,
+    .react-customer-order-detail__grid dl div {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

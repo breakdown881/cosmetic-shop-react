@@ -61,6 +61,10 @@ Route::delete('/cart/items/{product}', [CustomerCartController::class, 'destroy'
 Route::get('/checkout', [CustomerCheckoutController::class, 'show'])->name('customer.checkout.show');
 Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('customer.checkout.store');
 Route::get('/orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');
+Route::middleware('auth')->group(function () {
+    Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('customer.orders.show');
+    Route::patch('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel'])->name('customer.orders.cancel');
+});
 Route::get('/account', [CustomerAccountController::class, 'show'])->name('customer.account.show');
 Route::patch('/account', [CustomerAccountController::class, 'update'])->name('customer.account.update');
 Route::middleware('auth')->group(function () {

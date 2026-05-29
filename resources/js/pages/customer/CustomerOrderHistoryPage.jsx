@@ -52,6 +52,7 @@ export default function CustomerOrderHistoryPage({
                                 <footer>
                                     <span>{order.created_at}</span>
                                     <strong>{currencyFormatter.format(order.payment_total)}</strong>
+                                    <a href={order.detailUrl ?? `/orders/${order.id}`}>View details</a>
                                 </footer>
                             </article>
                         ))}
