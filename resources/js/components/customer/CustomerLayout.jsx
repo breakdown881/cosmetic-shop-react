@@ -1,3 +1,5 @@
+import CustomerChatbotWidget from './CustomerChatbotWidget.jsx';
+
 export default function CustomerLayout({ auth = null, children, navItems = [], title = 'Goda Shop' }) {
     const customer = auth?.user;
 

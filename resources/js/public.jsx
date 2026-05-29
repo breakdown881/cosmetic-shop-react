@@ -11,6 +11,7 @@ import PublicHeader from './components/public/PublicHeader.jsx';
 import PublicSidebar from './components/public/PublicSidebar.jsx';
 import PublicWelcomePage from './components/public/PublicWelcomePage.jsx';
 import ShippingAddressForm from './components/public/ShippingAddressForm.jsx';
+import CustomerChatbotWidget from './components/customer/CustomerChatbotWidget.jsx';
 import CustomerAccountPage from './pages/customer/CustomerAccountPage.jsx';
 import CustomerCartPage from './pages/customer/CustomerCartPage.jsx';
 import CustomerCheckoutPage from './pages/customer/CustomerCheckoutPage.jsx';
@@ -31,6 +32,7 @@ mountReactIslands({
     Cart,
     CustomerAccountPage,
     CustomerCartPage,
+    CustomerChatbotWidget,
     CustomerCheckoutPage,
     CustomerLoginPage,
     CustomerOrderDetailPage,

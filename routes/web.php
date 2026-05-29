@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\SpaController;
 use App\Http\Controllers\Customer\AccountController as CustomerAccountController;
 use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\CartController as CustomerCartController;
+use App\Http\Controllers\Customer\ChatbotController as CustomerChatbotController;
 use App\Http\Controllers\Customer\CheckoutController as CustomerCheckoutController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
@@ -43,6 +44,7 @@ Route::post('/products/{product}/reviews', [CustomerReviewController::class, 'st
 Route::get('/products/{product}', [CustomerProductController::class, 'show'])->name('customer.products.show');
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
+Route::post('/chatbot/messages', [CustomerChatbotController::class, 'store'])->name('customer.chatbot.messages.store');
 Route::get('/login', [CustomerAuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login');
 Route::get('/register', [CustomerAuthController::class, 'registerForm'])->name('customer.register.form');
