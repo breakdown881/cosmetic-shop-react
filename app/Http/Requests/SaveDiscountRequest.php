@@ -14,7 +14,8 @@ class SaveDiscountRequest extends FormRequest
 
     public function rules(): array
     {
-        $discountId = $this->route('discount')?->id;
+        $discount = $this->route('discount');
+        $discountId = is_object($discount) ? $discount->id : $discount;
 
         return [
             'code' => [

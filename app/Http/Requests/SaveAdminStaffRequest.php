@@ -15,7 +15,8 @@ class SaveAdminStaffRequest extends FormRequest
 
     public function rules(): array
     {
-        $staffId = $this->route('staff')?->id;
+        $staff = $this->route('staff');
+        $staffId = is_object($staff) ? $staff->id : $staff;
         $passwordRules = $staffId ? ['nullable', 'string', 'min:8', 'confirmed'] : ['required', 'string', 'min:8', 'confirmed'];
 
         return [

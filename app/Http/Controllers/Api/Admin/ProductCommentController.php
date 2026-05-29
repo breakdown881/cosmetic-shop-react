@@ -4,69 +4,40 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateCommentActiveRequest;
-use App\Models\Comment;
-use App\Models\Product;
+use App\Services\Admin\ProductCommentService;
 use Illuminate\Http\JsonResponse;
 
 class ProductCommentController extends Controller
 {
+    public function __construct(private readonly ProductCommentService $comments) {}
+
     public function all(): JsonResponse
     {
         return response()->json([
-            'data' => Comment::query()
-                ->with('product:id,name')
-                ->latest()
-                ->get()
-                ->map(fn (Comment $comment) => $this->formatComment($comment)),
+            'data' => $this->comments->all(),
         ]);
     }
 
-    public function index(Product $product): JsonResponse
+    public function index($product): JsonResponse
     {
         return response()->json([
-            'data' => $product->comments()
-                ->with('product:id,name')
-                ->latest()
-                ->get()
-                ->map(fn (Comment $comment) => $this->formatComment($comment)),
+            'data' => $this->comments->allForProduct($product),
         ]);
     }
 
-    public function update(UpdateCommentActiveRequest $request, Product $product, Comment $comment): JsonResponse
+    public function update(UpdateCommentActiveRequest $request, $product, $comment): JsonResponse
     {
-        abort_if((int) $comment->product_id !== (int) $product->id, 404);
-
-        return $this->updateComment($request, $comment);
-    }
-
-    public function updateAny(UpdateCommentActiveRequest $request, Comment $comment): JsonResponse
-    {
-        return $this->updateComment($request, $comment);
-    }
-
-    private function updateComment(UpdateCommentActiveRequest $request, Comment $comment): JsonResponse
-    {
-        $comment->update($request->validated());
-
         return response()->json([
             'message' => __('translate.updateSuccess'),
-            'data' => $this->formatComment($comment->refresh()->load('product:id,name')),
+            'data' => $this->comments->updateForProduct($product, $comment, $request->validated()),
         ]);
     }
 
-    private function formatComment(Comment $comment): array
+    public function updateAny(UpdateCommentActiveRequest $request, $comment): JsonResponse
     {
-        return [
-            'id' => $comment->id,
-            'product_id' => $comment->product_id,
-            'product_name' => $comment->product?->name,
-            'email' => $comment->email,
-            'fullname' => $comment->fullname,
-            'star' => $comment->star,
-            'description' => $comment->description,
-            'active' => (int) $comment->active,
-            'created_at' => optional($comment->created_at)->toDateTimeString(),
-            'updated_at' => optional($comment->updated_at)->toDateTimeString(),
-        ];
+        return response()->json([
+            'message' => __('translate.updateSuccess'),
+            'data' => $this->comments->update($comment, $request->validated()),
+        ]);
     }
 }

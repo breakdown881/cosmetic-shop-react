@@ -14,7 +14,8 @@ class SaveCustomerRequest extends FormRequest
 
     public function rules(): array
     {
-        $customerId = $this->route('customer')?->id;
+        $customer = $this->route('customer');
+        $customerId = is_object($customer) ? $customer->id : $customer;
 
         return [
             'name' => ['required', 'string', 'max:255'],

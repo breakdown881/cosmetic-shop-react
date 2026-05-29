@@ -15,12 +15,15 @@ class SaveRoleRequest extends FormRequest
 
     public function rules(): array
     {
+        $role = $this->route('role');
+        $roleId = is_object($role) ? $role->id : $role;
+
         return [
             'name' => [
                 'required',
                 'string',
                 Rule::in(Role::ALLOWED_ROLES),
-                Rule::unique('roles', 'name')->ignore($this->route('role')?->id),
+                Rule::unique('roles', 'name')->ignore($roleId),
             ],
         ];
     }
