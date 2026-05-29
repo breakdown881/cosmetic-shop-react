@@ -1,13 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { get } from '../../services/apiClient.js';
-import AdminApiResourceManager from './AdminApiResourceManager.jsx';
-import AdminDashboard from './AdminDashboard.jsx';
-import AdminFooterLogout from './AdminFooterLogout.jsx';
-import AdminMediaManager from './AdminMediaManager.jsx';
-import AdminNewsletterManager from './AdminNewsletterManager.jsx';
-import AdminOrderManager from './AdminOrderManager.jsx';
-import AdminSidebar from './AdminSidebar.jsx';
-import AdminTopNav from './AdminTopNav.jsx';
+import AdminApiResourceManager from '../../components/admin/AdminApiResourceManager.jsx';
+import AdminDashboard from './AdminDashboardPage.jsx';
+import AdminMediaManager from './AdminMediaPage.jsx';
+import AdminNewsletterManager from './AdminNewsletterPage.jsx';
+import AdminOrderManager from './AdminOrderPage.jsx';
 
 const commonLabels = {
     add: 'Add',
@@ -38,7 +35,7 @@ const roleOptions = [
 
 const optionRows = (rows) => rows.map((row) => ({ value: row.id, label: row.name }));
 
-const normalizePath = (path) => path.replace(/\/+$/, '') || '/admin';
+export const normalizePath = (path) => path.replace(/\/+$/, '') || '/admin';
 
 const canWriteSales = (role) => ['MANAGER', 'ADMIN'].includes(role);
 
@@ -48,7 +45,7 @@ const isActive = (currentPath, targetPath) => (
     currentPath === targetPath || currentPath.startsWith(`${targetPath}/`)
 );
 
-const buildSidebarItems = (role, currentPath) => {
+export const buildSidebarItems = (role, currentPath) => {
     const items = [
         { label: 'Overview', href: '/admin', icon: 'fas fa-fw fa-tachometer-alt', active: currentPath === '/admin' },
         {
@@ -502,7 +499,7 @@ function NotFoundPage() {
     );
 }
 
-function CurrentPage({ path, role }) {
+export default function AdminPageRouter({ path, role }) {
     const configs = useMemo(() => resourceConfigs(role), [role]);
     const productComments = path.match(/^\/admin\/products\/(\d+)\/comments$/);
 
@@ -543,62 +540,3 @@ function CurrentPage({ path, role }) {
     return <NotFoundPage />;
 }
 
-export default function AdminSpaApp({
-    csrfToken = '',
-    logoutUrl = '/admin/logout',
-    role = '',
-    userName = '',
-}) {
-    const [path, setPath] = useState(() => normalizePath(window.location.pathname));
-    const sidebarItems = useMemo(() => buildSidebarItems(role, path), [path, role]);
-
-    useEffect(() => {
-        const handlePopState = () => setPath(normalizePath(window.location.pathname));
-        const handleClick = (event) => {
-            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-                return;
-            }
-
-            const anchor = event.target.closest('a[href]');
-
-            if (!anchor || anchor.getAttribute('href').startsWith('#') || anchor.target) {
-                return;
-            }
-
-            const url = new URL(anchor.href, window.location.origin);
-
-            if (url.origin !== window.location.origin || !url.pathname.startsWith('/admin') || url.pathname.startsWith('/admin/api') || url.pathname === '/admin/login') {
-                return;
-            }
-
-            event.preventDefault();
-            window.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
-            setPath(normalizePath(url.pathname));
-        };
-
-        window.addEventListener('popstate', handlePopState);
-        document.addEventListener('click', handleClick);
-
-        return () => {
-            window.removeEventListener('popstate', handlePopState);
-            document.removeEventListener('click', handleClick);
-        };
-    }, []);
-
-    return (
-        <>
-            <AdminTopNav brandUrl="/admin" userName={userName} labels={{ brand: 'Goda', hello: 'Chao', logout: 'Logout' }} />
-            <div id="wrapper">
-                <AdminSidebar items={sidebarItems} />
-                <div id="content-wrapper">
-                    <CurrentPage key={path} path={path} role={role} />
-                </div>
-                <AdminFooterLogout
-                    csrfToken={csrfToken}
-                    logoutUrl={logoutUrl}
-                    labels={{ cancel: 'Cancel', copyright: 'Copyright Hoang Hai', exit: 'Exit', exitConfirm: 'Logout?' }}
-                />
-            </div>
-        </>
-    );
-}

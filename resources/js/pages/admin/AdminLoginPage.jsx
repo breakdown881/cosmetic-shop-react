@@ -1,4 +1,4 @@
-import AlertMessages from '../common/AlertMessages.jsx';
+import AlertMessages from '../../components/common/AlertMessages.jsx';
 
 export default function AdminLoginPage({
     action,

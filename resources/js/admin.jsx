@@ -2,16 +2,16 @@ import './bootstrap';
 
 import AlertMessages from './components/common/AlertMessages.jsx';
 import AdminApiResourceManager from './components/admin/AdminApiResourceManager.jsx';
-import AdminDashboard from './components/admin/AdminDashboard.jsx';
+import AdminDashboard from './pages/admin/AdminDashboardPage.jsx';
 import AdminFooterLogout from './components/admin/AdminFooterLogout.jsx';
-import AdminLoginPage from './components/admin/AdminLoginPage.jsx';
-import AdminMediaManager from './components/admin/AdminMediaManager.jsx';
-import AdminNewsletterManager from './components/admin/AdminNewsletterManager.jsx';
-import AdminOrderManager from './components/admin/AdminOrderManager.jsx';
+import AdminLoginPage from './pages/admin/AdminLoginPage.jsx';
+import AdminMediaManager from './pages/admin/AdminMediaPage.jsx';
+import AdminNewsletterManager from './pages/admin/AdminNewsletterPage.jsx';
+import AdminOrderManager from './pages/admin/AdminOrderPage.jsx';
 import AdminResourceForm from './components/admin/AdminResourceForm.jsx';
 import AdminResourceTable from './components/admin/AdminResourceTable.jsx';
 import AdminSidebar from './components/admin/AdminSidebar.jsx';
-import AdminSpaApp from './components/admin/AdminSpaApp.jsx';
+import AdminSpaApp from './pages/admin/AdminSpaApp.jsx';
 import AdminTopNav from './components/admin/AdminTopNav.jsx';
 import { mountReactIslands } from './islands/mountReactIslands.jsx';
 
