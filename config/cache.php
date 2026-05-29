@@ -19,6 +19,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Customer Catalog Cache TTL
+    |--------------------------------------------------------------------------
+    |
+    | Homepage, product listings, category pages, and product detail catalog
+    | data are read-heavy on the customer site. Keep this TTL short enough to
+    | avoid stale merchandising while still reducing repeated database reads.
+    |
+    */
+
+    'customer_catalog_ttl' => env('CUSTOMER_CATALOG_CACHE_TTL', 600),
+
+    /*
+    |--------------------------------------------------------------------------
     | Cache Stores
     |--------------------------------------------------------------------------
     |
