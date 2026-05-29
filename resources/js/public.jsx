@@ -13,6 +13,7 @@ import PublicWelcomePage from './components/public/PublicWelcomePage.jsx';
 import ShippingAddressForm from './components/public/ShippingAddressForm.jsx';
 import CustomerPlaceholderPage from './pages/customer/CustomerPlaceholderPage.jsx';
 import CustomerProductIndex from './pages/customer/CustomerProductIndex.jsx';
+import CustomerProductShow from './pages/customer/CustomerProductShow.jsx';
 import Home from './pages/Home.jsx';
 import ProductList from './pages/ProductList.jsx';
 import { mountReactIslands } from './islands/mountReactIslands.jsx';
@@ -22,6 +23,7 @@ mountReactIslands({
     Cart,
     CustomerPlaceholderPage,
     CustomerProductIndex,
+    CustomerProductShow,
     Home,
     ProductCard,
     ProductGrid,

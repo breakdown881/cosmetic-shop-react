@@ -29,6 +29,7 @@ Route::get('/', function () {
     return app(\App\Support\PublicReactShell::class)->welcome();
 });
 Route::get('/products', [CustomerProductController::class, 'index'])->name('customer.products.index');
+Route::get('/products/{product}', [CustomerProductController::class, 'show'])->name('customer.products.show');
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
 Route::get('/cart', [CustomerPageController::class, 'cart'])->name('customer.cart.show');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\CustomerProductListRequest;
+use App\Services\Customer\CustomerProductDetailService;
 use App\Services\Customer\CustomerProductService;
 use App\Support\PublicReactShell;
 use Illuminate\Http\Response;
@@ -12,6 +13,7 @@ class ProductController extends Controller
 {
     public function __construct(
         private readonly CustomerProductService $products,
+        private readonly CustomerProductDetailService $productDetails,
         private readonly PublicReactShell $shell,
     ) {}
 
@@ -36,5 +38,12 @@ class ProductController extends Controller
         $props = $this->products->brandProps($brand, $request->filters());
 
         return $this->shell->render('CustomerProductIndex', $props, $props['title']);
+    }
+
+    public function show(string $product): Response
+    {
+        $props = $this->productDetails->showProps($product);
+
+        return $this->shell->render('CustomerProductShow', $props, $props['title']);
     }
 }
