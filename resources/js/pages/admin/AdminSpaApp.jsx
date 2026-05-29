@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout.jsx';
 import AdminPageRouter, { buildSidebarItems, normalizePath } from './AdminPageRouter.jsx';
+import { get } from '../../services/apiClient.js';
 
 export default function AdminSpaApp({
     csrfToken = '',
@@ -9,6 +10,7 @@ export default function AdminSpaApp({
     userName = '',
 }) {
     const [path, setPath] = useState(() => normalizePath(window.location.pathname));
+    const [liveChatUnreadCount, setLiveChatUnreadCount] = useState(0);
     const sidebarItems = useMemo(() => buildSidebarItems(role, path), [path, role]);
 
     useEffect(() => {
@@ -44,10 +46,33 @@ export default function AdminSpaApp({
         };
     }, []);
 
+    useEffect(() => {
+        let cancelled = false;
+
+        const refreshLiveChatNotifications = () => {
+            get('/admin/api/live-chat/conversations')
+                .then((response) => {
+                    if (!cancelled) {
+                        setLiveChatUnreadCount(response.unread_count ?? 0);
+                    }
+                })
+                .catch(() => {});
+        };
+
+        refreshLiveChatNotifications();
+        const timer = window.setInterval(refreshLiveChatNotifications, 30000);
+
+        return () => {
+            cancelled = true;
+            window.clearInterval(timer);
+        };
+    }, []);
+
     return (
         <AdminLayout
             csrfToken={csrfToken}
             logoutUrl={logoutUrl}
+            liveChatUnreadCount={liveChatUnreadCount}
             sidebarItems={sidebarItems}
             userName={userName}
         >

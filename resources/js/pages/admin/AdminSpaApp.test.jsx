@@ -16,7 +16,9 @@ describe('AdminSpaApp', () => {
         window.axios = {
             delete: vi.fn().mockResolvedValue({ data: null }),
             get: vi.fn((url) => Promise.resolve({
-                data: url === '/admin/api/dashboard' ? dashboardPayload : { data: [] },
+                data: url === '/admin/api/dashboard'
+                    ? dashboardPayload
+                    : { unread_count: url === '/admin/api/live-chat/conversations' ? 1 : 0, data: [] },
             })),
             patch: vi.fn().mockResolvedValue({ data: {} }),
             post: vi.fn().mockResolvedValue({ data: {} }),
@@ -34,6 +36,7 @@ describe('AdminSpaApp', () => {
         expect(screen.getByRole('link', { name: 'Goda' })).toHaveAttribute('href', '/admin');
         expect(await screen.findByText('Orders 2')).toBeInTheDocument();
         expect(window.axios.get).toHaveBeenCalledWith('/admin/api/dashboard', {});
+        expect(await screen.findByText('1')).toHaveClass('badge-danger');
         expect(screen.getByDisplayValue('csrf-token')).toHaveAttribute('name', '_token');
     });
 

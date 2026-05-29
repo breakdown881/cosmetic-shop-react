@@ -1,4 +1,5 @@
 import CustomerChatbotWidget from './CustomerChatbotWidget.jsx';
+import CustomerLiveChatWidget from './CustomerLiveChatWidget.jsx';
 
 export default function CustomerLayout({ auth = null, children, navItems = [], title = 'Goda Shop' }) {
     const customer = auth?.user;
@@ -42,6 +43,8 @@ export default function CustomerLayout({ auth = null, children, navItems = [], t
                 <strong>Goda Shop</strong>
                 <span> Mỹ phẩm chính hãng, chăm sóc sắc đẹp mỗi ngày.</span>
             </footer>
+            <CustomerChatbotWidget />
+            <CustomerLiveChatWidget />
         </div>
     );
 }

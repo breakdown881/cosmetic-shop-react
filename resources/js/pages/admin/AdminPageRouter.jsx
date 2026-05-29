@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { get } from '../../services/apiClient.js';
 import AdminApiResourceManager from '../../components/admin/AdminApiResourceManager.jsx';
 import AdminDashboard from './AdminDashboardPage.jsx';
+import AdminLiveChatPage from './AdminLiveChatPage.jsx';
 import AdminMediaManager from './AdminMediaPage.jsx';
 import AdminNewsletterManager from './AdminNewsletterPage.jsx';
 import AdminOrderManager from './AdminOrderPage.jsx';
@@ -57,6 +58,7 @@ export const buildSidebarItems = (role, currentPath) => {
                 { label: 'Add', href: '/admin/orders/create', active: currentPath === '/admin/orders/create' },
             ],
         },
+        { label: 'Live Chat', href: '/admin/live-chat', icon: 'fas fa-comments', active: currentPath === '/admin/live-chat' },
     ];
 
     if (canManageCatalog(role)) {
@@ -509,6 +511,10 @@ export default function AdminPageRouter({ path, role }) {
 
     if (path === '/admin/orders' || path.startsWith('/admin/orders/')) {
         return <OrderPage />;
+    }
+
+    if (path === '/admin/live-chat') {
+        return <AdminLiveChatPage />;
     }
 
     if (productComments) {

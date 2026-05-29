@@ -7,6 +7,7 @@ use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\CartController as CustomerCartController;
 use App\Http\Controllers\Customer\ChatbotController as CustomerChatbotController;
 use App\Http\Controllers\Customer\CheckoutController as CustomerCheckoutController;
+use App\Http\Controllers\Customer\LiveChatController as CustomerLiveChatController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
 use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DashboardController as ApiDashboardController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
 use App\Http\Controllers\Api\Admin\FeeShipController as ApiFeeShipController;
+use App\Http\Controllers\Api\Admin\LiveChatController as ApiLiveChatController;
 use App\Http\Controllers\Api\Admin\MediaController as ApiMediaController;
 use App\Http\Controllers\Api\Admin\NewsletterController as ApiNewsletterController;
 use App\Http\Controllers\Api\Admin\OrderController as ApiOrderController;
@@ -46,6 +48,8 @@ Route::get('/products/{product}', [CustomerProductController::class, 'show'])->n
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
 Route::post('/chatbot/messages', [CustomerChatbotController::class, 'store'])->name('customer.chatbot.messages.store');
+Route::get('/live-chat/conversation', [CustomerLiveChatController::class, 'show'])->name('customer.live-chat.show');
+Route::post('/live-chat/messages', [CustomerLiveChatController::class, 'store'])->name('customer.live-chat.messages.store');
 Route::get('/payments/vnpay/return', [CustomerPaymentController::class, 'vnpayReturn'])->name('customer.payments.vnpay.return');
 Route::get('/payments/momo/return', [CustomerPaymentController::class, 'momoReturn'])->name('customer.payments.momo.return');
 Route::post('/payments/momo/ipn', [CustomerPaymentController::class, 'momoIpn'])->name('customer.payments.momo.ipn');
@@ -156,6 +160,15 @@ Route::prefix('admin')->group(function () {
                 ->middleware('admin.role:MANAGER,ADMIN');
             Route::apiResource('roles', ApiRoleController::class)->middleware('admin.role:MANAGER');
             Route::apiResource('staffs', ApiStaffController::class)->middleware('admin.role:MANAGER');
+            Route::get('live-chat/conversations', [ApiLiveChatController::class, 'index'])
+                ->name('live-chat.conversations.index')
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
+            Route::get('live-chat/conversations/{conversation}', [ApiLiveChatController::class, 'show'])
+                ->name('live-chat.conversations.show')
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
+            Route::post('live-chat/conversations/{conversation}/messages', [ApiLiveChatController::class, 'store'])
+                ->name('live-chat.conversations.messages.store')
+                ->middleware('admin.role:MANAGER,ADMIN,STAFF');
         });
 
         Route::get('{path?}', [SpaController::class, 'index'])

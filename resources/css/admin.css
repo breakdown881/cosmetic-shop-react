@@ -115,3 +115,82 @@
         grid-template-columns: 1fr;
     }
 }
+
+.react-admin-live-chat__list,
+.react-admin-live-chat__thread {
+    min-height: 420px;
+}
+
+.react-admin-live-chat__conversation {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    padding: 0.85rem;
+    text-align: left;
+}
+
+.react-admin-live-chat__conversation.active {
+    border-color: #007bff;
+    background: #eef6ff;
+}
+
+.react-admin-live-chat__conversation small {
+    color: #6c757d;
+}
+
+.react-admin-live-chat__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 300px;
+    max-height: 420px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    padding: 1rem;
+}
+
+.react-admin-live-chat__message {
+    max-width: 80%;
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.85rem;
+}
+
+.react-admin-live-chat__message span {
+    display: block;
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.react-admin-live-chat__message p {
+    margin: 0;
+}
+
+.react-admin-live-chat__message--customer {
+    align-self: flex-start;
+    background: #f8f9fa;
+}
+
+.react-admin-live-chat__message--staff {
+    align-self: flex-end;
+    background: #d1ecf1;
+}
+
+.react-admin-live-chat__reply {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.react-admin-live-chat__reply textarea {
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.65rem;
+}
