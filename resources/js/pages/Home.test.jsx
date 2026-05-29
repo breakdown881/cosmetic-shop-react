@@ -19,14 +19,16 @@ const categorySections = [
                 price: 250000,
                 sale_price: 199000,
                 featured_image: '/adm/images/godakeben450x170.jpg',
-                url: '#product-10',
+                url: '/products/10',
             },
         ],
+        url: '/categories/1',
     },
     {
         id: 2,
         name: 'Trang điểm',
         products: [],
+        url: '/categories/2',
     },
 ];
 
@@ -57,14 +59,21 @@ describe('Home', () => {
         );
 
         expect(screen.getByRole('heading', { name: 'Sale mỹ phẩm' })).toBeInTheDocument();
-        expect(screen.getByRole('navigation', { name: 'Menu chính' })).toBeInTheDocument();
+        expect(screen.getByRole('banner')).toHaveClass('react-customer-layout__header');
+        expect(screen.getByRole('navigation', { name: 'Customer navigation' })).toBeInTheDocument();
+        expect(screen.getAllByRole('link', { name: 'Tất cả sản phẩm' })[0]).toHaveAttribute('href', '/products');
         expect(screen.getByRole('complementary', { name: 'Điều hướng danh mục' })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: /Chăm sóc da/ })).toHaveAttribute('href', '#category-1');
         expect(screen.getByRole('heading', { name: 'Sản phẩm nổi bật' })).toBeInTheDocument();
-        expect(screen.getByRole('heading', { name: 'Voucher khuyen mai' })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Voucher khuyến mãi' })).toBeInTheDocument();
+        expect(screen.getByText('Sản phẩm có sẵn')).toBeInTheDocument();
         expect(screen.getByText('BEAUTY50')).toBeInTheDocument();
-        expect(screen.getAllByRole('link', { name: 'Serum dưỡng sáng' })[0]).toHaveAttribute('href', '#product-10');
+        expect(screen.getByText(/Hết hạn:/)).toBeInTheDocument();
+        expect(screen.getAllByRole('link', { name: 'Serum dưỡng sáng' })[0]).toHaveAttribute('href', '/products/10');
         expect(screen.getByText('Danh mục này chưa có sản phẩm nổi bật.')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Nhận ưu đãi chăm sóc da mỗi tuần' })).toBeInTheDocument();
+        expect(screen.getByLabelText('Email của bạn')).toHaveAttribute('placeholder', 'email@example.com');
+        expect(screen.getByRole('button', { name: 'Đăng ký' })).toBeInTheDocument();
         expect(screen.getByRole('form', { name: 'Newsletter signup' })).toHaveAttribute('action', '/newsletter/subscribe');
     });
 
@@ -72,5 +81,12 @@ describe('Home', () => {
         render(<Home errorMessage="Không thể tải dữ liệu." />);
 
         expect(screen.getByRole('alert')).toHaveTextContent('Không thể tải dữ liệu.');
+    });
+
+    it('renders a compact promotion empty state', () => {
+        render(<Home categories={categories} categorySections={categorySections} promotions={[]} />);
+
+        expect(screen.getByText('Đang cập nhật ưu đãi')).toBeInTheDocument();
+        expect(screen.getByText(/Voucher mới sẽ được mở lại sớm/)).toBeInTheDocument();
     });
 });

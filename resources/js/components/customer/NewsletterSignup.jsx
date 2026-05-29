@@ -1,6 +1,12 @@
 import { useState } from 'react';
 
-export default function NewsletterSignup() {
+export default function NewsletterSignup({
+    buttonLabel = 'Subscribe',
+    errorMessage = 'Could not subscribe. Please try again.',
+    label = 'Newsletter',
+    placeholder = 'you@example.com',
+    successMessage = 'Thanks for subscribing.',
+}) {
     const [status, setStatus] = useState('');
     const [error, setError] = useState('');
 
@@ -19,9 +25,9 @@ export default function NewsletterSignup() {
         try {
             await window.axios.post('/newsletter/subscribe', payload);
             form.reset();
-            setStatus('Thanks for subscribing.');
+            setStatus(successMessage);
         } catch (requestError) {
-            setError(requestError.response?.data?.message ?? 'Could not subscribe. Please try again.');
+            setError(requestError.response?.data?.message ?? errorMessage);
         }
     };
 
@@ -34,10 +40,10 @@ export default function NewsletterSignup() {
             onSubmit={handleSubmit}
         >
             <label>
-                Newsletter
-                <input name="email" type="email" placeholder="you@example.com" required />
+                {label}
+                <input name="email" type="email" placeholder={placeholder} required />
             </label>
-            <button type="submit">Subscribe</button>
+            <button type="submit">{buttonLabel}</button>
             {status ? <p role="status">{status}</p> : null}
             {error ? <p role="alert">{error}</p> : null}
         </form>

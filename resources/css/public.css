@@ -1748,3 +1748,594 @@
     padding: 0.65rem 0.9rem;
     font-weight: 700;
 }
+
+/* Home storefront refresh */
+.react-home {
+    background: #f6f7f5;
+    color: #24211f;
+    padding: 1rem;
+}
+
+.react-home > .react-customer-header {
+    margin-bottom: 1.25rem;
+}
+
+.react-home__topbar,
+.react-home__slide,
+.react-home__sidebar-card,
+.react-home__featured,
+.react-home__category-section,
+.react-home__promotions,
+.react-home__newsletter,
+.react-home__error,
+.react-home__skeleton,
+.react-product-card {
+    border-radius: 8px;
+}
+
+.react-home__topbar {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #e7e1da;
+    box-shadow: 0 10px 28px rgba(38, 33, 28, 0.08);
+    margin-bottom: 1.25rem;
+}
+
+.react-home__brand,
+.react-customer-layout__brand {
+    letter-spacing: 0;
+}
+
+.react-home__brand span,
+.react-home__eyebrow,
+.react-product-card__sale-price {
+    color: #b83266;
+}
+
+.react-home__topbar nav a {
+    color: #4d4a46;
+}
+
+.react-home__topbar nav a:hover,
+.react-home__topbar nav a:focus,
+.react-home__sidebar nav a:hover,
+.react-home__sidebar nav a:focus {
+    background: #e8f5f1;
+    color: #0f6b5b;
+}
+
+.react-home__slide {
+    background: #1f2a2b;
+    min-height: 420px;
+}
+
+.react-home__slide::after {
+    background: linear-gradient(90deg, rgba(24, 30, 31, 0.88), rgba(24, 30, 31, 0.58), rgba(24, 30, 31, 0.16));
+}
+
+.react-home__slide-content {
+    padding: 4rem 3rem;
+}
+
+.react-home__slide-content h1 {
+    font-size: 3rem;
+    letter-spacing: 0;
+    max-width: 760px;
+}
+
+.react-home__slide-content p {
+    color: #f3f0ea;
+    max-width: 640px;
+}
+
+.react-home__primary-link,
+.react-home__section-heading > a,
+.react-product-card__cart-button,
+.react-product-card__detail-link,
+.react-newsletter-signup button {
+    align-items: center;
+    border-radius: 8px;
+    display: inline-flex;
+    font-weight: 800;
+    gap: 0.4rem;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0.65rem 0.95rem;
+}
+
+.react-home__primary-link,
+.react-product-card__cart-button,
+.react-newsletter-signup button {
+    background: #0f6b5b;
+    border: 1px solid #0f6b5b;
+    color: #fff;
+}
+
+.react-home__primary-link:hover,
+.react-product-card__cart-button:hover,
+.react-newsletter-signup button:hover {
+    background: #0b5549;
+    border-color: #0b5549;
+}
+
+.react-home__stats {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0 auto 1.25rem;
+    max-width: 1180px;
+}
+
+.react-home__stats div {
+    background: #fff;
+    border: 1px solid #e7e1da;
+    border-radius: 8px;
+    box-shadow: 0 10px 26px rgba(38, 33, 28, 0.06);
+    padding: 1rem;
+}
+
+.react-home__stats strong {
+    color: #b83266;
+    display: block;
+    font-size: 1.7rem;
+    line-height: 1;
+}
+
+.react-home__stats span {
+    color: #5d5954;
+    display: block;
+    font-weight: 700;
+    margin-top: 0.4rem;
+}
+
+.react-home__promotions,
+.react-home__newsletter {
+    background: #fff;
+    border: 1px solid #e7e1da;
+    box-shadow: 0 10px 26px rgba(38, 33, 28, 0.05);
+    margin: 0 auto 1.25rem;
+    max-width: 1180px;
+    padding: 1.1rem;
+}
+
+.react-home__promotions {
+    display: grid;
+    gap: 0.95rem;
+}
+
+.react-home__promotions .react-home__section-heading {
+    align-items: center;
+    border-bottom: 0;
+    margin-bottom: 0;
+}
+
+.react-home__promotion-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.react-home__promotion-card {
+    background: #fffaf5;
+    border: 1px solid #eadfd4;
+    border-radius: 8px;
+    display: grid;
+    gap: 0.7rem;
+    padding: 1rem;
+}
+
+.react-home__promotion-card-header,
+.react-home__promotion-card-footer {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+}
+
+.react-home__promotion-card-header span {
+    color: #7a5524;
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.react-home__promotion-card strong {
+    color: #0f6b5b;
+    font-size: 1.1rem;
+}
+
+.react-home__promotion-card p {
+    color: #4d4a46;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.react-home__promotion-card-footer {
+    border-top: 1px solid #eadfd4;
+    margin-top: auto;
+    padding-top: 0.75rem;
+}
+
+.react-home__promotion-card-footer span {
+    color: #b83266;
+    font-size: 1.15rem;
+    font-weight: 900;
+}
+
+.react-home__promotion-card-footer small {
+    color: #6a655f;
+    font-weight: 700;
+    text-align: right;
+}
+
+.react-home__promotion-empty {
+    align-items: center;
+    background: #fbf8f4;
+    border: 1px dashed #d8cabc;
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+}
+
+.react-home__promotion-empty span {
+    color: #0f6b5b;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.react-home__promotion-empty p {
+    color: #5d5954;
+    line-height: 1.55;
+    margin: 0;
+    text-align: right;
+}
+
+.react-home__sidebar-card,
+.react-home__featured,
+.react-home__category-section,
+.react-home__error,
+.react-home__skeleton {
+    background: #fff;
+    border: 1px solid #e7e1da;
+    box-shadow: 0 10px 26px rgba(38, 33, 28, 0.06);
+}
+
+.react-home__sidebar nav a {
+    border-radius: 8px;
+    color: #4d4a46;
+}
+
+.react-home__sidebar nav span {
+    background: #f1e9dc;
+    color: #7a5524;
+}
+
+.react-home__section-heading {
+    align-items: flex-end;
+}
+
+.react-home__section-heading h2 {
+    color: #24211f;
+    font-size: 1.35rem;
+    letter-spacing: 0;
+}
+
+.react-home__section-heading > a,
+.react-product-card__detail-link {
+    background: #fbf8f4;
+    border: 1px solid #eadfd4;
+    color: #7a5524;
+}
+
+.react-home__section-heading > a:hover,
+.react-product-card__detail-link:hover {
+    background: #f1e9dc;
+    color: #5d3b12;
+}
+
+.react-product-grid {
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+
+.react-product-card {
+    border: 1px solid #e7e1da;
+    box-shadow: 0 10px 24px rgba(38, 33, 28, 0.06);
+    min-height: 100%;
+    position: relative;
+    transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.react-product-card:hover {
+    border-color: #d8cabc;
+    box-shadow: 0 16px 34px rgba(38, 33, 28, 0.11);
+    transform: translateY(-2px);
+}
+
+.react-product-card__sale-badge {
+    background: #b83266;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 900;
+    left: 0.75rem;
+    padding: 0.3rem 0.5rem;
+    position: absolute;
+    top: 0.75rem;
+    z-index: 2;
+}
+
+.react-product-card__image {
+    background: #f4f1eb;
+}
+
+.react-product-card__image img {
+    transition: transform 180ms ease;
+}
+
+.react-product-card:hover .react-product-card__image img {
+    transform: scale(1.04);
+}
+
+.react-product-card__body {
+    gap: 0.65rem;
+}
+
+.react-product-card__meta {
+    align-items: center;
+    color: #6a655f;
+    display: flex;
+    font-size: 0.82rem;
+    font-weight: 800;
+    gap: 0.5rem;
+    justify-content: space-between;
+}
+
+.react-product-card__name {
+    font-size: 1.02rem;
+    line-height: 1.35;
+}
+
+.react-product-card__name a:hover {
+    color: #b83266;
+}
+
+.react-product-card__price {
+    gap: 0.4rem;
+}
+
+.react-product-card__regular-price {
+    color: #8f8982;
+    font-size: 0.9rem;
+}
+
+.react-product-card__sale-price {
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+
+.react-product-card__stock {
+    color: #0f6b5b;
+    font-size: 0.88rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.react-product-card__stock--empty {
+    color: #9a3412;
+}
+
+.react-product-card__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.react-product-card__cart-button {
+    cursor: pointer;
+    font: inherit;
+}
+
+.react-product-card__cart-button:disabled {
+    background: #c8c1b8;
+    border-color: #c8c1b8;
+    cursor: not-allowed;
+}
+
+.react-newsletter-signup {
+    align-items: end;
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.react-newsletter-signup label {
+    color: #4d4a46;
+    display: grid;
+    font-weight: 800;
+    gap: 0.4rem;
+}
+
+.react-newsletter-signup input {
+    border: 1px solid #d8cabc;
+    border-radius: 8px;
+    min-height: 44px;
+    padding: 0.6rem 0.75rem;
+}
+
+.react-newsletter-signup p {
+    grid-column: 1 / -1;
+    margin: 0;
+}
+
+.react-home__newsletter {
+    align-items: center;
+    background: #fff;
+    border-color: #e7e1da;
+    color: #24211f;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
+    overflow: hidden;
+    position: relative;
+}
+
+.react-home__newsletter::before {
+    background: #0f6b5b;
+    content: '';
+    inset: 0 auto 0 0;
+    position: absolute;
+    width: 5px;
+}
+
+.react-home__newsletter .react-home__eyebrow {
+    color: #0f6b5b;
+}
+
+.react-home__newsletter-copy h2 {
+    font-size: 1.55rem;
+    letter-spacing: 0;
+    margin: 0.35rem 0 0.5rem;
+}
+
+.react-home__newsletter-copy p {
+    color: #5d5954;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 620px;
+}
+
+.react-home__newsletter .react-newsletter-signup {
+    background: #fbf8f4;
+    border: 1px solid #eadfd4;
+    border-radius: 8px;
+    padding: 0.85rem;
+}
+
+.react-home__newsletter .react-newsletter-signup label {
+    color: #3f3a35;
+}
+
+.react-home__newsletter .react-newsletter-signup input {
+    background: #fff;
+    border-color: #d8cabc;
+}
+
+.react-home__newsletter .react-newsletter-signup p {
+    color: #0f6b5b;
+    font-weight: 700;
+}
+
+@media (max-width: 991px) {
+    .react-home__slide {
+        min-height: 340px;
+    }
+
+    .react-home__slide-content {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .react-home__slide-content h1 {
+        font-size: 2.25rem;
+    }
+
+    .react-home__stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .react-home {
+        padding: 0.75rem;
+    }
+
+    .react-home__topbar {
+        position: static;
+    }
+
+    .react-home__topbar nav a,
+    .react-home__primary-link,
+    .react-product-card__cart-button,
+    .react-product-card__detail-link {
+        width: 100%;
+    }
+
+    .react-home__section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .react-home__promotion-empty {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .react-home__promotion-empty p {
+        text-align: left;
+    }
+
+    .react-newsletter-signup {
+        grid-template-columns: 1fr;
+    }
+
+    .react-home__newsletter {
+        grid-template-columns: 1fr;
+    }
+}
+
+.react-home__slider-viewport {
+    background: #1f2a2b;
+    border-radius: 8px;
+    box-shadow: 0 18px 42px rgba(38, 33, 28, 0.14);
+    overflow: hidden;
+}
+
+.react-home__slide-track {
+    display: flex;
+    transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.react-home__slide {
+    border-radius: 0;
+    box-shadow: none;
+    flex: 0 0 100%;
+}
+
+.react-home__slide-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.react-home__secondary-link {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 8px;
+    color: #fff;
+    display: inline-flex;
+    font-weight: 800;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0.65rem 0.95rem;
+}
+
+.react-home__secondary-link:hover,
+.react-home__secondary-link:focus {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .react-home__slide-track,
+    .react-product-card,
+    .react-product-card__image img {
+        transition: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .react-home__secondary-link {
+        width: 100%;
+    }
+}

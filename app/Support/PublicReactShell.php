@@ -20,6 +20,7 @@ class PublicReactShell
     {
         $props['auth'] ??= $this->authProps();
         $jsonProps = htmlspecialchars(json_encode($props, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG), ENT_QUOTES, 'UTF-8');
+        $reactRefresh = Vite::reactRefresh();
         $vite = Vite::useHotFile(public_path('hot'))(['resources/css/public.css', 'resources/js/public.jsx']);
         $escapedComponent = htmlspecialchars($component, ENT_QUOTES, 'UTF-8');
         $escapedTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
@@ -31,6 +32,7 @@ class PublicReactShell
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{$escapedTitle}</title>
+    {$reactRefresh}
     {$vite}
 </head>
 <body class="customer-site antialiased">

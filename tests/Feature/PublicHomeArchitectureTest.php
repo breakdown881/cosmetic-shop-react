@@ -50,7 +50,7 @@ class PublicHomeArchitectureTest extends TestCase
         $brand = Brand::create(['name' => 'Customer Home Brand', 'status' => 1, 'created_by' => 1]);
         $category = Category::create(['name' => 'Customer Home Category', 'status' => 1, 'created_by' => 1]);
 
-        Product::create([
+        $product = Product::create([
             'code' => 'HOME-' . uniqid(),
             'name' => 'Customer Home Serum',
             'brand_id' => $brand->id,
@@ -73,6 +73,7 @@ class PublicHomeArchitectureTest extends TestCase
             ->assertSee('data-react-component="Home"', false)
             ->assertSee('Customer Home Category')
             ->assertSee('Customer Home Serum')
-            ->assertSee('&quot;sale_price&quot;:180000', false);
+            ->assertSee('&quot;sale_price&quot;:180000', false)
+            ->assertSee('&quot;url&quot;:&quot;\/products\/' . $product->id . '&quot;', false);
     }
 }

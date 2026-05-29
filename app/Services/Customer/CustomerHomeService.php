@@ -12,6 +12,7 @@ class CustomerHomeService
 {
     public function __construct(
         private readonly CustomerHomeRepository $homeRepository,
+        private readonly CustomerNavigationService $navigationService,
         private readonly CustomerPromotionRepository $promotionRepository,
     ) {}
 
@@ -29,7 +30,7 @@ class CustomerHomeService
 
         return [
             'slides' => $this->slides(),
-            'navItems' => $this->navItems(),
+            'navItems' => $this->navigationService->navItems(),
             'promotions' => $this->promotionRepository->activeDiscounts()
                 ->take(3)
                 ->map(fn (Discount $discount) => $this->formatPromotion($discount))
@@ -41,20 +42,10 @@ class CustomerHomeService
                 ->map(fn (Category $category) => [
                     'id' => $category->id,
                     'name' => $category->name,
-                    'url' => '#category-' . $category->id,
+                    'url' => '/categories/' . $category->id,
                     'products' => $formattedProducts->get($category->id, collect())->take(6)->values(),
                 ])
                 ->values(),
-        ];
-    }
-
-    private function navItems(): array
-    {
-        return [
-            ['label' => 'Trang chủ', 'href' => '#home'],
-            ['label' => 'Khuyến mãi', 'href' => '#promotions'],
-            ['label' => 'Danh mục', 'href' => '#categories'],
-            ['label' => 'Sản phẩm nổi bật', 'href' => '#featured-products'],
         ];
     }
 
@@ -65,8 +56,8 @@ class CustomerHomeService
                 'title' => 'Mỹ phẩm chính hãng cho làn da Việt',
                 'description' => 'Ưu đãi chăm sóc da, trang điểm và dưỡng thể được chọn lọc mỗi tuần.',
                 'imageUrl' => asset('adm/images/slider1.jpg'),
-                'ctaLabel' => 'Mua ngay',
-                'ctaUrl' => '#categories',
+                'ctaLabel' => 'Xem tất cả sản phẩm',
+                'ctaUrl' => '/products',
             ],
             [
                 'title' => 'Combo dưỡng da tiết kiệm',
@@ -91,7 +82,7 @@ class CustomerHomeService
             'id' => $category->id,
             'name' => $category->name,
             'parentId' => $category->parent_id,
-            'url' => '#category-' . $category->id,
+            'url' => '/categories/' . $category->id,
             'productsCount' => $formattedProducts->get($category->id, collect())->count(),
         ];
     }
@@ -115,7 +106,7 @@ class CustomerHomeService
             'star' => $product->star,
             'featured' => (bool) $product->featured,
             'featured_image' => $mediaUrls[$product->media_id] ?? asset('adm/images/godakeben450x170.jpg'),
-            'url' => '#product-' . $product->id,
+            'url' => '/products/' . $product->id,
         ];
     }
 

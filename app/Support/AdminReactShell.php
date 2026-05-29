@@ -47,6 +47,7 @@ class AdminReactShell
         );
         $csrf = self::escape(csrf_token());
         $title = self::escape($options['title']);
+        $reactRefresh = Vite::reactRefresh();
         $vite = Vite::useHotFile(public_path('hot'))(['resources/css/admin.css', 'resources/js/admin.jsx']);
 
         return <<<HTML
@@ -63,6 +64,7 @@ class AdminReactShell
     <link href="/adm/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
     <link href="/adm/css/sb-admin.css" rel="stylesheet">
     <link href="/adm/css/admin.css" rel="stylesheet">
+    {$reactRefresh}
     {$vite}
 </head>
 <body id="page-top" class="{$bodyClass}">

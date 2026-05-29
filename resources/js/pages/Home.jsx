@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import CustomerHeader from '../components/customer/CustomerHeader.jsx';
 import NewsletterSignup from '../components/customer/NewsletterSignup.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 
@@ -27,10 +28,12 @@ const defaultSlides = [
 ];
 
 const defaultNavItems = [
-    { label: 'Trang chủ', href: '#home' },
-    { label: 'Khuyến mãi', href: '#promotions' },
-    { label: 'Danh mục', href: '#categories' },
-    { label: 'Sản phẩm nổi bật', href: '#featured-products' },
+    { label: 'Trang chủ', href: '/' },
+    { label: 'Tất cả sản phẩm', href: '/products' },
+    { label: 'Khuyến mãi', href: '/promotions' },
+    { label: 'Giỏ hàng', href: '/cart' },
+    { label: 'Đơn hàng', href: '/orders' },
+    { label: 'Tài khoản', href: '/account' },
 ];
 
 const SkeletonSection = () => (
@@ -48,7 +51,6 @@ const EmptyState = ({ message }) => (
 const AdvertisementSlider = ({ slides = [] }) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const hasMultipleSlides = slides.length > 1;
-    const activeSlide = slides[activeIndex] ?? slides[0];
 
     useEffect(() => {
         if (!hasMultipleSlides) {
@@ -62,7 +64,7 @@ const AdvertisementSlider = ({ slides = [] }) => {
         return () => window.clearInterval(timerId);
     }, [hasMultipleSlides, slides.length]);
 
-    if (!activeSlide) {
+    if (!slides.length) {
         return null;
     }
 
@@ -78,17 +80,31 @@ const AdvertisementSlider = ({ slides = [] }) => {
 
     return (
         <section className="react-home__slider" id="promotions" aria-label="Slide quảng cáo">
-            <div className="react-home__slide">
-                <img src={activeSlide.imageUrl} alt={activeSlide.title} />
-                <div className="react-home__slide-content">
-                    <span className="react-home__eyebrow">Goda Beauty Deal</span>
-                    <h1>{activeSlide.title}</h1>
-                    <p>{activeSlide.description}</p>
-                    {activeSlide.ctaUrl && (
-                        <a className="react-home__primary-link" href={activeSlide.ctaUrl}>
-                            {activeSlide.ctaLabel ?? 'Xem ngay'}
-                        </a>
-                    )}
+            <div className="react-home__slider-viewport">
+                <div
+                    className="react-home__slide-track"
+                    style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+                >
+                    {slides.map((slide) => (
+                        <div className="react-home__slide" key={slide.title}>
+                            <img src={slide.imageUrl} alt={slide.title} />
+                            <div className="react-home__slide-content">
+                                <span className="react-home__eyebrow">Goda Beauty Deal</span>
+                                <h1>{slide.title}</h1>
+                                <p>{slide.description}</p>
+                                <div className="react-home__slide-actions">
+                                    {slide.ctaUrl && (
+                                        <a className="react-home__primary-link" href={slide.ctaUrl}>
+                                            {slide.ctaLabel ?? 'Xem ngay'}
+                                        </a>
+                                    )}
+                                    <a className="react-home__secondary-link" href="/products">
+                                        Tất cả sản phẩm
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
@@ -131,6 +147,7 @@ const CategoryMenu = ({ categories = [] }) => (
             <h2>Chuyển nhanh</h2>
             <nav>
                 <a href="#home">Trang chủ</a>
+                <a href="/products">Tất cả sản phẩm</a>
                 <a href="#promotions">Khuyến mãi</a>
                 <a href="#categories">Tất cả danh mục</a>
                 <a href="#featured-products">Sản phẩm nổi bật</a>
@@ -177,29 +194,55 @@ const PromotionSection = ({ promotions = [] }) => (
         <div className="react-home__section-heading">
             <div>
                 <span className="react-home__eyebrow">Beauty deal</span>
-                <h2 id="home-promotions-title">Voucher khuyen mai</h2>
+                <h2 id="home-promotions-title">Voucher khuyến mãi</h2>
             </div>
-            <a href="/promotions">Xem tat ca</a>
+            <a href="/promotions">Xem tất cả</a>
         </div>
 
         {promotions.length ? (
             <div className="react-home__promotion-grid">
                 {promotions.map((promotion) => (
                     <article className="react-home__promotion-card" key={promotion.code}>
-                        <strong>{promotion.code}</strong>
+                        <div className="react-home__promotion-card-header">
+                            <span>Voucher</span>
+                            <strong>{promotion.code}</strong>
+                        </div>
                         <p>{promotion.description}</p>
-                        <span>{promotion.label}</span>
-                        {promotion.expires_at ? <small>Het han: {promotion.expires_at}</small> : null}
+                        <div className="react-home__promotion-card-footer">
+                            <span>{promotion.label}</span>
+                            {promotion.expires_at ? <small>Hết hạn: {promotion.expires_at}</small> : null}
+                        </div>
                     </article>
                 ))}
             </div>
         ) : (
-            <EmptyState message="No active promotions right now." />
+            <div className="react-home__promotion-empty">
+                <span>Đang cập nhật ưu đãi</span>
+                <p>Voucher mới sẽ được mở lại sớm. Bạn vẫn có thể xem các sản phẩm đang có giá tốt hôm nay.</p>
+            </div>
         )}
     </section>
 );
 
+const HomeStats = ({ categoriesCount, featuredCount, productsCount }) => (
+    <section className="react-home__stats" aria-label="Tổng quan cửa hàng">
+        <div>
+            <strong>{productsCount}</strong>
+            <span>Sản phẩm có sẵn</span>
+        </div>
+        <div>
+            <strong>{categoriesCount}</strong>
+            <span>Danh mục chăm sóc</span>
+        </div>
+        <div>
+            <strong>{featuredCount}</strong>
+            <span>Gợi ý nổi bật</span>
+        </div>
+    </section>
+);
+
 export default function Home({
+    auth = null,
     categories = [],
     categorySections = [],
     errorMessage = '',
@@ -213,71 +256,84 @@ export default function Home({
         () => categorySections.flatMap((section) => section.products ?? []).slice(0, 6),
         [categorySections],
     );
+    const productsCount = useMemo(
+        () => categories.reduce((total, category) => total + Number(category.productsCount ?? 0), 0),
+        [categories],
+    );
 
     if (errorMessage) {
         return (
-            <main className="react-home" id="home">
+            <div className="react-home" id="home">
+                <CustomerHeader auth={auth} navItems={navItems} />
                 <div className="react-home__error" role="alert">
                     <h1>Không tải được trang chủ</h1>
                     <p>{errorMessage}</p>
                 </div>
-            </main>
+            </div>
         );
     }
 
     return (
-        <main className="react-home" id="home">
-            <header className="react-home__topbar">
-                <a className="react-home__brand" href="#home">
-                    <span>Goda</span> Shop
-                </a>
-                <nav aria-label="Menu chính">
-                    {navItems.map((item) => (
-                        <a key={item.href} href={item.href}>
-                            {item.label}
-                        </a>
-                    ))}
-                </nav>
-            </header>
+        <div className="react-home" id="home">
+            <CustomerHeader auth={auth} navItems={navItems} />
 
-            <AdvertisementSlider slides={normalizedSlides} />
+            <main>
+                <AdvertisementSlider slides={normalizedSlides} />
 
-            <PromotionSection promotions={promotions} />
+                <HomeStats
+                    categoriesCount={categories.length}
+                    featuredCount={featuredProducts.length}
+                    productsCount={productsCount}
+                />
 
-            <div className="react-home__layout">
-                <CategoryMenu categories={categories} />
+                <PromotionSection promotions={promotions} />
 
-                <div className="react-home__content" id="categories">
-                    {isLoading && !categorySections.length ? (
-                        <SkeletonSection />
-                    ) : categorySections.length ? (
-                        <>
-                            <section className="react-home__featured" id="featured-products">
-                                <div className="react-home__section-heading">
-                                    <div>
-                                        <span className="react-home__eyebrow">Gợi ý hôm nay</span>
-                                        <h2>Sản phẩm nổi bật</h2>
+                <div className="react-home__layout">
+                    <CategoryMenu categories={categories} />
+
+                    <div className="react-home__content" id="categories">
+                        {isLoading && !categorySections.length ? (
+                            <SkeletonSection />
+                        ) : categorySections.length ? (
+                            <>
+                                <section className="react-home__featured" id="featured-products">
+                                    <div className="react-home__section-heading">
+                                        <div>
+                                            <span className="react-home__eyebrow">Gợi ý hôm nay</span>
+                                            <h2>Sản phẩm nổi bật</h2>
+                                        </div>
                                     </div>
-                                </div>
-                                <ProductGrid
-                                    products={featuredProducts}
-                                    emptyMessage="Chưa có sản phẩm nổi bật để hiển thị."
-                                />
-                            </section>
+                                    <ProductGrid
+                                        products={featuredProducts}
+                                        emptyMessage="Chưa có sản phẩm nổi bật để hiển thị."
+                                    />
+                                </section>
 
-                            {categorySections.map((section) => (
-                                <CategorySection key={section.id} section={section} />
-                            ))}
-                        </>
-                    ) : (
-                        <EmptyState message="Chưa có danh mục hoặc sản phẩm để hiển thị trên trang chủ." />
-                    )}
+                                {categorySections.map((section) => (
+                                    <CategorySection key={section.id} section={section} />
+                                ))}
+                            </>
+                        ) : (
+                            <EmptyState message="Chưa có danh mục hoặc sản phẩm để hiển thị trên trang chủ." />
+                        )}
+                    </div>
                 </div>
-            </div>
 
-            <section className="react-home__newsletter">
-                <NewsletterSignup />
-            </section>
-        </main>
+                <section className="react-home__newsletter" aria-labelledby="home-newsletter-title">
+                    <div className="react-home__newsletter-copy">
+                        <span className="react-home__eyebrow">Goda member</span>
+                        <h2 id="home-newsletter-title">Nhận ưu đãi chăm sóc da mỗi tuần</h2>
+                        <p>Nhận mã giảm giá mới, gợi ý sản phẩm phù hợp và thông tin restock trong một email gọn nhẹ.</p>
+                    </div>
+                    <NewsletterSignup
+                        buttonLabel="Đăng ký"
+                        errorMessage="Chưa đăng ký được. Bạn thử lại sau nhé."
+                        label="Email của bạn"
+                        placeholder="email@example.com"
+                        successMessage="Đã đăng ký nhận ưu đãi."
+                    />
+                </section>
+            </main>
+        </div>
     );
 }
