@@ -20,6 +20,7 @@ import CustomerPlaceholderPage from './pages/customer/CustomerPlaceholderPage.js
 import CustomerProductIndex from './pages/customer/CustomerProductIndex.jsx';
 import CustomerProductShow from './pages/customer/CustomerProductShow.jsx';
 import CustomerRegisterPage from './pages/customer/CustomerRegisterPage.jsx';
+import CustomerWishlistPage from './pages/customer/CustomerWishlistPage.jsx';
 import Home from './pages/Home.jsx';
 import ProductList from './pages/ProductList.jsx';
 import { mountReactIslands } from './islands/mountReactIslands.jsx';
@@ -36,6 +37,7 @@ mountReactIslands({
     CustomerProductIndex,
     CustomerProductShow,
     CustomerRegisterPage,
+    CustomerWishlistPage,
     Home,
     ProductCard,
     ProductGrid,

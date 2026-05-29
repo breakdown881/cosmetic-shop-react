@@ -1258,3 +1258,134 @@
         width: 100%;
     }
 }
+
+.react-customer-product-detail__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.react-customer-product-detail__actions form {
+    margin: 0;
+}
+
+.react-customer-product-detail__wishlist-button,
+.react-customer-product-detail__wishlist-link {
+    background: #fff5f9;
+    border: 1px solid #f1bfd4;
+    border-radius: 999px;
+    color: #7b3659;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-weight: 900;
+    padding: 0.75rem 1.15rem;
+}
+
+.react-customer-reviews,
+.react-customer-wishlist {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #f7d5e5;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(138, 33, 88, 0.08);
+    margin-top: 1rem;
+    padding: 1rem;
+}
+
+.react-customer-reviews__header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.react-customer-reviews__form {
+    border: 1px solid #f7d8e4;
+    border-radius: 18px;
+    display: grid;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    padding: 1rem;
+}
+
+.react-customer-reviews__form label {
+    color: #6f405a;
+    display: grid;
+    font-weight: 800;
+    gap: 0.35rem;
+}
+
+.react-customer-reviews__form select,
+.react-customer-reviews__form textarea {
+    border: 1px solid #f1bfd4;
+    border-radius: 12px;
+    padding: 0.55rem 0.75rem;
+}
+
+.react-customer-reviews__form button,
+.react-customer-reviews__login a,
+.react-customer-wishlist__empty a,
+.react-customer-wishlist__card button {
+    background: #d81b72;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-weight: 900;
+    justify-self: start;
+    padding: 0.7rem 1rem;
+}
+
+.react-customer-reviews__list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.react-customer-reviews__item {
+    border: 1px solid #f7d8e4;
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+.react-customer-reviews__item span {
+    color: #d81b72;
+    font-weight: 900;
+    margin-left: 0.5rem;
+}
+
+.react-customer-wishlist__grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.react-customer-wishlist__card {
+    background: #fff;
+    border: 1px solid #f7d8e4;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.react-customer-wishlist__card img {
+    height: 180px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.react-customer-wishlist__card div {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1rem;
+}
+
+.react-customer-wishlist__card a {
+    font-weight: 900;
+}
+
+.react-customer-wishlist__card strong {
+    color: #d81b72;
+}

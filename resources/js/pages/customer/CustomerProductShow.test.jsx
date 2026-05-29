@@ -46,6 +46,57 @@ describe('CustomerProductShow', () => {
         expect(screen.queryByText(/Admin/i)).not.toBeInTheDocument();
     });
 
+
+    it('renders approved reviews and login-gated review and wishlist actions', () => {
+        render(
+            <CustomerProductShow
+                auth={{ check: false, loginUrl: '/login' }}
+                product={{
+                    ...product,
+                    reviews: [
+                        {
+                            id: 1,
+                            fullname: 'Approved Reviewer',
+                            star: 5,
+                            description: 'Visible approved review.',
+                        },
+                    ],
+                    reviewSummary: { average: 5, count: 1 },
+                    canReview: false,
+                    hasReviewed: false,
+                    wishlist: { isWishlisted: false, storeUrl: '/wishlist/items' },
+                }}
+            />,
+        );
+
+        expect(screen.getByRole('heading', { name: 'Customer reviews' })).toBeInTheDocument();
+        expect(screen.getByText('Visible approved review.')).toBeInTheDocument();
+        expect(screen.getByText('Sign in to review or save this product.')).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Sign in to review' })).toHaveAttribute('href', '/login');
+        expect(screen.getByRole('link', { name: 'Sign in to add wishlist' })).toHaveAttribute('href', '/login');
+    });
+
+    it('renders review form and wishlist form for logged-in eligible customer', () => {
+        render(
+            <CustomerProductShow
+                auth={{ check: true, user: { name: 'Customer' } }}
+                product={{
+                    ...product,
+                    reviews: [],
+                    reviewSummary: { average: 0, count: 0 },
+                    canReview: true,
+                    hasReviewed: false,
+                    wishlist: { isWishlisted: false, storeUrl: '/wishlist/items' },
+                }}
+            />,
+        );
+
+        expect(screen.getByRole('button', { name: 'Add to wishlist' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Submit review' })).toBeInTheDocument();
+        expect(screen.getByLabelText('Rating')).toHaveAttribute('name', 'star');
+        expect(screen.getByLabelText('Review')).toHaveAttribute('name', 'description');
+    });
+
     it('disables add to cart when product is out of stock', () => {
         render(<CustomerProductShow product={{ ...product, inventory_qty: 0 }} />);
 

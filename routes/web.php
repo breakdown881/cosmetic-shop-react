@@ -10,6 +10,8 @@ use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Customer\SocialAuthController as CustomerSocialAuthController;
+use App\Http\Controllers\Customer\ReviewController as CustomerReviewController;
+use App\Http\Controllers\Customer\WishlistController as CustomerWishlistController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DashboardController as ApiDashboardController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
@@ -35,6 +37,9 @@ Route::get('/', function () {
     return app(\App\Support\PublicReactShell::class)->welcome();
 });
 Route::get('/products', [CustomerProductController::class, 'index'])->name('customer.products.index');
+Route::post('/products/{product}/reviews', [CustomerReviewController::class, 'store'])
+    ->middleware('auth')
+    ->name('customer.products.reviews.store');
 Route::get('/products/{product}', [CustomerProductController::class, 'show'])->name('customer.products.show');
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
@@ -58,6 +63,11 @@ Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('cu
 Route::get('/orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');
 Route::get('/account', [CustomerAccountController::class, 'show'])->name('customer.account.show');
 Route::patch('/account', [CustomerAccountController::class, 'update'])->name('customer.account.update');
+Route::middleware('auth')->group(function () {
+    Route::get('/wishlist', [CustomerWishlistController::class, 'index'])->name('customer.wishlist.index');
+    Route::post('/wishlist/items', [CustomerWishlistController::class, 'store'])->name('customer.wishlist.items.store');
+    Route::delete('/wishlist/items/{product}', [CustomerWishlistController::class, 'destroy'])->name('customer.wishlist.items.destroy');
+});
 
 Route::prefix('admin')->group(function () {
     Route::get('login', [LoginController::class, 'index'])->name('admin.login.form');
