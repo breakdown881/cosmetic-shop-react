@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\SpaController;
+use App\Http\Controllers\Customer\CartController as CustomerCartController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
@@ -32,7 +33,10 @@ Route::get('/products', [CustomerProductController::class, 'index'])->name('cust
 Route::get('/products/{product}', [CustomerProductController::class, 'show'])->name('customer.products.show');
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
-Route::get('/cart', [CustomerPageController::class, 'cart'])->name('customer.cart.show');
+Route::get('/cart', [CustomerCartController::class, 'show'])->name('customer.cart.show');
+Route::post('/cart/items', [CustomerCartController::class, 'store'])->name('customer.cart.items.store');
+Route::patch('/cart/items/{product}', [CustomerCartController::class, 'update'])->name('customer.cart.items.update');
+Route::delete('/cart/items/{product}', [CustomerCartController::class, 'destroy'])->name('customer.cart.items.destroy');
 Route::get('/checkout', [CustomerPageController::class, 'checkout'])->name('customer.checkout.show');
 Route::get('/orders', [CustomerPageController::class, 'orders'])->name('customer.orders.index');
 Route::get('/account', [CustomerPageController::class, 'account'])->name('customer.account.show');

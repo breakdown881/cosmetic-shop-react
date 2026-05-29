@@ -767,6 +767,114 @@
     margin: 0 0 1rem;
 }
 
+.react-customer-cart {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #f7d5e5;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(138, 33, 88, 0.08);
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    padding: 1rem;
+}
+
+.react-customer-cart__empty {
+    grid-column: 1 / -1;
+}
+
+.react-customer-cart__empty p {
+    color: #6f405a;
+    font-size: 1.1rem;
+}
+
+.react-customer-cart__empty a,
+.react-customer-cart__summary a {
+    background: #d81b72;
+    border-radius: 999px;
+    color: #fff;
+    display: inline-flex;
+    font-weight: 900;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+}
+
+.react-customer-cart__items {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.react-customer-cart__item {
+    align-items: center;
+    border: 1px solid #f7d5e5;
+    border-radius: 18px;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 84px minmax(0, 1fr) 120px 120px auto;
+    padding: 0.75rem;
+}
+
+.react-customer-cart__item img {
+    border-radius: 14px;
+    height: 84px;
+    object-fit: cover;
+    width: 84px;
+}
+
+.react-customer-cart__item h2 {
+    font-size: 1rem;
+    margin: 0 0 0.35rem;
+}
+
+.react-customer-cart__item p {
+    color: #d81b72;
+    font-weight: 900;
+    margin: 0;
+}
+
+.react-customer-cart__item label {
+    color: #6f405a;
+    display: grid;
+    font-size: 0.85rem;
+    font-weight: 800;
+    gap: 0.25rem;
+}
+
+.react-customer-cart__item input {
+    border: 1px solid #f1bfd4;
+    border-radius: 10px;
+    min-height: 38px;
+    padding: 0.4rem 0.6rem;
+}
+
+.react-customer-cart__item button {
+    background: #fff0f6;
+    border: 0;
+    border-radius: 999px;
+    color: #b50e5b;
+    font-weight: 900;
+    padding: 0.55rem 0.85rem;
+}
+
+.react-customer-cart__summary {
+    align-self: start;
+    background: #fff8fb;
+    border: 1px solid #f7d5e5;
+    border-radius: 18px;
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.react-customer-cart__summary span {
+    color: #6f405a;
+    font-weight: 800;
+}
+
+.react-customer-cart__summary strong {
+    color: #d81b72;
+    font-size: 1.6rem;
+}
+
 @media (max-width: 991px) {
     .react-customer-layout {
         padding: 0.75rem;
@@ -791,5 +899,15 @@
 
     .react-customer-product-detail__facts {
         grid-template-columns: 1fr;
+    }
+
+    .react-customer-cart,
+    .react-customer-cart__item {
+        grid-template-columns: 1fr;
+    }
+
+    .react-customer-cart__item img {
+        height: auto;
+        width: 100%;
     }
 }
