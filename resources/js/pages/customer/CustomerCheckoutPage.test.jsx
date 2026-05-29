@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import CustomerCheckoutPage from './CustomerCheckoutPage.jsx';
 
 const checkout = {
@@ -18,10 +19,21 @@ const checkout = {
         total: 540000,
     },
     feeShips: [{ id: 9, label: 'City HCM', price: 25000 }],
-    paymentMethods: { 0: 'Cash', 1: 'Bank transfer' },
+    paymentMethods: { 0: 'Cash', 1: 'Bank transfer', 2: 'VNPay', 3: 'MoMo' },
 };
 
 describe('CustomerCheckoutPage', () => {
+    beforeEach(() => {
+        window.axios = {
+            post: vi.fn(),
+        };
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        delete window.axios;
+    });
+
     it('renders checkout form, cart summary and payment options', () => {
         render(
             <CustomerCheckoutPage
@@ -48,5 +60,36 @@ describe('CustomerCheckoutPage', () => {
 
         expect(screen.getByText('Your cart is empty.')).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Back to products' })).toHaveAttribute('href', '/products');
+    });
+
+    it('redirects customers to online payment gateway after checkout', async () => {
+        const user = userEvent.setup();
+        const assign = vi.spyOn(window.location, 'assign').mockImplementation(() => {});
+        window.axios.post.mockResolvedValue({
+            data: {
+                data: {
+                    id: 42,
+                    payment: {
+                        redirect_url: 'https://test-payment.momo.vn/pay/demo',
+                    },
+                },
+            },
+        });
+
+        render(<CustomerCheckoutPage checkout={checkout} />);
+
+        await user.type(screen.getByLabelText('Full name'), 'Nguyen Van A');
+        await user.type(screen.getByLabelText('Mobile'), '0900111222');
+        await user.type(screen.getByLabelText('Address'), '123 Beauty Street');
+        await user.selectOptions(screen.getByLabelText('Payment method'), '3');
+        await user.click(screen.getByRole('button', { name: 'Place order' }));
+
+        await waitFor(() => {
+            expect(window.axios.post).toHaveBeenCalledWith('/checkout', expect.objectContaining({
+                payment_method: '3',
+                shipping_fullname: 'Nguyen Van A',
+            }));
+            expect(assign).toHaveBeenCalledWith('https://test-payment.momo.vn/pay/demo');
+        });
     });
 });

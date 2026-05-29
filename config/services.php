@@ -43,4 +43,21 @@ return [
         'redirect' => env('FACEBOOK_REDIRECT_URI', env('APP_URL') . '/auth/facebook/callback'),
     ],
 
+    'vnpay' => [
+        'tmn_code' => env('VNPAY_TMN_CODE'),
+        'hash_secret' => env('VNPAY_HASH_SECRET'),
+        'payment_url' => env('VNPAY_PAYMENT_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'),
+        'return_url' => env('VNPAY_RETURN_URL', env('APP_URL') . '/payments/vnpay/return'),
+    ],
+
+    'momo' => [
+        'partner_code' => env('MOMO_PARTNER_CODE'),
+        'access_key' => env('MOMO_ACCESS_KEY'),
+        'secret_key' => env('MOMO_SECRET_KEY'),
+        'endpoint' => env('MOMO_ENDPOINT', 'https://test-payment.momo.vn/v2/gateway/api/create'),
+        'redirect_url' => env('MOMO_REDIRECT_URL', env('APP_URL') . '/payments/momo/return'),
+        'ipn_url' => env('MOMO_IPN_URL', env('APP_URL') . '/payments/momo/ipn'),
+        'request_type' => env('MOMO_REQUEST_TYPE', 'payWithMethod'),
+    ],
+
 ];

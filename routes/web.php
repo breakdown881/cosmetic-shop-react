@@ -9,6 +9,7 @@ use App\Http\Controllers\Customer\ChatbotController as CustomerChatbotController
 use App\Http\Controllers\Customer\CheckoutController as CustomerCheckoutController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
+use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Customer\SocialAuthController as CustomerSocialAuthController;
 use App\Http\Controllers\Customer\ReviewController as CustomerReviewController;
@@ -45,6 +46,9 @@ Route::get('/products/{product}', [CustomerProductController::class, 'show'])->n
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
 Route::post('/chatbot/messages', [CustomerChatbotController::class, 'store'])->name('customer.chatbot.messages.store');
+Route::get('/payments/vnpay/return', [CustomerPaymentController::class, 'vnpayReturn'])->name('customer.payments.vnpay.return');
+Route::get('/payments/momo/return', [CustomerPaymentController::class, 'momoReturn'])->name('customer.payments.momo.return');
+Route::post('/payments/momo/ipn', [CustomerPaymentController::class, 'momoIpn'])->name('customer.payments.momo.ipn');
 Route::get('/login', [CustomerAuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login');
 Route::get('/register', [CustomerAuthController::class, 'registerForm'])->name('customer.register.form');

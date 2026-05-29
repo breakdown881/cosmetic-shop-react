@@ -14,6 +14,7 @@ class CustomerCheckoutService
         private readonly CustomerCartService $cartService,
         private readonly CustomerCheckoutRepository $checkoutRepository,
         private readonly CustomerNavigationService $navigationService,
+        private readonly CustomerPaymentService $paymentService,
     ) {}
 
     public function props(Store $session): array
@@ -53,6 +54,8 @@ class CustomerCheckoutService
             'shipping_fullname' => $data['shipping_fullname'],
             'shipping_mobile' => $data['shipping_mobile'],
             'payment_method' => (int) $data['payment_method'],
+            'payment_gateway' => $this->gatewayForPaymentMethod((int) $data['payment_method']),
+            'payment_status' => $this->paymentStatusForPaymentMethod((int) $data['payment_method']),
             'shipping_ward_id' => $data['shipping_ward_id'] ?? '',
             'shipping_housenumber_street' => $data['shipping_housenumber_street'],
             'shipping_fee' => $shippingFee,
@@ -76,9 +79,25 @@ class CustomerCheckoutService
             'total_price' => $item['subtotal'],
         ])->all());
 
+        $payment = $this->paymentService->initiate($order);
+
         $this->cartService->clear($session);
 
-        return $this->formatOrder($order);
+        return $this->formatOrder($order, $payment);
+    }
+
+    private function gatewayForPaymentMethod(int $paymentMethod): ?string
+    {
+        return match ($paymentMethod) {
+            2 => 'vnpay',
+            3 => 'momo',
+            default => null,
+        };
+    }
+
+    private function paymentStatusForPaymentMethod(int $paymentMethod): string
+    {
+        return in_array($paymentMethod, [2, 3], true) ? 'PENDING' : 'UNPAID';
     }
 
     private function discountAmount(?string $discountCode, int $subTotal): int
@@ -102,7 +121,7 @@ class CustomerCheckoutService
             && ! ($discount->expires_at && $discount->expires_at->isPast());
     }
 
-    private function formatOrder(Order $order): array
+    private function formatOrder(Order $order, ?array $payment = null): array
     {
         return [
             'id' => $order->id,
@@ -111,6 +130,8 @@ class CustomerCheckoutService
             'shipping_fullname' => $order->shipping_fullname,
             'shipping_mobile' => $order->shipping_mobile,
             'payment_method' => (int) $order->payment_method,
+            'payment_gateway' => $order->payment_gateway,
+            'payment_status' => $order->payment_status,
             'shipping_fee' => (int) $order->shipping_fee,
             'discount_code' => $order->discount_code ?: null,
             'discount_amount' => (int) $order->discount_amount,
@@ -123,6 +144,7 @@ class CustomerCheckoutService
                 'unit_price' => (int) $item->unit_price,
                 'total_price' => (int) $item->total_price,
             ])->values(),
+            'payment' => $payment,
         ];
     }
 }

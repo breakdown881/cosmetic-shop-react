@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import CustomerLayout from '../../components/customer/CustomerLayout.jsx';
 
 const currencyFormatter = new Intl.NumberFormat('vi-VN', {
@@ -12,10 +13,38 @@ export default function CustomerCheckoutPage({
     navItems = [],
     title = 'Thanh toán',
 }) {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const cart = checkout.cart ?? { items: [], total: 0 };
     const items = cart.items ?? [];
     const feeShips = checkout.feeShips ?? [];
     const paymentMethods = checkout.paymentMethods ?? {};
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!window.axios) {
+            event.currentTarget.submit();
+            return;
+        }
+
+        const form = event.currentTarget;
+        const payload = Object.fromEntries(new FormData(form).entries());
+
+        setIsSubmitting(true);
+        setErrorMessage('');
+
+        try {
+            const response = await window.axios.post('/checkout', payload);
+            const order = response.data?.data;
+            const redirectUrl = order?.payment?.redirect_url ?? (order?.id ? `/orders/${order.id}` : '/orders');
+
+            window.location.assign(redirectUrl);
+        } catch (error) {
+            setErrorMessage(error.response?.data?.message ?? 'Could not place order. Please try again.');
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <CustomerLayout auth={auth} navItems={navItems} title={title}>
@@ -27,7 +56,12 @@ export default function CustomerCheckoutPage({
                     </div>
                 ) : (
                     <>
-                        <form className="react-customer-checkout__form" method="post" action="/checkout">
+                        <form className="react-customer-checkout__form" method="post" action="/checkout" onSubmit={handleSubmit}>
+                            {errorMessage ? (
+                                <p className="react-customer-checkout__error" role="alert">
+                                    {errorMessage}
+                                </p>
+                            ) : null}
                             <label>
                                 Full name
                                 <input name="shipping_fullname" type="text" required />
@@ -74,7 +108,9 @@ export default function CustomerCheckoutPage({
                                 <textarea name="note" rows="4" />
                             </label>
 
-                            <button type="submit">Place order</button>
+                            <button type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? 'Placing order...' : 'Place order'}
+                            </button>
                         </form>
 
                         <aside className="react-customer-checkout__summary">

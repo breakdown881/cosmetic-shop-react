@@ -22,6 +22,8 @@ class Order extends Model
     public const PAYMENT_METHODS = [
         0 => 'Cash',
         1 => 'Bank transfer',
+        2 => 'VNPay',
+        3 => 'MoMo',
     ];
 
     protected $fillable = [
@@ -30,6 +32,10 @@ class Order extends Model
         'shipping_fullname',
         'shipping_mobile',
         'payment_method',
+        'payment_gateway',
+        'payment_status',
+        'payment_reference',
+        'paid_at',
         'shipping_ward_id',
         'shipping_housenumber_street',
         'shipping_fee',
@@ -52,6 +58,7 @@ class Order extends Model
         'staff_id' => 'integer',
         'customer_id' => 'integer',
         'payment_method' => 'integer',
+        'paid_at' => 'datetime',
         'shipping_fee' => 'integer',
         'feeship_id' => 'integer',
         'delivered_date' => 'date',
