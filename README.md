@@ -15,15 +15,17 @@
 - [Routes và API](#routes-và-api)
 - [Mô hình dữ liệu](#mô-hình-dữ-liệu)
 - [Testing và quality checks](#testing-và-quality-checks)
+- [Tài liệu mã nguồn tham chiếu](#tài-liệu-mã-nguồn-tham-chiếu)
 - [Ghi chú phát triển](#ghi-chú-phát-triển)
 - [License](#license)
 
 ## Tổng quan
 
-Dự án hiện phục vụ các nghiệp vụ phổ biến của một cửa hàng mỹ phẩm online:
+Dự án phục vụ các nghiệp vụ chính của một cửa hàng mỹ phẩm online:
 
 - Khách hàng duyệt sản phẩm theo danh mục/thương hiệu, xem chi tiết, đánh giá, thêm giỏ hàng, checkout, xem đơn hàng, quản lý tài khoản và wishlist.
-- Admin đăng nhập bằng guard riêng, quản lý catalog, đơn hàng, khách hàng, bình luận, khuyến mãi, phí ship, media, newsletter, role và staff.
+- Hệ thống hỗ trợ thanh toán qua VNPay/MoMo, newsletter, chatbot tự động, live chat giữa khách hàng với nhân viên và queue RabbitMQ.
+- Admin đăng nhập bằng guard riêng, quản lý catalog, đơn hàng, khách hàng, bình luận, khuyến mãi, phí ship, media, newsletter, live chat, role và staff.
 - Frontend React được mount từ Laravel shell thay vì dùng một SPA độc lập hoàn toàn. Public shell nằm ở `App\Support\PublicReactShell`, admin shell nằm ở `App\Support\AdminReactShell`.
 
 ## Tính năng chính
@@ -37,8 +39,10 @@ Dự án hiện phục vụ các nghiệp vụ phổ biến của một cửa h�
 - Đăng nhập mạng xã hội Google/Facebook qua Laravel Socialite.
 - Giỏ hàng, cập nhật số lượng, xóa sản phẩm khỏi giỏ.
 - Checkout, lịch sử đơn hàng, chi tiết đơn hàng và hủy đơn.
+- Tích hợp callback thanh toán VNPay/MoMo.
 - Trang tài khoản khách hàng và wishlist.
 - Chatbot message endpoint tại `/chatbot/messages`.
+- Live chat customer endpoints tại `/live-chat/conversation` và `/live-chat/messages`.
 
 ### Trang quản trị admin
 
@@ -48,11 +52,12 @@ Dự án hiện phục vụ các nghiệp vụ phổ biến của một cửa h�
 - Quản lý catalog: brands, categories, products, media và product comments.
 - Quản lý bán hàng: orders, discounts, fee ships, customers.
 - Quản lý newsletter: danh sách email và gửi email newsletter.
+- Quản lý live chat: xem hội thoại và gửi phản hồi cho khách hàng.
 - Quản lý nhân sự và phân quyền: staffs, roles.
 - Phân quyền theo role:
   - `MANAGER`: toàn quyền, gồm role/staff.
   - `ADMIN`: quản lý catalog và nghiệp vụ bán hàng chính.
-  - `STAFF`: chủ yếu xem/xử lý order, customer, discount/feeship read-only theo route hiện tại.
+  - `STAFF`: chủ yếu xem/xử lý order, customer, discount/feeship read-only và live chat theo route hiện tại.
 
 ## Công nghệ sử dụng
 
@@ -64,8 +69,10 @@ Dự án hiện phục vụ các nghiệp vụ phổ biến của một cửa h�
 | Framework | `laravel/framework ^11.0` |
 | Auth/API token | `laravel/sanctum ^4.0` |
 | Social login | `laravel/socialite ^5.14` |
-| Search | `laravel/scout`, `matchish/laravel-scout-elasticsearch`, `elasticsearch/elasticsearch` |
+| Search | `laravel/scout ^10.15`, `matchish/laravel-scout-elasticsearch ^7.11`, `elasticsearch/elasticsearch ^8.18` |
 | Media | `spatie/laravel-medialibrary ^11.13` |
+| Queue | `vladimir-yuldashev/laravel-queue-rabbitmq ^15.0` |
+| HTTP client | Guzzle, PHP HTTP adapter/discovery |
 | Test PHP | PHPUnit 10 |
 | Dev tools | Laravel Pint, Sail, Tinker, Ignition |
 
@@ -92,11 +99,11 @@ flowchart LR
     PublicShell --> PublicReact["React public islands"]
     AdminShell --> AdminReact["React admin SPA"]
 
-    PublicReact --> WebActions["Customer web actions"]
+    PublicReact --> CustomerActions["Customer web actions"]
     AdminReact --> AdminApi["/admin/api/*"]
     ApiRoutes --> ProtectedApi["/api/* Sanctum API"]
 
-    WebActions --> CustomerControllers["Customer Controllers"]
+    CustomerActions --> CustomerControllers["Customer Controllers"]
     AdminApi --> ApiControllers["API Controllers"]
     ProtectedApi --> ApiControllers
 
@@ -110,6 +117,7 @@ flowchart LR
     Models --> DB[("MySQL/MariaDB")]
     Models --> Scout["Laravel Scout / Elasticsearch"]
     Models --> Media["Spatie Media Library"]
+    CustomerServices --> Payments["VNPay / MoMo gateways"]
 ```
 
 ### Luồng public
@@ -130,7 +138,7 @@ flowchart LR
 
 ### Luồng API token
 
-`routes/api.php` expose các endpoint tương tự cho client có Sanctum token. Tất cả route trong file này đang nằm trong middleware `auth:sanctum` và được phân quyền bằng `admin.role`.
+`routes/api.php` expose các endpoint quản trị dưới prefix `/api/*`, yêu cầu `auth:sanctum` và phân quyền bằng `admin.role`.
 
 ## Cấu trúc thư mục
 
@@ -145,7 +153,10 @@ app/
     Requests/             # Form Request validation
   Models/                 # Eloquent models: Product, Brand, Order, User, Admin...
   Repositories/           # Repository layer cho admin/api/customer modules
-  Services/               # Service layer tách nghiệp vụ khỏi controller
+  Services/
+    Admin/                # Nghiệp vụ admin: dashboard, order, live chat, newsletter...
+    Api/                  # Nghiệp vụ API catalog
+    Customer/             # Nghiệp vụ customer site, payment, live chat, auth...
   Support/                # PublicReactShell và AdminReactShell
 
 config/                   # Laravel config: auth, scout, media-library, services...
@@ -179,7 +190,9 @@ tests/                    # PHPUnit feature/unit tests
 - Node.js 20+ và npm
 - MySQL hoặc MariaDB
 - Elasticsearch 8.x nếu dùng Scout Elasticsearch
+- RabbitMQ nếu dùng queue theo cấu hình mặc định trong `.env.example`
 - Mailpit hoặc SMTP server nếu test newsletter/email
+- Tài khoản sandbox VNPay/MoMo nếu kiểm thử thanh toán online
 
 ## Cài đặt và chạy local
 
@@ -288,6 +301,43 @@ FACEBOOK_CLIENT_SECRET=
 FACEBOOK_REDIRECT_URI=${APP_URL}/auth/facebook/callback
 ```
 
+### Thanh toán VNPay/MoMo
+
+`.env.example` có sẵn cấu hình sandbox cho VNPay và MoMo:
+
+```env
+VNPAY_TMN_CODE=
+VNPAY_HASH_SECRET=
+VNPAY_PAYMENT_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+VNPAY_RETURN_URL=${APP_URL}/payments/vnpay/return
+MOMO_PARTNER_CODE=
+MOMO_ACCESS_KEY=
+MOMO_SECRET_KEY=
+MOMO_ENDPOINT=https://test-payment.momo.vn/v2/gateway/api/create
+MOMO_REDIRECT_URL=${APP_URL}/payments/momo/return
+MOMO_IPN_URL=${APP_URL}/payments/momo/ipn
+MOMO_REQUEST_TYPE=payWithMethod
+```
+
+Theo `CustomerPaymentService`, `payment_method = 2` khởi tạo VNPay và `payment_method = 3` khởi tạo MoMo.
+
+### Queue RabbitMQ
+
+`.env.example` đang đặt queue mặc định là RabbitMQ:
+
+```env
+QUEUE_CONNECTION=rabbitmq
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_VHOST=/
+RABBITMQ_QUEUE=default
+RABBITMQ_QUEUE_MAX_PRIORITY=10
+```
+
+Nếu môi trường local chưa chạy RabbitMQ, có thể đổi `QUEUE_CONNECTION=sync` để phát triển nhanh các flow không cần queue worker.
+
 ### Scout và Elasticsearch
 
 ```env
@@ -333,9 +383,10 @@ Laravel shell render dạng:
 | Auth khách hàng | `GET/POST /login`, `GET/POST /register`, `POST /logout` |
 | Social auth | `GET /auth/{provider}/redirect`, `GET /auth/{provider}/callback` |
 | Cart | `GET /cart`, `POST /cart/items`, `PATCH /cart/items/{product}`, `DELETE /cart/items/{product}` |
-| Checkout/order | `GET/POST /checkout`, `GET /orders`, `GET /orders/{order}`, `PATCH /orders/{order}/cancel` |
+| Checkout/order | `GET/POST /checkout`, `GET /checkout/requests/{checkoutRequest}`, `GET /orders`, `GET /orders/{order}`, `PATCH /orders/{order}/cancel` |
+| Payment callbacks | `GET /payments/vnpay/return`, `GET /payments/momo/return`, `POST /payments/momo/ipn` |
 | Account/wishlist | `GET/PATCH /account`, `GET /wishlist`, `POST /wishlist/items`, `DELETE /wishlist/items/{product}` |
-| Review/chatbot | `POST /products/{product}/reviews`, `POST /chatbot/messages` |
+| Review/chatbot/live chat | `POST /products/{product}/reviews`, `POST /chatbot/messages`, `GET /live-chat/conversation`, `POST /live-chat/messages` |
 
 ### Admin web/API routes
 
@@ -344,10 +395,11 @@ Laravel shell render dạng:
 | Admin auth | `GET /admin/login`, `POST /admin/login`, `POST /admin/logout` |
 | Admin SPA | `GET /admin/{path?}` |
 | Dashboard | `GET /admin/api/dashboard` |
-| Catalog | `/admin/api/brands`, `/admin/api/categories`, `/admin/api/products` |
+| Catalog | `/admin/api/brands`, `/admin/api/categories`, `/admin/api/products`, `/admin/api/products/search` |
 | Media/newsletter | `/admin/api/media`, `/admin/api/newsletters`, `/admin/api/newsletters/send` |
-| Sales | `/admin/api/orders`, `/admin/api/discounts`, `/admin/api/feeships` |
+| Sales | `/admin/api/orders`, `/admin/api/order-options`, `/admin/api/discounts`, `/admin/api/feeships` |
 | Customers/comments | `/admin/api/customers`, `/admin/api/comments`, `/admin/api/products/{product}/comments` |
+| Live chat | `/admin/api/live-chat/conversations`, `/admin/api/live-chat/conversations/{conversation}`, `/admin/api/live-chat/conversations/{conversation}/messages` |
 | Staff/roles | `/admin/api/staffs`, `/admin/api/roles` |
 
 ### Protected API routes
@@ -366,8 +418,8 @@ Các bảng chính được tạo bởi migrations:
 
 - Auth: `users`, `admins`, `password_reset_tokens`, `personal_access_tokens`.
 - Catalog: `brands`, `categories`, `products`, `media`.
-- Customer interactions: `comments`, `shopping_cart`, `customer_wishlist`, `chatbot_messages`, `news_letters`.
-- Order/shipping: `orders`, `order_items`, `discounts`, `transports`, `provinces`, `districts`, `wards`.
+- Customer interactions: `comments`, `shopping_cart`, `customer_wishlist`, `chatbot_messages`, `customer_checkout_requests`, `live_chat_conversations`, `live_chat_messages`, `news_letters`.
+- Order/shipping/payment: `orders`, `order_items`, `discounts`, `transports`, `provinces`, `districts`, `wards`.
 - Authorization: `roles`, `permissions`, `permission_role`.
 - System: `failed_jobs`.
 
@@ -376,8 +428,9 @@ Một số quan hệ/nghiệp vụ đáng chú ý:
 - `Product`, `Brand`, `Category` có tích hợp Laravel Scout để hỗ trợ search.
 - `Brand` tích hợp Spatie Media Library.
 - `Discount` dùng soft deletes.
-- `Order` có `order_items`, thông tin phí ship và ghi chú theo migration mở rộng.
+- `Order` có `order_items`, thông tin phí ship, ghi chú và trạng thái giao dịch thanh toán theo các migration mở rộng.
 - `User` có thêm trường social auth cho Google/Facebook.
+- Live chat tách hội thoại (`live_chat_conversations`) và tin nhắn (`live_chat_messages`) để hỗ trợ nhiều tin nhắn trên cùng một phiên; migration mới cũng bổ sung trạng thái queue cho message.
 
 ## Testing và quality checks
 
@@ -413,6 +466,21 @@ Trên Windows PowerShell có thể chạy:
 ```powershell
 vendor\bin\pint.bat
 ```
+
+## Tài liệu mã nguồn tham chiếu
+
+Một số file nên đọc khi onboarding hoặc sửa tính năng lớn:
+
+- `routes/web.php`: khai báo public routes, admin session API và admin SPA catch-all.
+- `routes/api.php`: khai báo API dùng Sanctum token.
+- `app/Support/PublicReactShell.php`: HTML shell cho website khách hàng.
+- `app/Support/AdminReactShell.php`: HTML shell cho admin SPA.
+- `resources/js/public.jsx`: registry React islands cho public site.
+- `resources/js/admin.jsx`: registry React islands cho admin site.
+- `resources/js/pages/admin/AdminPageRouter.jsx`: router phía client cho admin SPA.
+- `app/Services/Customer/CustomerPaymentService.php`: điều phối thanh toán VNPay/MoMo.
+- `app/Services/Customer/CustomerLiveChatService.php`: nghiệp vụ live chat phía khách hàng.
+- `app/Services/Admin/LiveChatService.php`: nghiệp vụ live chat phía admin.
 
 ## License
 
