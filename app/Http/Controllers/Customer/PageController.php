@@ -14,11 +14,6 @@ class PageController extends Controller
         private readonly PublicReactShell $shell,
     ) {}
 
-    public function checkout(): Response
-    {
-        return $this->placeholder('Thanh toán', 'Checkout flow will be implemented after cart.');
-    }
-
     public function orders(): Response
     {
         return $this->placeholder('Đơn hàng của tôi', 'Customer order history will be implemented after checkout.');

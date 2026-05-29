@@ -44,6 +44,11 @@ class CustomerCartService
         return $this->payload($session);
     }
 
+    public function clear(Store $session): void
+    {
+        $session->put(self::SESSION_KEY, []);
+    }
+
     public function props(Store $session, array $navItems): array
     {
         return [

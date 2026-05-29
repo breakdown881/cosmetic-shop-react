@@ -875,6 +875,99 @@
     font-size: 1.6rem;
 }
 
+.react-customer-checkout {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #f7d5e5;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(138, 33, 88, 0.08);
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    padding: 1rem;
+}
+
+.react-customer-checkout__empty {
+    grid-column: 1 / -1;
+}
+
+.react-customer-checkout__empty a {
+    background: #d81b72;
+    border-radius: 999px;
+    color: #fff;
+    display: inline-flex;
+    font-weight: 900;
+    padding: 0.75rem 1rem;
+}
+
+.react-customer-checkout__form {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.react-customer-checkout__form label {
+    color: #6f405a;
+    display: grid;
+    font-weight: 800;
+    gap: 0.35rem;
+}
+
+.react-customer-checkout__form input,
+.react-customer-checkout__form select,
+.react-customer-checkout__form textarea {
+    border: 1px solid #f1bfd4;
+    border-radius: 12px;
+    min-height: 42px;
+    padding: 0.55rem 0.75rem;
+}
+
+.react-customer-checkout__form label:nth-child(4),
+.react-customer-checkout__form label:nth-child(8),
+.react-customer-checkout__form button {
+    grid-column: 1 / -1;
+}
+
+.react-customer-checkout__form button {
+    background: #d81b72;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 900;
+    justify-self: start;
+    min-height: 46px;
+    padding: 0.75rem 1.25rem;
+}
+
+.react-customer-checkout__summary {
+    align-self: start;
+    background: #fff8fb;
+    border: 1px solid #f7d5e5;
+    border-radius: 18px;
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.react-customer-checkout__summary h2 {
+    margin: 0;
+}
+
+.react-customer-checkout__item,
+.react-customer-checkout__total {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+}
+
+.react-customer-checkout__total {
+    border-top: 1px solid #f7d5e5;
+    color: #d81b72;
+    font-size: 1.2rem;
+    font-weight: 900;
+    padding-top: 0.75rem;
+}
+
 @media (max-width: 991px) {
     .react-customer-layout {
         padding: 0.75rem;
@@ -902,7 +995,9 @@
     }
 
     .react-customer-cart,
-    .react-customer-cart__item {
+    .react-customer-cart__item,
+    .react-customer-checkout,
+    .react-customer-checkout__form {
         grid-template-columns: 1fr;
     }
 
