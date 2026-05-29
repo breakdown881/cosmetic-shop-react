@@ -12,9 +12,15 @@ class PublicReactShell
 
     public function welcome(): Response
     {
-        $props = $this->homeService->props();
+        return $this->render('Home', $this->homeService->props(), 'Goda Shop');
+    }
+
+    public function render(string $component, array $props, string $title = 'Goda Shop'): Response
+    {
         $jsonProps = htmlspecialchars(json_encode($props, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG), ENT_QUOTES, 'UTF-8');
         $vite = Vite::useHotFile(public_path('hot'))(['resources/css/public.css', 'resources/js/public.jsx']);
+        $escapedComponent = htmlspecialchars($component, ENT_QUOTES, 'UTF-8');
+        $escapedTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
         return response(<<<HTML
 <!DOCTYPE html>
@@ -22,11 +28,11 @@ class PublicReactShell
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Goda Shop</title>
+    <title>{$escapedTitle}</title>
     {$vite}
 </head>
 <body class="customer-site antialiased">
-    <div id="react-public-shell" data-react-component="Home" data-props='{$jsonProps}'></div>
+    <div id="react-public-shell" data-react-component="{$escapedComponent}" data-props='{$jsonProps}'></div>
 </body>
 </html>
 HTML);

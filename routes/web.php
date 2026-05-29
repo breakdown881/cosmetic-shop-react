@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\SpaController;
+use App\Http\Controllers\Customer\PageController as CustomerPageController;
+use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DashboardController as ApiDashboardController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
@@ -26,6 +28,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return app(\App\Support\PublicReactShell::class)->welcome();
 });
+Route::get('/products', [CustomerProductController::class, 'index'])->name('customer.products.index');
+Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
+Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
+Route::get('/cart', [CustomerPageController::class, 'cart'])->name('customer.cart.show');
+Route::get('/checkout', [CustomerPageController::class, 'checkout'])->name('customer.checkout.show');
+Route::get('/orders', [CustomerPageController::class, 'orders'])->name('customer.orders.index');
+Route::get('/account', [CustomerPageController::class, 'account'])->name('customer.account.show');
 
 Route::prefix('admin')->group(function () {
     Route::get('login', [LoginController::class, 'index'])->name('admin.login.form');
