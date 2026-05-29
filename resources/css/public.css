@@ -968,6 +968,82 @@
     padding-top: 0.75rem;
 }
 
+.react-customer-orders {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #f7d5e5;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(138, 33, 88, 0.08);
+    padding: 1rem;
+}
+
+.react-customer-orders__empty p {
+    color: #6f405a;
+    font-size: 1.1rem;
+}
+
+.react-customer-orders__empty a {
+    background: #d81b72;
+    border-radius: 999px;
+    color: #fff;
+    display: inline-flex;
+    font-weight: 900;
+    padding: 0.75rem 1rem;
+}
+
+.react-customer-orders__list {
+    display: grid;
+    gap: 1rem;
+}
+
+.react-customer-orders__card {
+    border: 1px solid #f7d5e5;
+    border-radius: 18px;
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+}
+
+.react-customer-orders__card-header,
+.react-customer-orders__card footer,
+.react-customer-orders__card li {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+}
+
+.react-customer-orders__card h2,
+.react-customer-orders__card p {
+    margin: 0;
+}
+
+.react-customer-orders__card-header > span {
+    background: #fff0f6;
+    border-radius: 999px;
+    color: #b50e5b;
+    font-weight: 900;
+    padding: 0.35rem 0.65rem;
+}
+
+.react-customer-orders__card ul {
+    display: grid;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.react-customer-orders__card footer {
+    border-top: 1px solid #f7d5e5;
+    color: #6f405a;
+    padding-top: 0.75rem;
+}
+
+.react-customer-orders__card footer strong {
+    color: #d81b72;
+    font-size: 1.25rem;
+}
+
 @media (max-width: 991px) {
     .react-customer-layout {
         padding: 0.75rem;

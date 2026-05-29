@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\SpaController;
 use App\Http\Controllers\Customer\CartController as CustomerCartController;
 use App\Http\Controllers\Customer\CheckoutController as CustomerCheckoutController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
@@ -40,7 +41,7 @@ Route::patch('/cart/items/{product}', [CustomerCartController::class, 'update'])
 Route::delete('/cart/items/{product}', [CustomerCartController::class, 'destroy'])->name('customer.cart.items.destroy');
 Route::get('/checkout', [CustomerCheckoutController::class, 'show'])->name('customer.checkout.show');
 Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('customer.checkout.store');
-Route::get('/orders', [CustomerPageController::class, 'orders'])->name('customer.orders.index');
+Route::get('/orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');
 Route::get('/account', [CustomerPageController::class, 'account'])->name('customer.account.show');
 
 Route::prefix('admin')->group(function () {
