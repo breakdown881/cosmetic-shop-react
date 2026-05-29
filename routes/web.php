@@ -11,9 +11,11 @@ use App\Http\Controllers\Customer\LiveChatController as CustomerLiveChatControll
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
 use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
+use App\Http\Controllers\Customer\PromotionController as CustomerPromotionController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Customer\SocialAuthController as CustomerSocialAuthController;
 use App\Http\Controllers\Customer\ReviewController as CustomerReviewController;
+use App\Http\Controllers\Customer\NewsletterController as CustomerNewsletterController;
 use App\Http\Controllers\Customer\WishlistController as CustomerWishlistController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DashboardController as ApiDashboardController;
@@ -47,6 +49,9 @@ Route::post('/products/{product}/reviews', [CustomerReviewController::class, 'st
 Route::get('/products/{product}', [CustomerProductController::class, 'show'])->name('customer.products.show');
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
+Route::get('/promotions', [CustomerPromotionController::class, 'index'])->name('customer.promotions.index');
+Route::post('/cart/vouchers/validate', [CustomerPromotionController::class, 'validateVoucher'])->name('customer.cart.vouchers.validate');
+Route::post('/newsletter/subscribe', [CustomerNewsletterController::class, 'store'])->name('customer.newsletter.subscribe');
 Route::post('/chatbot/messages', [CustomerChatbotController::class, 'store'])->name('customer.chatbot.messages.store');
 Route::get('/live-chat/conversation', [CustomerLiveChatController::class, 'show'])->name('customer.live-chat.show');
 Route::post('/live-chat/messages', [CustomerLiveChatController::class, 'store'])->name('customer.live-chat.messages.store');

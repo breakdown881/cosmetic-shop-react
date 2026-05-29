@@ -61,6 +61,18 @@ export default function CustomerCartPage({
                         <aside className="react-customer-cart__summary">
                             <span>Total</span>
                             <strong>{currencyFormatter.format(cart.total ?? 0)}</strong>
+                            <form
+                                method="post"
+                                action="/cart/vouchers/validate"
+                                aria-label="Validate voucher"
+                                className="react-customer-cart__voucher-form"
+                            >
+                                <label>
+                                    Voucher code
+                                    <input name="discount_code" type="text" />
+                                </label>
+                                <button type="submit">Apply voucher</button>
+                            </form>
                             <a href="/checkout">Checkout</a>
                         </aside>
                     </>

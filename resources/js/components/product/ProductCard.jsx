@@ -28,6 +28,10 @@ export default function ProductCard({ product, onAddToCart }) {
     const productUrl = product.url ?? product.href ?? '#';
     const imageUrl = resolveProductImage(product);
     const hasDiscount = regularPrice > 0 && salePrice > 0 && regularPrice !== salePrice;
+    const explicitDiscountPercentage = Number(product.discount_percentage ?? product.discountPercentage ?? 0);
+    const discountPercentage = explicitDiscountPercentage > 0
+        ? explicitDiscountPercentage
+        : (hasDiscount ? Math.round(((regularPrice - salePrice) / regularPrice) * 100) : 0);
 
     const handleAddToCart = () => {
         onAddToCart?.(product);
@@ -43,6 +47,12 @@ export default function ProductCard({ product, onAddToCart }) {
 
     return (
         <article className="react-product-card">
+            {hasDiscount && discountPercentage > 0 && (
+                <span className="react-product-card__sale-badge">
+                    -{discountPercentage}%
+                </span>
+            )}
+
             {imageUrl && (
                 <a className="react-product-card__image" href={productUrl}>
                     <img src={imageUrl} alt={product.name ?? 'Product'} loading="lazy" />

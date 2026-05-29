@@ -3,12 +3,17 @@
 namespace App\Services\Customer;
 
 use App\Models\Category;
+use App\Models\Discount;
 use App\Models\Product;
 use App\Repositories\Customer\CustomerHomeRepository;
+use App\Repositories\Customer\CustomerPromotionRepository;
 
 class CustomerHomeService
 {
-    public function __construct(private readonly CustomerHomeRepository $homeRepository) {}
+    public function __construct(
+        private readonly CustomerHomeRepository $homeRepository,
+        private readonly CustomerPromotionRepository $promotionRepository,
+    ) {}
 
     public function props(): array
     {
@@ -25,6 +30,10 @@ class CustomerHomeService
         return [
             'slides' => $this->slides(),
             'navItems' => $this->navItems(),
+            'promotions' => $this->promotionRepository->activeDiscounts()
+                ->take(3)
+                ->map(fn (Discount $discount) => $this->formatPromotion($discount))
+                ->values(),
             'categories' => $categories
                 ->map(fn (Category $category) => $this->formatCategory($category, $formattedProducts))
                 ->values(),
@@ -107,6 +116,18 @@ class CustomerHomeService
             'featured' => (bool) $product->featured,
             'featured_image' => $mediaUrls[$product->media_id] ?? asset('adm/images/godakeben450x170.jpg'),
             'url' => '#product-' . $product->id,
+        ];
+    }
+
+    private function formatPromotion(Discount $discount): array
+    {
+        return [
+            'code' => $discount->code,
+            'description' => $discount->description,
+            'label' => (int) $discount->is_fixed === 1
+                ? number_format((int) $discount->discount_amount, 0, ',', '.') . ' VND'
+                : ((int) $discount->discount_amount) . '%',
+            'expires_at' => optional($discount->expires_at)->toDateTimeString(),
         ];
     }
 }

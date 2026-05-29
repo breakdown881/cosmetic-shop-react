@@ -36,6 +36,14 @@ describe('Home', () => {
             <Home
                 categories={categories}
                 categorySections={categorySections}
+                promotions={[
+                    {
+                        code: 'BEAUTY50',
+                        description: 'Giam 50.000 cho don skincare',
+                        label: '50.000 VND',
+                        expires_at: '2026-05-30 10:00:00',
+                    },
+                ]}
                 slides={[
                     {
                         title: 'Sale mỹ phẩm',
@@ -53,8 +61,11 @@ describe('Home', () => {
         expect(screen.getByRole('complementary', { name: 'Điều hướng danh mục' })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: /Chăm sóc da/ })).toHaveAttribute('href', '#category-1');
         expect(screen.getByRole('heading', { name: 'Sản phẩm nổi bật' })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Voucher khuyen mai' })).toBeInTheDocument();
+        expect(screen.getByText('BEAUTY50')).toBeInTheDocument();
         expect(screen.getAllByRole('link', { name: 'Serum dưỡng sáng' })[0]).toHaveAttribute('href', '#product-10');
         expect(screen.getByText('Danh mục này chưa có sản phẩm nổi bật.')).toBeInTheDocument();
+        expect(screen.getByRole('form', { name: 'Newsletter signup' })).toHaveAttribute('action', '/newsletter/subscribe');
     });
 
     it('surfaces page errors to the user', () => {

@@ -50,6 +50,7 @@ describe('CustomerCheckoutPage', () => {
         expect(screen.getByLabelText('Address')).toHaveAttribute('name', 'shipping_housenumber_street');
         expect(screen.getByLabelText('Shipping fee')).toHaveValue('9');
         expect(screen.getByLabelText('Payment method')).toHaveValue('0');
+        expect(screen.getByLabelText('Discount code')).toHaveAttribute('name', 'discount_code');
         expect(screen.getByText('Checkout Serum')).toBeInTheDocument();
         expect(screen.getByText(/540\.000/)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Place order' })).toBeEnabled();

@@ -21,6 +21,7 @@ import CustomerOrderHistoryPage from './pages/customer/CustomerOrderHistoryPage.
 import CustomerPlaceholderPage from './pages/customer/CustomerPlaceholderPage.jsx';
 import CustomerProductIndex from './pages/customer/CustomerProductIndex.jsx';
 import CustomerProductShow from './pages/customer/CustomerProductShow.jsx';
+import CustomerPromotionPage from './pages/customer/CustomerPromotionPage.jsx';
 import CustomerRegisterPage from './pages/customer/CustomerRegisterPage.jsx';
 import CustomerWishlistPage from './pages/customer/CustomerWishlistPage.jsx';
 import Home from './pages/Home.jsx';
@@ -40,6 +41,7 @@ mountReactIslands({
     CustomerPlaceholderPage,
     CustomerProductIndex,
     CustomerProductShow,
+    CustomerPromotionPage,
     CustomerRegisterPage,
     CustomerWishlistPage,
     Home,

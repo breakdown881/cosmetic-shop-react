@@ -1,5 +1,6 @@
 import CustomerChatbotWidget from './CustomerChatbotWidget.jsx';
 import CustomerLiveChatWidget from './CustomerLiveChatWidget.jsx';
+import NewsletterSignup from './NewsletterSignup.jsx';
 
 export default function CustomerLayout({ auth = null, children, navItems = [], title = 'Goda Shop' }) {
     const customer = auth?.user;
@@ -40,8 +41,11 @@ export default function CustomerLayout({ auth = null, children, navItems = [], t
             </main>
 
             <footer className="react-customer-layout__footer">
-                <strong>Goda Shop</strong>
-                <span> Mỹ phẩm chính hãng, chăm sóc sắc đẹp mỗi ngày.</span>
+                <div>
+                    <strong>Goda Shop</strong>
+                    <span> Mỹ phẩm chính hãng, chăm sóc sắc đẹp mỗi ngày.</span>
+                </div>
+                <NewsletterSignup />
             </footer>
             <CustomerChatbotWidget />
             <CustomerLiveChatWidget />

@@ -26,6 +26,8 @@ describe('CustomerCartPage', () => {
         expect(screen.getByRole('link', { name: 'Cart Serum' })).toHaveAttribute('href', '/products/5');
         expect(screen.getByDisplayValue('2')).toHaveAttribute('name', 'quantity');
         expect(screen.getAllByText(/400\.000/)[0]).toBeInTheDocument();
+        expect(screen.getByLabelText('Voucher code')).toHaveAttribute('name', 'discount_code');
+        expect(screen.getByRole('form', { name: 'Validate voucher' })).toHaveAttribute('action', '/cart/vouchers/validate');
         expect(screen.getByRole('link', { name: 'Checkout' })).toHaveAttribute('href', '/checkout');
         expect(screen.queryByText(/Admin/i)).not.toBeInTheDocument();
     });

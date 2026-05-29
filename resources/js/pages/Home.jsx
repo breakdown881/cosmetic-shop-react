@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import NewsletterSignup from '../components/customer/NewsletterSignup.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 
 const defaultSlides = [
@@ -171,12 +172,40 @@ const CategorySection = ({ section }) => (
     </section>
 );
 
+const PromotionSection = ({ promotions = [] }) => (
+    <section className="react-home__promotions" aria-labelledby="home-promotions-title">
+        <div className="react-home__section-heading">
+            <div>
+                <span className="react-home__eyebrow">Beauty deal</span>
+                <h2 id="home-promotions-title">Voucher khuyen mai</h2>
+            </div>
+            <a href="/promotions">Xem tat ca</a>
+        </div>
+
+        {promotions.length ? (
+            <div className="react-home__promotion-grid">
+                {promotions.map((promotion) => (
+                    <article className="react-home__promotion-card" key={promotion.code}>
+                        <strong>{promotion.code}</strong>
+                        <p>{promotion.description}</p>
+                        <span>{promotion.label}</span>
+                        {promotion.expires_at ? <small>Het han: {promotion.expires_at}</small> : null}
+                    </article>
+                ))}
+            </div>
+        ) : (
+            <EmptyState message="No active promotions right now." />
+        )}
+    </section>
+);
+
 export default function Home({
     categories = [],
     categorySections = [],
     errorMessage = '',
     isLoading = false,
     navItems = defaultNavItems,
+    promotions = [],
     slides = defaultSlides,
 }) {
     const normalizedSlides = slides.length ? slides : defaultSlides;
@@ -213,6 +242,8 @@ export default function Home({
 
             <AdvertisementSlider slides={normalizedSlides} />
 
+            <PromotionSection promotions={promotions} />
+
             <div className="react-home__layout">
                 <CategoryMenu categories={categories} />
 
@@ -243,6 +274,10 @@ export default function Home({
                     )}
                 </div>
             </div>
+
+            <section className="react-home__newsletter">
+                <NewsletterSignup />
+            </section>
         </main>
     );
 }
