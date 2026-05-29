@@ -1,135 +1,136 @@
 ﻿# Cosmetic Shop React + Laravel
 
-Ứng dụng quản lý và bán mỹ phẩm được xây dựng bằng **Laravel 11**, **Blade**, **React 19** và **Vite**. Mã nguồn hiện kết hợp server-rendered Blade với các **React islands** cho giao diện public/admin, có khu vực quản trị `/admin`, CRUD API cho catalog, phân quyền admin theo role và nền tảng dữ liệu cho giỏ hàng, đơn hàng, địa chỉ giao hàng, khuyến mãi, bình luận và newsletter.
+Ứng dụng thương mại điện tử bán mỹ phẩm được xây dựng bằng **Laravel 11**, **React 19**, **Vite** và mô hình **React islands**. Dự án có hai khu vực chính: website khách hàng và trang quản trị admin dạng SPA, dùng chung backend Laravel, Eloquent models, service/repository layer và các API JSON.
 
 ## Mục lục
 
-- [Tính năng hiện có](#tính-năng-hiện-có)
+- [Tổng quan](#tổng-quan)
+- [Tính năng chính](#tính-năng-chính)
 - [Công nghệ sử dụng](#công-nghệ-sử-dụng)
-- [Kiến trúc tổng quan](#kiến-trúc-tổng-quan)
+- [Kiến trúc hệ thống](#kiến-trúc-hệ-thống)
 - [Cấu trúc thư mục](#cấu-trúc-thư-mục)
 - [Yêu cầu môi trường](#yêu-cầu-môi-trường)
-- [Cài đặt và chạy dự án](#cài-đặt-và-chạy-dự-án)
+- [Cài đặt và chạy local](#cài-đặt-và-chạy-local)
 - [Cấu hình quan trọng](#cấu-hình-quan-trọng)
-- [Scripts thường dùng](#scripts-thường-dùng)
-- [Routes chính](#routes-chính)
-- [API](#api)
+- [Routes và API](#routes-và-api)
 - [Mô hình dữ liệu](#mô-hình-dữ-liệu)
-- [Kiểm thử](#kiểm-thử)
+- [Testing và quality checks](#testing-và-quality-checks)
 - [Ghi chú phát triển](#ghi-chú-phát-triển)
+- [License](#license)
 
-## Tính năng hiện có
+## Tổng quan
 
-### Public frontend
+Dự án hiện phục vụ các nghiệp vụ phổ biến của một cửa hàng mỹ phẩm online:
 
-- Trang welcome tại `/` dùng React component `PublicWelcomePage`.
-- Hệ component public cho header, sidebar, footer, auth modal, cart modal, product card/grid, cart và shipping address form.
-- React islands được mount qua thuộc tính `data-react-component` trong Blade.
-- Các JS service dùng Axios để gọi API: brand, category, product/search.
-- Có view/layout public trong `resources/views/layout`, tuy nhiên một số route được layout tham chiếu như `product.index`, `login`, `register`, `payment.create`, `customer.orders` chưa thấy được khai báo trong `routes/web.php` hiện tại.
+- Khách hàng duyệt sản phẩm theo danh mục/thương hiệu, xem chi tiết, đánh giá, thêm giỏ hàng, checkout, xem đơn hàng, quản lý tài khoản và wishlist.
+- Admin đăng nhập bằng guard riêng, quản lý catalog, đơn hàng, khách hàng, bình luận, khuyến mãi, phí ship, media, newsletter, role và staff.
+- Frontend React được mount từ Laravel shell thay vì dùng một SPA độc lập hoàn toàn. Public shell nằm ở `App\Support\PublicReactShell`, admin shell nằm ở `App\Support\AdminReactShell`.
 
-### Admin web
+## Tính năng chính
 
-- Đăng nhập/đăng xuất admin qua guard riêng `admin`.
-- Middleware `admin` kiểm tra đăng nhập và trạng thái active.
-- Middleware `admin.role` giới hạn quyền theo role.
-- Dashboard admin bằng React component `AdminDashboard`.
-- CRUD web cho:
-  - Brand
-  - Category, bao gồm danh mục cha/con
-  - Product
-- Giao diện bảng/form admin dùng các component React tái sử dụng:
-  - `AdminResourceTable`
-  - `AdminResourceForm`
-  - `AdminApiResourceManager`
-  - `AdminSidebar`, `AdminTopNav`, `AdminFooterLogout`
-- Trang quản lý role và staff dùng API resource manager.
+### Website khách hàng
 
-### Admin/API
+- Trang chủ `/` render React component `Home` với dữ liệu từ `CustomerHomeService`.
+- Danh sách sản phẩm `/products`, lọc theo danh mục `/categories/{category}` và thương hiệu `/brands/{brand}`.
+- Trang chi tiết sản phẩm `/products/{product}` và gửi review qua `/products/{product}/reviews`.
+- Đăng ký, đăng nhập, đăng xuất bằng guard web mặc định.
+- Đăng nhập mạng xã hội Google/Facebook qua Laravel Socialite.
+- Giỏ hàng, cập nhật số lượng, xóa sản phẩm khỏi giỏ.
+- Checkout, lịch sử đơn hàng, chi tiết đơn hàng và hủy đơn.
+- Trang tài khoản khách hàng và wishlist.
+- Chatbot message endpoint tại `/chatbot/messages`.
 
-- API catalog được bảo vệ bằng `auth:sanctum` và `admin.role`:
-  - Brands
-  - Categories
-  - Products
-  - Product search
-- API quản lý staff và role:
-  - Staffs: role `MANAGER`, `ADMIN`
-  - Roles: role `MANAGER`
-- Nhánh web `/admin/api/*` cũng expose API role/staff cho giao diện admin session.
+### Trang quản trị admin
 
-### Search và media
-
-- Laravel Scout + Matchish Elasticsearch được cấu hình cho search.
-- Model có Scout Searchable:
-  - `Brand` → index `brands_index`
-  - `Category`
-  - `Product`
-- `Brand` tích hợp Spatie Media Library với collection `brands`.
+- Admin login/logout tại `/admin/login` và `/admin/logout`.
+- Admin SPA catch-all tại `/admin/{path?}` sau khi qua middleware `admin`.
+- Dashboard tổng quan.
+- Quản lý catalog: brands, categories, products, media và product comments.
+- Quản lý bán hàng: orders, discounts, fee ships, customers.
+- Quản lý newsletter: danh sách email và gửi email newsletter.
+- Quản lý nhân sự và phân quyền: staffs, roles.
+- Phân quyền theo role:
+  - `MANAGER`: toàn quyền, gồm role/staff.
+  - `ADMIN`: quản lý catalog và nghiệp vụ bán hàng chính.
+  - `STAFF`: chủ yếu xem/xử lý order, customer, discount/feeship read-only theo route hiện tại.
 
 ## Công nghệ sử dụng
 
 ### Backend
 
-| Thành phần | Phiên bản/Gói |
+| Thành phần | Gói/Phiên bản |
 |---|---|
 | PHP | `^8.2` |
-| Laravel | `^11.0` |
+| Framework | `laravel/framework ^11.0` |
 | Auth/API token | `laravel/sanctum ^4.0` |
-| Search | `laravel/scout ^10.15`, `matchish/laravel-scout-elasticsearch ^7.11`, `elasticsearch/elasticsearch ^8.18` |
+| Social login | `laravel/socialite ^5.14` |
+| Search | `laravel/scout`, `matchish/laravel-scout-elasticsearch`, `elasticsearch/elasticsearch` |
 | Media | `spatie/laravel-medialibrary ^11.13` |
-| HTTP | Guzzle, PHP HTTP adapter/discovery |
-| Test PHP | PHPUnit `^10.1` |
-| Dev tooling | Laravel Pint, Sail, Collision, Ignition |
+| Test PHP | PHPUnit 10 |
+| Dev tools | Laravel Pint, Sail, Tinker, Ignition |
 
 ### Frontend
 
-| Thành phần | Phiên bản/Gói |
+| Thành phần | Gói/Phiên bản |
 |---|---|
 | React | `^19.2.6` |
 | React DOM | `^19.2.6` |
 | Vite | `^6.4.2` |
 | Laravel Vite Plugin | `^1.0.0` |
-| Axios | `^1.6.4` |
-| Test JS | Vitest `^4.1.7`, Testing Library, Happy DOM/JSDOM |
+| HTTP client | Axios |
+| Test JS | Vitest, Testing Library, Happy DOM/JSDOM |
 
-## Kiến trúc tổng quan
+## Kiến trúc hệ thống
 
 ```mermaid
 flowchart LR
-    Browser["Browser"] --> WebRoutes["Laravel web routes"]
-    WebRoutes --> Blade["Blade views"]
-    Blade --> Islands["React islands"]
-    Islands --> Axios["Axios services"]
-    Axios --> ApiRoutes["API routes"]
+    Browser["Browser"] --> WebRoutes["routes/web.php"]
+    Browser --> ApiRoutes["routes/api.php"]
 
-    WebRoutes --> AdminControllers["Admin Controllers"]
-    ApiRoutes --> ApiControllers["API Controllers"]
-    AdminControllers --> Services["Admin Services"]
+    WebRoutes --> PublicShell["PublicReactShell"]
+    WebRoutes --> AdminShell["AdminReactShell"]
+    PublicShell --> PublicReact["React public islands"]
+    AdminShell --> AdminReact["React admin SPA"]
+
+    PublicReact --> WebActions["Customer web actions"]
+    AdminReact --> AdminApi["/admin/api/*"]
+    ApiRoutes --> ProtectedApi["/api/* Sanctum API"]
+
+    WebActions --> CustomerControllers["Customer Controllers"]
+    AdminApi --> ApiControllers["API Controllers"]
+    ProtectedApi --> ApiControllers
+
+    CustomerControllers --> CustomerServices["Customer Services"]
+    ApiControllers --> Services["Admin/API Services"]
     Services --> Repositories["Repositories"]
-    AdminControllers --> Models["Eloquent Models"]
-    ApiControllers --> Models
+    CustomerServices --> Models["Eloquent Models"]
     Repositories --> Models
+    ApiControllers --> Models
+
     Models --> DB[("MySQL/MariaDB")]
     Models --> Scout["Laravel Scout / Elasticsearch"]
     Models --> Media["Spatie Media Library"]
 ```
 
-### Luồng web admin
+### Luồng public
 
-1. Người dùng truy cập `/admin/...`.
-2. Middleware `admin` xác thực `Auth::guard('admin')`.
-3. Controller trong `app/Http/Controllers/Admin` nhận request.
-4. Với brand/category/product, controller gọi service trong `app/Services/Admin`.
-5. Service xử lý nghiệp vụ cơ bản, ví dụ gán `created_by`, rồi gọi repository.
-6. Repository thao tác Eloquent model và trả dữ liệu về view.
-7. Blade render container `data-react-component`, sau đó React island mount component tương ứng.
+1. Request vào các route public trong `routes/web.php`.
+2. Controller customer hoặc `PublicReactShell` chuẩn bị props.
+3. Laravel trả về HTML shell có `data-react-component` và `data-props`.
+4. `resources/js/public.jsx` đăng ký component và `mountReactIslands` mount React vào DOM.
+5. Các form/action gửi request lại Laravel web routes hoặc gọi service Axios khi cần.
 
-### Luồng API
+### Luồng admin
 
-1. Request vào `/api/*` qua `routes/api.php`.
-2. Middleware `auth:sanctum` xác thực user/admin token.
-3. Middleware `admin.role` kiểm tra quyền theo role.
-4. API controller trả JSON cho React/Axios hoặc client khác.
+1. Admin truy cập `/admin/login` để đăng nhập qua guard `admin`.
+2. Sau khi đăng nhập, `/admin/{path?}` trả về `AdminSpaApp`.
+3. `AdminPageRouter` điều hướng nội bộ theo pathname hiện tại.
+4. React admin gọi `/admin/api/*` bằng Axios.
+5. API đi qua middleware `admin` và `admin.role`, sau đó controller gọi service/repository/model.
+
+### Luồng API token
+
+`routes/api.php` expose các endpoint tương tự cho client có Sanctum token. Tất cả route trong file này đang nằm trong middleware `auth:sanctum` và được phân quyền bằng `admin.role`.
 
 ## Cấu trúc thư mục
 
@@ -137,35 +138,38 @@ flowchart LR
 app/
   Http/
     Controllers/
-      Admin/              # Controller web admin: login, dashboard, brand, category, product, role, staff
-      Api/                # Controller JSON API cho catalog, role, staff
+      Admin/              # Admin login và SPA shell controller
+      Api/                # API catalog và API admin resources
+      Customer/           # Controller cho public/customer site
     Middleware/           # admin, admin.role, customer, auth...
     Requests/             # Form Request validation
-  Models/                 # Eloquent models
-  Repositories/           # Repository layer cho brand/category/product
-  Services/Admin/         # Service layer cho brand/category/product
+  Models/                 # Eloquent models: Product, Brand, Order, User, Admin...
+  Repositories/           # Repository layer cho admin/api/customer modules
+  Services/               # Service layer tách nghiệp vụ khỏi controller
+  Support/                # PublicReactShell và AdminReactShell
 
-config/                   # Cấu hình Laravel, auth guards/providers, scout, media-library...
+config/                   # Laravel config: auth, scout, media-library, services...
 database/
   migrations/             # Schema database
-  seeders/                # Seeder hiện chưa tạo dữ liệu mặc định
-public/                   # Public assets và entry index.php
+  seeders/                # Seeder mặc định hiện chưa seed admin/user mẫu
+public/                   # Entry index.php và public assets
 resources/
-  css/                    # CSS entry
+  css/                    # public.css, admin.css, app.css
   js/
-    components/           # React components public/admin/common/product/cart
-    islands/              # Cơ chế mount React islands
-    pages/                # React pages
+    components/           # React components dùng lại
+    islands/              # mountReactIslands
+    pages/admin/          # Admin SPA pages
+    pages/customer/       # Customer pages
     services/             # Axios API clients
-    test/                 # Setup Vitest
+    test/                 # Vitest setup
   lang/                   # Bản dịch en/vi
-  views/                  # Blade views public/admin/layout/vendor media-library
+  views/                  # Blade/vendor/email views
 routes/
-  web.php                 # Web routes public + admin
-  api.php                 # Protected API routes
-  channels.php            # Broadcast channels
-  console.php             # Artisan closure command mặc định
-tests/                    # PHPUnit test skeleton
+  web.php                 # Public + admin web routes
+  api.php                 # Sanctum protected API routes
+  channels.php
+  console.php
+tests/                    # PHPUnit feature/unit tests
 ```
 
 ## Yêu cầu môi trường
@@ -173,10 +177,11 @@ tests/                    # PHPUnit test skeleton
 - PHP 8.2+
 - Composer
 - Node.js 20+ và npm
-- MySQL/MariaDB
-- Elasticsearch 8.x nếu bật Scout Elasticsearch
+- MySQL hoặc MariaDB
+- Elasticsearch 8.x nếu dùng Scout Elasticsearch
+- Mailpit hoặc SMTP server nếu test newsletter/email
 
-## Cài đặt và chạy dự án
+## Cài đặt và chạy local
 
 ### 1. Cài PHP dependencies
 
@@ -190,14 +195,7 @@ composer install
 npm install
 ```
 
-### 3. Tạo file `.env`
-
-Linux/macOS/Git Bash:
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
+### 3. Tạo `.env` và app key
 
 PowerShell:
 
@@ -206,9 +204,16 @@ Copy-Item .env.example .env
 php artisan key:generate
 ```
 
+Linux/macOS/Git Bash:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
 ### 4. Cấu hình database
 
-Ví dụ:
+Ví dụ cấu hình MySQL/MariaDB:
 
 ```env
 DB_CONNECTION=mysql
@@ -225,13 +230,15 @@ DB_PASSWORD=
 php artisan migrate
 ```
 
-### 6. Tạo symlink storage nếu dùng file public
+> Lưu ý: `DatabaseSeeder` hiện chưa tạo admin mặc định. Nếu cần đăng nhập admin ở local, hãy tạo bản ghi trong bảng `admins` bằng seeder/tinker hoặc thêm seeder phù hợp cho môi trường dev.
+
+### 6. Tạo storage link nếu dùng upload/media public
 
 ```bash
 php artisan storage:link
 ```
 
-### 7. Chạy ứng dụng ở local
+### 7. Chạy ứng dụng
 
 Terminal 1:
 
@@ -245,9 +252,10 @@ Terminal 2:
 npm run dev
 ```
 
-Truy cập:
+Địa chỉ thường dùng:
 
-- Public welcome: `http://127.0.0.1:8000`
+- Website khách hàng: `http://127.0.0.1:8000`
+- Trang sản phẩm: `http://127.0.0.1:8000/products`
 - Admin login: `http://127.0.0.1:8000/admin/login`
 
 ### 8. Build production assets
@@ -258,49 +266,29 @@ npm run build
 
 ## Cấu hình quan trọng
 
-### Auth admin
+### Auth và guard
 
-Trong `config/auth.php` có guard/provider riêng:
+`config/auth.php` khai báo hai guard chính:
 
-- Guard: `admin`
-- Provider: `admins`
-- Model: `App\Models\Admin`
+- `web`: dùng cho khách hàng, model `App\Models\User`.
+- `admin`: dùng cho trang quản trị, model `App\Models\Admin`.
 
-`AdminMiddleware` redirect về `/admin/login` nếu chưa đăng nhập hoặc admin không hợp lệ.
+Admin phải có `is_active = true` và role hợp lệ để đi qua middleware.
 
-### Role admin
+### Social login
 
-Model `Admin` định nghĩa role:
+`.env.example` có sẵn biến cho Google/Facebook:
 
-```php
-MANAGER, ADMIN, STAFF
+```env
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=${APP_URL}/auth/google/callback
+FACEBOOK_CLIENT_ID=
+FACEBOOK_CLIENT_SECRET=
+FACEBOOK_REDIRECT_URI=${APP_URL}/auth/facebook/callback
 ```
 
-`AdminRoleMiddleware` dùng cho cả web route và API route để giới hạn quyền.
-
-### Vite entries
-
-`vite.config.js` build 3 entry:
-
-```js
-resources/css/app.css
-resources/js/public.jsx
-resources/js/admin.jsx
-```
-
-### React islands
-
-Các Blade view mount React bằng pattern:
-
-```html
-<div data-react-component="ComponentName" data-props='{}'></div>
-```
-
-Registry public nằm trong `resources/js/public.jsx`; registry admin nằm trong `resources/js/admin.jsx`.
-
-### Elasticsearch / Scout
-
-`.env.example` có cấu hình:
+### Scout và Elasticsearch
 
 ```env
 SCOUT_DRIVER=Matchish\ScoutElasticSearch\Engines\ElasticSearchEngine
@@ -308,36 +296,124 @@ ELASTICSEARCH_HOST=
 SCOUT_QUEUE=false
 ```
 
-Nếu môi trường local chưa có Elasticsearch, cần cấu hình `ELASTICSEARCH_HOST` đúng hoặc điều chỉnh Scout driver khi phát triển.
+Các model có tích hợp search gồm `Brand`, `Category`, `Product`. Nếu môi trường local chưa chạy Elasticsearch, cần cấu hình `ELASTICSEARCH_HOST` đúng hoặc điều chỉnh Scout driver phục vụ phát triển.
 
-## Scripts thường dùng
+### Vite entries
+
+`vite.config.js` build các entry chính:
+
+```js
+resources/css/public.css
+resources/css/admin.css
+resources/js/public.jsx
+resources/js/admin.jsx
+```
+
+### React islands
+
+Laravel shell render dạng:
+
+```html
+<div data-react-component="ComponentName" data-props='{}'></div>
+```
+
+- Registry public: `resources/js/public.jsx`
+- Registry admin: `resources/js/admin.jsx`
+- Hàm mount: `resources/js/islands/mountReactIslands.jsx`
+
+## Routes và API
+
+### Public web routes
+
+| Nhóm | Route tiêu biểu |
+|---|---|
+| Trang chủ | `GET /` |
+| Product listing/detail | `GET /products`, `GET /products/{product}` |
+| Category/brand listing | `GET /categories/{category}`, `GET /brands/{brand}` |
+| Auth khách hàng | `GET/POST /login`, `GET/POST /register`, `POST /logout` |
+| Social auth | `GET /auth/{provider}/redirect`, `GET /auth/{provider}/callback` |
+| Cart | `GET /cart`, `POST /cart/items`, `PATCH /cart/items/{product}`, `DELETE /cart/items/{product}` |
+| Checkout/order | `GET/POST /checkout`, `GET /orders`, `GET /orders/{order}`, `PATCH /orders/{order}/cancel` |
+| Account/wishlist | `GET/PATCH /account`, `GET /wishlist`, `POST /wishlist/items`, `DELETE /wishlist/items/{product}` |
+| Review/chatbot | `POST /products/{product}/reviews`, `POST /chatbot/messages` |
+
+### Admin web/API routes
+
+| Nhóm | Route tiêu biểu |
+|---|---|
+| Admin auth | `GET /admin/login`, `POST /admin/login`, `POST /admin/logout` |
+| Admin SPA | `GET /admin/{path?}` |
+| Dashboard | `GET /admin/api/dashboard` |
+| Catalog | `/admin/api/brands`, `/admin/api/categories`, `/admin/api/products` |
+| Media/newsletter | `/admin/api/media`, `/admin/api/newsletters`, `/admin/api/newsletters/send` |
+| Sales | `/admin/api/orders`, `/admin/api/discounts`, `/admin/api/feeships` |
+| Customers/comments | `/admin/api/customers`, `/admin/api/comments`, `/admin/api/products/{product}/comments` |
+| Staff/roles | `/admin/api/staffs`, `/admin/api/roles` |
+
+### Protected API routes
+
+`routes/api.php` expose các API dưới prefix `/api/*`, yêu cầu `auth:sanctum`:
+
+- `customers`, `orders`, `discounts`, `feeships`
+- `brands`, `categories`, `products`, `products/search`
+- `comments`, `products/{product}/comments`
+- `staffs`, `roles`
+- `/api/user`
+
+## Mô hình dữ liệu
+
+Các bảng chính được tạo bởi migrations:
+
+- Auth: `users`, `admins`, `password_reset_tokens`, `personal_access_tokens`.
+- Catalog: `brands`, `categories`, `products`, `media`.
+- Customer interactions: `comments`, `shopping_cart`, `customer_wishlist`, `chatbot_messages`, `news_letters`.
+- Order/shipping: `orders`, `order_items`, `discounts`, `transports`, `provinces`, `districts`, `wards`.
+- Authorization: `roles`, `permissions`, `permission_role`.
+- System: `failed_jobs`.
+
+Một số quan hệ/nghiệp vụ đáng chú ý:
+
+- `Product`, `Brand`, `Category` có tích hợp Laravel Scout để hỗ trợ search.
+- `Brand` tích hợp Spatie Media Library.
+- `Discount` dùng soft deletes.
+- `Order` có `order_items`, thông tin phí ship và ghi chú theo migration mở rộng.
+- `User` có thêm trường social auth cho Google/Facebook.
+
+## Testing và quality checks
+
+### Frontend tests
 
 ```bash
-# Vite dev server
-npm run dev
-
-# Build assets
-npm run build
-
-# Chạy test frontend một lần
 npm test
-
-# Chạy test frontend watch mode
 npm run test:watch
+```
 
-# Chạy test PHP
+### Backend tests
+
+```bash
 php artisan test
+```
 
-# Liệt kê route
+### Route/debug commands
+
+```bash
 php artisan route:list
+php artisan config:clear
+php artisan cache:clear
+```
 
-# Format PHP bằng Pint
+### Format PHP
+
+```bash
 ./vendor/bin/pint
 ```
 
-> Các lệnh `php artisan ...` yêu cầu đã chạy `composer install` để có `vendor/autoload.php`.
+Trên Windows PowerShell có thể chạy:
+
+```powershell
+vendor\bin\pint.bat
+```
 
 ## License
 
-Dự án sử dụng giấy phép MIT theo `composer.json`.
-
+Dự án dùng giấy phép MIT theo `composer.json`.
