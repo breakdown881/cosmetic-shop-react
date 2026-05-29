@@ -24,6 +24,7 @@ export default function CustomerCheckoutPage({
     const items = cart.items ?? [];
     const feeShips = checkout.feeShips ?? [];
     const paymentMethods = checkout.paymentMethods ?? {};
+    const prefill = checkout.prefill ?? {};
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -82,19 +83,38 @@ export default function CustomerCheckoutPage({
                             ) : null}
                             <label>
                                 Full name
-                                <input name="shipping_fullname" type="text" required />
+                                <input
+                                    name="shipping_fullname"
+                                    type="text"
+                                    defaultValue={prefill.shipping_fullname ?? ''}
+                                    required
+                                />
                             </label>
                             <label>
                                 Mobile
-                                <input name="shipping_mobile" type="tel" required />
+                                <input
+                                    name="shipping_mobile"
+                                    type="tel"
+                                    defaultValue={prefill.shipping_mobile ?? ''}
+                                    required
+                                />
                             </label>
                             <label>
                                 Ward
-                                <input name="shipping_ward_id" type="text" />
+                                <input
+                                    name="shipping_ward_id"
+                                    type="text"
+                                    defaultValue={prefill.shipping_ward_id ?? ''}
+                                />
                             </label>
                             <label>
                                 Address
-                                <input name="shipping_housenumber_street" type="text" required />
+                                <input
+                                    name="shipping_housenumber_street"
+                                    type="text"
+                                    defaultValue={prefill.shipping_housenumber_street ?? ''}
+                                    required
+                                />
                             </label>
                             <label>
                                 Shipping fee

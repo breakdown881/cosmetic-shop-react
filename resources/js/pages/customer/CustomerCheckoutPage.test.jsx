@@ -56,6 +56,27 @@ describe('CustomerCheckoutPage', () => {
         expect(screen.queryByText(/Admin/i)).not.toBeInTheDocument();
     });
 
+    it('prefills checkout shipping fields for authenticated customers', () => {
+        render(
+            <CustomerCheckoutPage
+                checkout={{
+                    ...checkout,
+                    prefill: {
+                        shipping_fullname: 'Latest Shipping Name',
+                        shipping_mobile: '0900777666',
+                        shipping_ward_id: '009',
+                        shipping_housenumber_street: '99 Latest Street',
+                    },
+                }}
+            />,
+        );
+
+        expect(screen.getByLabelText('Full name')).toHaveValue('Latest Shipping Name');
+        expect(screen.getByLabelText('Mobile')).toHaveValue('0900777666');
+        expect(screen.getByLabelText('Ward')).toHaveValue('009');
+        expect(screen.getByLabelText('Address')).toHaveValue('99 Latest Street');
+    });
+
     it('renders empty cart checkout state', () => {
         render(<CustomerCheckoutPage checkout={{ ...checkout, cart: { items: [], total: 0 } }} />);
 

@@ -31,10 +31,10 @@ class CheckoutController extends Controller
         ], 202);
     }
 
-    public function request(string $checkoutRequest): JsonResponse
+    public function request(Request $request, string $checkoutRequest): JsonResponse
     {
         return response()->json([
-            'data' => $this->checkout->checkoutRequest($checkoutRequest),
+            'data' => $this->checkout->checkoutRequest($checkoutRequest, $request->session()),
         ]);
     }
 }

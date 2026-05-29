@@ -19,11 +19,14 @@ class CustomerCheckoutService
 
     public function props(Store $session): array
     {
+        $customer = Auth::user();
+
         return [
             'title' => 'Thanh toán',
             'navItems' => $this->navigationService->navItems(),
             'checkout' => [
                 'cart' => $this->cartService->payload($session),
+                'prefill' => $this->prefillForCustomer($customer),
                 'feeShips' => $this->checkoutRepository->activeFeeShips()
                     ->map(fn ($feeShip) => [
                         'id' => $feeShip->id,
@@ -39,7 +42,6 @@ class CustomerCheckoutService
     public function checkout(Store $session, array $data): array
     {
         $customer = Auth::user();
-        abort_unless($customer, 401);
 
         $cart = $this->cartService->payload($session);
         abort_if(($cart['items'] ?? []) === [], 422, 'Your cart is empty.');
@@ -50,7 +52,7 @@ class CustomerCheckoutService
 
         $orderData = [
             'staff_id' => 1,
-            'customer_id' => $customer->id,
+            'customer_id' => $customer?->id,
             'shipping_fullname' => $data['shipping_fullname'],
             'shipping_mobile' => $data['shipping_mobile'],
             'payment_method' => (int) $data['payment_method'],
@@ -80,7 +82,8 @@ class CustomerCheckoutService
             'total_price' => $item['subtotal'],
         ])->all();
 
-        $checkoutRequest = $this->checkoutRepository->createCheckoutRequest($customer->id, $orderData, $items);
+        $checkoutRequest = $this->checkoutRepository->createCheckoutRequest($customer?->id, $orderData, $items);
+        $this->rememberCheckoutRequest($session, $checkoutRequest->id);
         ProcessCustomerOrderJob::dispatch($checkoutRequest->id);
 
         $this->cartService->clear($session);
@@ -88,14 +91,19 @@ class CustomerCheckoutService
         return $this->formatCheckoutRequest($checkoutRequest->refresh());
     }
 
-    public function checkoutRequest(int|string $requestId): array
+    public function checkoutRequest(int|string $requestId, Store $session): array
     {
         $customer = Auth::user();
-        abort_unless($customer, 401);
 
-        return $this->formatCheckoutRequest(
-            $this->checkoutRepository->findCheckoutRequestForCustomer($requestId, $customer->id)
-        );
+        if ($customer) {
+            return $this->formatCheckoutRequest(
+                $this->checkoutRepository->findCheckoutRequestForCustomer($requestId, $customer->id)
+            );
+        }
+
+        abort_unless($this->hasRememberedCheckoutRequest($session, $requestId), 404);
+
+        return $this->formatCheckoutRequest($this->checkoutRepository->findGuestCheckoutRequest($requestId));
     }
 
     private function gatewayForPaymentMethod(int $paymentMethod): ?string
@@ -133,6 +141,43 @@ class CustomerCheckoutService
             && ! ($discount->expires_at && $discount->expires_at->isPast());
     }
 
+    private function prefillForCustomer($customer): array
+    {
+        if (! $customer) {
+            return [
+                'shipping_fullname' => '',
+                'shipping_mobile' => '',
+                'shipping_ward_id' => '',
+                'shipping_housenumber_street' => '',
+            ];
+        }
+
+        $latestOrder = $this->checkoutRepository->latestOrderForCustomer($customer->id);
+
+        return [
+            'shipping_fullname' => $latestOrder?->shipping_fullname ?: $customer->name,
+            'shipping_mobile' => $latestOrder?->shipping_mobile ?? '',
+            'shipping_ward_id' => $latestOrder?->shipping_ward_id ?? '',
+            'shipping_housenumber_street' => $latestOrder?->shipping_housenumber_street ?? '',
+        ];
+    }
+
+    private function rememberCheckoutRequest(Store $session, int $checkoutRequestId): void
+    {
+        $requestIds = collect($session->get('customer_checkout_request_ids', []))
+            ->push($checkoutRequestId)
+            ->unique()
+            ->values()
+            ->all();
+
+        $session->put('customer_checkout_request_ids', $requestIds);
+    }
+
+    private function hasRememberedCheckoutRequest(Store $session, int|string $checkoutRequestId): bool
+    {
+        return in_array((int) $checkoutRequestId, array_map('intval', $session->get('customer_checkout_request_ids', [])), true);
+    }
+
     private function formatCheckoutRequest(CustomerCheckoutRequest $checkoutRequest): array
     {
         return [
@@ -153,7 +198,7 @@ class CustomerCheckoutService
         return [
             'id' => $order->id,
             'status' => $order->status,
-            'customer_id' => $order->customer_id,
+            'customer_id' => $order->customer_id ? (int) $order->customer_id : null,
             'shipping_fullname' => $order->shipping_fullname,
             'shipping_mobile' => $order->shipping_mobile,
             'payment_method' => (int) $order->payment_method,

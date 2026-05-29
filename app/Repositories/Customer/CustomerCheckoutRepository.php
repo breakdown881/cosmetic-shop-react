@@ -62,7 +62,15 @@ class CustomerCheckoutRepository
         });
     }
 
-    public function createCheckoutRequest(int $customerId, array $orderData, array $items): CustomerCheckoutRequest
+    public function latestOrderForCustomer(int $customerId): ?Order
+    {
+        return Order::query()
+            ->where('customer_id', $customerId)
+            ->latest()
+            ->first();
+    }
+
+    public function createCheckoutRequest(?int $customerId, array $orderData, array $items): CustomerCheckoutRequest
     {
         return CustomerCheckoutRequest::query()->create([
             'customer_id' => $customerId,
@@ -77,6 +85,14 @@ class CustomerCheckoutRepository
         return CustomerCheckoutRequest::query()
             ->with(['order.items.product:id,name,price'])
             ->where('customer_id', $customerId)
+            ->findOrFail($id);
+    }
+
+    public function findGuestCheckoutRequest(int|string $id): CustomerCheckoutRequest
+    {
+        return CustomerCheckoutRequest::query()
+            ->with(['order.items.product:id,name,price'])
+            ->whereNull('customer_id')
             ->findOrFail($id);
     }
 

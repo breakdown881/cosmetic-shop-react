@@ -116,6 +116,83 @@ class CustomerCheckoutTest extends TestCase
         $this->assertSame([], session('customer_cart'));
     }
 
+    public function test_guest_can_checkout_cart_with_manual_shipping_information(): void
+    {
+        $product = $this->product('Guest Checkout Serum', 300000, 5, 0);
+
+        $response = $this
+            ->withSession(['customer_cart' => [$product->id => 1]])
+            ->postJson('/checkout', $this->checkoutPayload([
+                'shipping_fullname' => 'Guest Buyer',
+                'shipping_mobile' => '0900999888',
+                'shipping_housenumber_street' => '45 Guest Street',
+            ]))
+            ->assertAccepted()
+            ->assertJsonPath('data.status', 'COMPLETED')
+            ->assertJsonPath('data.order.customer_id', null)
+            ->assertJsonPath('data.order.shipping_fullname', 'Guest Buyer');
+
+        $checkoutRequestId = $response->json('data.id');
+        $orderId = $response->json('data.order.id');
+
+        $this->assertDatabaseHas('customer_checkout_requests', [
+            'id' => $checkoutRequestId,
+            'customer_id' => null,
+            'order_id' => $orderId,
+            'status' => 'COMPLETED',
+        ]);
+        $this->assertDatabaseHas('orders', [
+            'id' => $orderId,
+            'customer_id' => null,
+            'shipping_fullname' => 'Guest Buyer',
+            'shipping_mobile' => '0900999888',
+        ]);
+
+        $this
+            ->getJson('/checkout/requests/' . $checkoutRequestId)
+            ->assertOk()
+            ->assertJsonPath('data.id', $checkoutRequestId)
+            ->assertJsonPath('data.order.id', $orderId);
+    }
+
+    public function test_checkout_page_prefills_logged_in_customer_shipping_from_latest_order(): void
+    {
+        $customer = User::factory()->create(['name' => 'Profile Name']);
+        $product = $this->product('Prefill Serum', 300000, 5, 0);
+
+        Order::create([
+            'staff_id' => 1,
+            'customer_id' => $customer->id,
+            'shipping_fullname' => 'Latest Shipping Name',
+            'shipping_mobile' => '0900777666',
+            'payment_method' => 0,
+            'payment_gateway' => null,
+            'payment_status' => 'UNPAID',
+            'shipping_ward_id' => '009',
+            'shipping_housenumber_street' => '99 Latest Street',
+            'shipping_fee' => 0,
+            'delivered_date' => now()->toDateString(),
+            'price_total' => 300000,
+            'discount_code' => '',
+            'discount_amount' => 0,
+            'sub_total' => 300000,
+            'tax' => 0,
+            'price_inc_tax_total' => 300000,
+            'voucher_code' => '',
+            'voucher_amount' => 0,
+            'payment_total' => 300000,
+            'status' => 'PENDING',
+        ]);
+
+        $this->actingAs($customer)
+            ->withSession(['customer_cart' => [$product->id => 1]])
+            ->get('/checkout')
+            ->assertOk()
+            ->assertSee('&quot;prefill&quot;:{&quot;shipping_fullname&quot;:&quot;Latest Shipping Name&quot;', false)
+            ->assertSee('&quot;shipping_mobile&quot;:&quot;0900777666&quot;', false)
+            ->assertSee('&quot;shipping_housenumber_street&quot;:&quot;99 Latest Street&quot;', false);
+    }
+
     public function test_checkout_rejects_empty_cart_and_expired_discount(): void
     {
         $customer = User::factory()->create();
