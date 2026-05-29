@@ -7,13 +7,14 @@ const currencyFormatter = new Intl.NumberFormat('vi-VN', {
 });
 
 export default function CustomerOrderHistoryPage({
+    auth = null,
     navItems = [],
     orders = [],
     requiresAuth = false,
     title = 'Đơn hàng của tôi',
 }) {
     return (
-        <CustomerLayout navItems={navItems} title={title}>
+        <CustomerLayout auth={auth} navItems={navItems} title={title}>
             <section className="react-customer-orders">
                 {requiresAuth ? (
                     <div className="react-customer-orders__empty">

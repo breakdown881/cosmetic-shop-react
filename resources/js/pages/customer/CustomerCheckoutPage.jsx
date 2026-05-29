@@ -7,6 +7,7 @@ const currencyFormatter = new Intl.NumberFormat('vi-VN', {
 });
 
 export default function CustomerCheckoutPage({
+    auth = null,
     checkout = { cart: { items: [], total: 0 }, feeShips: [], paymentMethods: {} },
     navItems = [],
     title = 'Thanh toán',
@@ -17,7 +18,7 @@ export default function CustomerCheckoutPage({
     const paymentMethods = checkout.paymentMethods ?? {};
 
     return (
-        <CustomerLayout navItems={navItems} title={title}>
+        <CustomerLayout auth={auth} navItems={navItems} title={title}>
             <section className="react-customer-checkout">
                 {!items.length ? (
                     <div className="react-customer-checkout__empty">

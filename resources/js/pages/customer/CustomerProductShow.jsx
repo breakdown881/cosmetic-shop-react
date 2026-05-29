@@ -8,13 +8,14 @@ const currencyFormatter = new Intl.NumberFormat('vi-VN', {
 });
 
 export default function CustomerProductShow({
+    auth = null,
     navItems = [],
     product,
     relatedProducts = [],
 }) {
     if (!product) {
         return (
-            <CustomerLayout navItems={navItems} title="Product not found">
+            <CustomerLayout auth={auth} navItems={navItems} title="Product not found">
                 <p className="react-empty-state">This product is not available.</p>
             </CustomerLayout>
         );
@@ -32,7 +33,7 @@ export default function CustomerProductShow({
     };
 
     return (
-        <CustomerLayout navItems={navItems} title="">
+        <CustomerLayout auth={auth} navItems={navItems} title="">
             <article className="react-customer-product-detail">
                 <div className="react-customer-product-detail__media">
                     <img src={product.featured_image} alt={product.name} />

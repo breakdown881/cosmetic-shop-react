@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\SpaController;
+use App\Http\Controllers\Customer\AccountController as CustomerAccountController;
+use App\Http\Controllers\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Customer\CartController as CustomerCartController;
 use App\Http\Controllers\Customer\CheckoutController as CustomerCheckoutController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\PageController as CustomerPageController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
+use App\Http\Controllers\Customer\SocialAuthController as CustomerSocialAuthController;
 use App\Http\Controllers\Api\Admin\CustomerController as ApiCustomerController;
 use App\Http\Controllers\Api\Admin\DashboardController as ApiDashboardController;
 use App\Http\Controllers\Api\Admin\DiscountController as ApiDiscountController;
@@ -35,6 +38,17 @@ Route::get('/products', [CustomerProductController::class, 'index'])->name('cust
 Route::get('/products/{product}', [CustomerProductController::class, 'show'])->name('customer.products.show');
 Route::get('/categories/{category}', [CustomerProductController::class, 'category'])->name('customer.categories.show');
 Route::get('/brands/{brand}', [CustomerProductController::class, 'brand'])->name('customer.brands.show');
+Route::get('/login', [CustomerAuthController::class, 'loginForm'])->name('login');
+Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login');
+Route::get('/register', [CustomerAuthController::class, 'registerForm'])->name('customer.register.form');
+Route::post('/register', [CustomerAuthController::class, 'register'])->name('customer.register');
+Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
+Route::get('/auth/{provider}/redirect', [CustomerSocialAuthController::class, 'redirect'])
+    ->where('provider', 'google|facebook')
+    ->name('customer.social.redirect');
+Route::get('/auth/{provider}/callback', [CustomerSocialAuthController::class, 'callback'])
+    ->where('provider', 'google|facebook')
+    ->name('customer.social.callback');
 Route::get('/cart', [CustomerCartController::class, 'show'])->name('customer.cart.show');
 Route::post('/cart/items', [CustomerCartController::class, 'store'])->name('customer.cart.items.store');
 Route::patch('/cart/items/{product}', [CustomerCartController::class, 'update'])->name('customer.cart.items.update');
@@ -42,7 +56,8 @@ Route::delete('/cart/items/{product}', [CustomerCartController::class, 'destroy'
 Route::get('/checkout', [CustomerCheckoutController::class, 'show'])->name('customer.checkout.show');
 Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('customer.checkout.store');
 Route::get('/orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');
-Route::get('/account', [CustomerPageController::class, 'account'])->name('customer.account.show');
+Route::get('/account', [CustomerAccountController::class, 'show'])->name('customer.account.show');
+Route::patch('/account', [CustomerAccountController::class, 'update'])->name('customer.account.update');
 
 Route::prefix('admin')->group(function () {
     Route::get('login', [LoginController::class, 'index'])->name('admin.login.form');

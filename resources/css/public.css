@@ -561,6 +561,30 @@
     color: #b50e5b;
 }
 
+.react-customer-layout__auth {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.react-customer-layout__auth form {
+    margin: 0;
+}
+
+.react-customer-layout__auth a,
+.react-customer-layout__auth button {
+    background: #fff5f9;
+    border: 1px solid #f5c7d9;
+    border-radius: 999px;
+    color: #7b3659;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+    padding: 0.45rem 0.8rem;
+}
+
 .react-customer-layout__main {
     padding: 1.25rem 0;
 }
@@ -1044,6 +1068,153 @@
     font-size: 1.25rem;
 }
 
+.react-customer-account {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #f7d5e5;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(138, 33, 88, 0.08);
+    padding: 1rem;
+}
+
+.react-customer-account__empty p {
+    color: #6f405a;
+    font-size: 1.1rem;
+}
+
+.react-customer-account__empty a {
+    background: #d81b72;
+    border-radius: 999px;
+    color: #fff;
+    display: inline-flex;
+    font-weight: 900;
+    padding: 0.75rem 1rem;
+}
+
+.react-customer-account__form {
+    display: grid;
+    gap: 0.85rem;
+    max-width: 560px;
+}
+
+.react-customer-account__form label {
+    color: #6f405a;
+    display: grid;
+    font-weight: 800;
+    gap: 0.35rem;
+}
+
+.react-customer-account__form input {
+    border: 1px solid #f1bfd4;
+    border-radius: 12px;
+    min-height: 42px;
+    padding: 0.55rem 0.75rem;
+}
+
+.react-customer-account__form button {
+    background: #d81b72;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 900;
+    justify-self: start;
+    min-height: 46px;
+    padding: 0.75rem 1.25rem;
+}
+
+.react-customer-auth {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1fr);
+}
+
+.react-customer-auth__panel,
+.react-customer-auth__form {
+    background: #fff;
+    border: 1px solid #f7d8e4;
+    border-radius: 22px;
+    box-shadow: 0 16px 35px rgba(117, 41, 79, 0.08);
+    padding: 1.25rem;
+}
+
+.react-customer-auth__panel {
+    background: linear-gradient(135deg, #fff6fa, #ffe5f0);
+}
+
+.react-customer-auth__eyebrow {
+    color: #d81b72;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.react-customer-auth__form {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.react-customer-auth__social {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.react-customer-auth__social-link {
+    align-items: center;
+    border: 1px solid #f1bfd4;
+    border-radius: 999px;
+    color: #351528;
+    display: flex;
+    font-weight: 900;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+}
+
+.react-customer-auth__social-link:hover {
+    background: #fff5f9;
+}
+
+.react-customer-auth__divider {
+    align-items: center;
+    color: #8d6078;
+    display: flex;
+    font-size: 0.88rem;
+    font-weight: 800;
+    gap: 0.75rem;
+}
+
+.react-customer-auth__divider::before,
+.react-customer-auth__divider::after {
+    background: #f4d2df;
+    content: '';
+    flex: 1;
+    height: 1px;
+}
+
+.react-customer-auth__form label {
+    color: #6f405a;
+    display: grid;
+    font-weight: 800;
+    gap: 0.35rem;
+}
+
+.react-customer-auth__form input {
+    border: 1px solid #f1bfd4;
+    border-radius: 12px;
+    min-height: 42px;
+    padding: 0.55rem 0.75rem;
+}
+
+.react-customer-auth__form button {
+    background: #d81b72;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 900;
+    min-height: 46px;
+    padding: 0.75rem 1.25rem;
+}
+
 @media (max-width: 991px) {
     .react-customer-layout {
         padding: 0.75rem;
@@ -1056,6 +1227,10 @@
 
     .react-customer-layout__nav {
         justify-content: flex-start;
+    }
+
+    .react-customer-layout__auth {
+        margin-left: 0;
     }
 
     .react-customer-filters {
@@ -1073,7 +1248,8 @@
     .react-customer-cart,
     .react-customer-cart__item,
     .react-customer-checkout,
-    .react-customer-checkout__form {
+    .react-customer-checkout__form,
+    .react-customer-auth {
         grid-template-columns: 1fr;
     }
 

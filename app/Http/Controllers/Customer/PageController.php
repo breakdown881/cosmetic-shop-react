@@ -14,11 +14,6 @@ class PageController extends Controller
         private readonly PublicReactShell $shell,
     ) {}
 
-    public function account(): Response
-    {
-        return $this->placeholder('Tài khoản', 'Customer account management will be implemented in the account phase.');
-    }
-
     private function placeholder(string $title, string $description): Response
     {
         return $this->shell->render('CustomerPlaceholderPage', [

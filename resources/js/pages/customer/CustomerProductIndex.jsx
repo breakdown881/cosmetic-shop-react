@@ -3,6 +3,7 @@ import ProductFilters from '../../components/customer/ProductFilters.jsx';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
 
 export default function CustomerProductIndex({
+    auth = null,
     filterOptions = {},
     filters = {},
     navItems = [],
@@ -13,7 +14,7 @@ export default function CustomerProductIndex({
     const total = products.meta?.total ?? productRows.length;
 
     return (
-        <CustomerLayout navItems={navItems} title={title}>
+        <CustomerLayout auth={auth} navItems={navItems} title={title}>
             <section className="react-customer-products">
                 <div className="react-customer-products__summary">
                     <span>{total} product{total === 1 ? '' : 's'} found</span>

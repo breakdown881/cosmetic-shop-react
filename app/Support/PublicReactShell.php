@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Services\Customer\CustomerHomeService;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
 
 class PublicReactShell
@@ -17,6 +18,7 @@ class PublicReactShell
 
     public function render(string $component, array $props, string $title = 'Goda Shop'): Response
     {
+        $props['auth'] ??= $this->authProps();
         $jsonProps = htmlspecialchars(json_encode($props, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG), ENT_QUOTES, 'UTF-8');
         $vite = Vite::useHotFile(public_path('hot'))(['resources/css/public.css', 'resources/js/public.jsx']);
         $escapedComponent = htmlspecialchars($component, ENT_QUOTES, 'UTF-8');
@@ -36,5 +38,22 @@ class PublicReactShell
 </body>
 </html>
 HTML);
+    }
+
+    private function authProps(): array
+    {
+        $user = Auth::user();
+
+        return [
+            'check' => $user !== null,
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ] : null,
+            'loginUrl' => '/login',
+            'registerUrl' => '/register',
+            'logoutUrl' => '/logout',
+        ];
     }
 }

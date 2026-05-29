@@ -1,4 +1,6 @@
-export default function CustomerLayout({ children, navItems = [], title = 'Goda Shop' }) {
+export default function CustomerLayout({ auth = null, children, navItems = [], title = 'Goda Shop' }) {
+    const customer = auth?.user;
+
     return (
         <div className="react-customer-layout">
             <header className="react-customer-layout__header">
@@ -12,6 +14,21 @@ export default function CustomerLayout({ children, navItems = [], title = 'Goda 
                         </a>
                     ))}
                 </nav>
+                <div className="react-customer-layout__auth">
+                    {auth?.check ? (
+                        <>
+                            <a href="/account">Hi, {customer?.name ?? 'Customer'}</a>
+                            <form method="post" action={auth.logoutUrl ?? '/logout'}>
+                                <button type="submit">Sign out</button>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <a href={auth?.loginUrl ?? '/login'}>Sign in</a>
+                            <a href={auth?.registerUrl ?? '/register'}>Register</a>
+                        </>
+                    )}
+                </div>
             </header>
 
             <main className="react-customer-layout__main">

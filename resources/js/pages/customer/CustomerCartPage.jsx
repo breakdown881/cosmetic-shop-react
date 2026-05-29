@@ -7,6 +7,7 @@ const currencyFormatter = new Intl.NumberFormat('vi-VN', {
 });
 
 export default function CustomerCartPage({
+    auth = null,
     cart = { items: [], total: 0 },
     navItems = [],
     title = 'Giỏ hàng',
@@ -14,7 +15,7 @@ export default function CustomerCartPage({
     const items = cart.items ?? [];
 
     return (
-        <CustomerLayout navItems={navItems} title={title}>
+        <CustomerLayout auth={auth} navItems={navItems} title={title}>
             <section className="react-customer-cart">
                 {!items.length ? (
                     <div className="react-customer-cart__empty">
