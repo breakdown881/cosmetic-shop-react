@@ -14,6 +14,10 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->withoutVite();
+        config([
+            'queue.order_connection' => 'sync',
+            'queue.live_chat_connection' => 'sync',
+        ]);
         Cache::flush();
     }
 }

@@ -28,6 +28,13 @@ class CheckoutController extends Controller
     {
         return response()->json([
             'data' => $this->checkout->checkout($request->session(), $request->validated()),
-        ], 201);
+        ], 202);
+    }
+
+    public function request(string $checkoutRequest): JsonResponse
+    {
+        return response()->json([
+            'data' => $this->checkout->checkoutRequest($checkoutRequest),
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Customer;
 
+use App\Jobs\LiveChatMessageReceivedJob;
 use App\Models\LiveChatConversation;
 use App\Models\LiveChatMessage;
 use App\Models\User;
@@ -27,8 +28,9 @@ class CustomerLiveChatService
             ?? $this->liveChats->create($session->getId(), $user?->id);
 
         $this->liveChats->attachCustomer($conversation, $user?->id);
-        $this->liveChats->addCustomerMessage($conversation, $user?->id, $message);
+        $chatMessage = $this->liveChats->addCustomerMessage($conversation, $user?->id, $message);
         $session->put(self::SESSION_KEY, $conversation->id);
+        LiveChatMessageReceivedJob::dispatch($conversation->id, $chatMessage->id);
 
         return $this->formatConversation($this->liveChats->loadConversation($conversation));
     }
@@ -71,6 +73,7 @@ class CustomerLiveChatService
             'id' => $message->id,
             'sender_type' => $message->sender_type,
             'message' => $message->message,
+            'status' => $message->status,
             'created_at' => $message->created_at?->toIso8601String(),
             'staff' => $message->sender_type === LiveChatMessage::SENDER_STAFF && $message->staff ? [
                 'id' => $message->staff->id,

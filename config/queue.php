@@ -15,6 +15,11 @@ return [
 
     'default' => env('QUEUE_CONNECTION', 'sync'),
 
+    'order_connection' => env('ORDER_QUEUE_CONNECTION', 'rabbitmq'),
+    'order_queue' => env('ORDER_QUEUE_NAME', 'orders'),
+    'live_chat_connection' => env('LIVE_CHAT_QUEUE_CONNECTION', 'rabbitmq'),
+    'live_chat_queue' => env('LIVE_CHAT_QUEUE_NAME', 'live-chat'),
+
     /*
     |--------------------------------------------------------------------------
     | Queue Connections
@@ -69,6 +74,32 @@ return [
             'retry_after' => 90,
             'block_for' => null,
             'after_commit' => false,
+        ],
+
+        'rabbitmq' => [
+            'driver' => 'rabbitmq',
+            'queue' => env('RABBITMQ_QUEUE', 'default'),
+            'connection' => 'default',
+            'hosts' => [
+                [
+                    'host' => env('RABBITMQ_HOST', '127.0.0.1'),
+                    'port' => env('RABBITMQ_PORT', 5672),
+                    'user' => env('RABBITMQ_USER', 'guest'),
+                    'password' => env('RABBITMQ_PASSWORD', 'guest'),
+                    'vhost' => env('RABBITMQ_VHOST', '/'),
+                ],
+            ],
+            'options' => [
+                'queue' => [
+                    'queue_max_priority' => env('RABBITMQ_QUEUE_MAX_PRIORITY', 10),
+                ],
+                'connection_timeout' => env('RABBITMQ_CONNECTION_TIMEOUT', 3.0),
+                'read_timeout' => env('RABBITMQ_READ_TIMEOUT', 3.0),
+                'write_timeout' => env('RABBITMQ_WRITE_TIMEOUT', 3.0),
+                'heartbeat' => env('RABBITMQ_HEARTBEAT', 10),
+            ],
+            'worker' => env('RABBITMQ_WORKER', 'default'),
+            'after_commit' => true,
         ],
 
     ],

@@ -25,6 +25,7 @@ const checkout = {
 describe('CustomerCheckoutPage', () => {
     beforeEach(() => {
         window.axios = {
+            get: vi.fn(),
             post: vi.fn(),
         };
     });
@@ -69,6 +70,8 @@ describe('CustomerCheckoutPage', () => {
             data: {
                 data: {
                     id: 42,
+                    status: 'COMPLETED',
+                    order: { id: 42 },
                     payment: {
                         redirect_url: 'https://test-payment.momo.vn/pay/demo',
                     },
@@ -92,4 +95,46 @@ describe('CustomerCheckoutPage', () => {
             expect(assign).toHaveBeenCalledWith('https://test-payment.momo.vn/pay/demo');
         });
     });
+
+    it('polls the queued checkout request before redirecting customers', async () => {
+        const user = userEvent.setup();
+        const assign = vi.spyOn(window.location, 'assign').mockImplementation(() => {});
+
+        window.axios.post.mockResolvedValue({
+            data: {
+                data: {
+                    id: 7,
+                    status: 'QUEUED',
+                    message: 'Your order is queued and will be processed shortly.',
+                    status_url: '/checkout/requests/7',
+                },
+            },
+        });
+        window.axios.get
+            .mockResolvedValueOnce({ data: { data: { id: 7, status: 'PROCESSING' } } })
+            .mockResolvedValueOnce({
+                data: {
+                    data: {
+                        id: 7,
+                        status: 'COMPLETED',
+                        order: { id: 42 },
+                        payment: null,
+                    },
+                },
+            });
+
+        render(<CustomerCheckoutPage checkout={checkout} />);
+
+        await user.type(screen.getByLabelText('Full name'), 'Nguyen Van A');
+        await user.type(screen.getByLabelText('Mobile'), '0900111222');
+        await user.type(screen.getByLabelText('Address'), '123 Beauty Street');
+        await user.click(screen.getByRole('button', { name: 'Place order' }));
+
+        expect(await screen.findByText('Your order is queued and will be processed shortly.')).toBeInTheDocument();
+
+        await waitFor(() => {
+            expect(window.axios.get).toHaveBeenCalledWith('/checkout/requests/7');
+            expect(assign).toHaveBeenCalledWith('/orders/42');
+        }, { timeout: 5000 });
+    }, 10000);
 });

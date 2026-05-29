@@ -2,8 +2,9 @@
 
 namespace App\Services\Customer;
 
+use App\Models\CustomerCheckoutRequest;
 use App\Models\Discount;
-use App\Models\Order;
+use App\Jobs\ProcessCustomerOrderJob;
 use App\Repositories\Customer\CustomerCheckoutRepository;
 use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,6 @@ class CustomerCheckoutService
         private readonly CustomerCartService $cartService,
         private readonly CustomerCheckoutRepository $checkoutRepository,
         private readonly CustomerNavigationService $navigationService,
-        private readonly CustomerPaymentService $paymentService,
     ) {}
 
     public function props(Store $session): array
@@ -48,7 +48,7 @@ class CustomerCheckoutService
         $discountAmount = $this->discountAmount($data['discount_code'] ?? null, (int) $cart['total']);
         $paymentTotal = max(0, (int) $cart['total'] - $discountAmount + $shippingFee);
 
-        $order = $this->checkoutRepository->createOrderWithItems([
+        $orderData = [
             'staff_id' => 1,
             'customer_id' => $customer->id,
             'shipping_fullname' => $data['shipping_fullname'],
@@ -72,18 +72,30 @@ class CustomerCheckoutService
             'payment_total' => $paymentTotal,
             'status' => 'PENDING',
             'note' => $data['note'] ?? null,
-        ], collect($cart['items'])->map(fn ($item) => [
+        ];
+        $items = collect($cart['items'])->map(fn ($item) => [
             'product_id' => $item['product_id'],
             'qty' => $item['quantity'],
             'unit_price' => $item['sale_price'],
             'total_price' => $item['subtotal'],
-        ])->all());
+        ])->all();
 
-        $payment = $this->paymentService->initiate($order);
+        $checkoutRequest = $this->checkoutRepository->createCheckoutRequest($customer->id, $orderData, $items);
+        ProcessCustomerOrderJob::dispatch($checkoutRequest->id);
 
         $this->cartService->clear($session);
 
-        return $this->formatOrder($order, $payment);
+        return $this->formatCheckoutRequest($checkoutRequest->refresh());
+    }
+
+    public function checkoutRequest(int|string $requestId): array
+    {
+        $customer = Auth::user();
+        abort_unless($customer, 401);
+
+        return $this->formatCheckoutRequest(
+            $this->checkoutRepository->findCheckoutRequestForCustomer($requestId, $customer->id)
+        );
     }
 
     private function gatewayForPaymentMethod(int $paymentMethod): ?string
@@ -121,7 +133,22 @@ class CustomerCheckoutService
             && ! ($discount->expires_at && $discount->expires_at->isPast());
     }
 
-    private function formatOrder(Order $order, ?array $payment = null): array
+    private function formatCheckoutRequest(CustomerCheckoutRequest $checkoutRequest): array
+    {
+        return [
+            'id' => $checkoutRequest->id,
+            'status' => $checkoutRequest->status,
+            'message' => $checkoutRequest->status === CustomerCheckoutRequest::STATUS_QUEUED
+                ? 'Your order is queued and will be processed shortly.'
+                : null,
+            'status_url' => '/checkout/requests/' . $checkoutRequest->id,
+            'order' => $checkoutRequest->order ? $this->formatOrder($checkoutRequest->order, $checkoutRequest->payment_payload) : null,
+            'payment' => $checkoutRequest->payment_payload,
+            'error_message' => $checkoutRequest->error_message,
+        ];
+    }
+
+    private function formatOrder($order, ?array $payment = null): array
     {
         return [
             'id' => $order->id,

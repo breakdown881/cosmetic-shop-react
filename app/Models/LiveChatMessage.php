@@ -12,16 +12,21 @@ class LiveChatMessage extends Model
 
     public const SENDER_CUSTOMER = 'customer';
     public const SENDER_STAFF = 'staff';
+    public const STATUS_PENDING = 'PENDING';
+    public const STATUS_PROCESSED = 'PROCESSED';
 
     protected $fillable = [
         'conversation_id',
         'sender_type',
         'sender_id',
         'message',
+        'status',
+        'processed_at',
         'read_at',
     ];
 
     protected $casts = [
+        'processed_at' => 'datetime',
         'read_at' => 'datetime',
     ];
 

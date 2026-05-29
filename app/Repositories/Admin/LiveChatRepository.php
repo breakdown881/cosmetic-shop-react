@@ -29,6 +29,7 @@ class LiveChatRepository
             'sender_type' => LiveChatMessage::SENDER_STAFF,
             'sender_id' => $staffId,
             'message' => $message,
+            'status' => LiveChatMessage::STATUS_PENDING,
         ]);
 
         $conversation->forceFill([
@@ -42,5 +43,15 @@ class LiveChatRepository
     public function loadConversation(LiveChatConversation $conversation): LiveChatConversation
     {
         return $conversation->refresh()->load(['customer', 'staff', 'messages.staff', 'messages.customer']);
+    }
+
+    public function markMessageProcessed(int|string $messageId): void
+    {
+        LiveChatMessage::query()
+            ->whereKey($messageId)
+            ->update([
+                'status' => LiveChatMessage::STATUS_PROCESSED,
+                'processed_at' => now(),
+            ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Jobs\LiveChatStaffReplyJob;
 use App\Models\LiveChatConversation;
 use App\Models\LiveChatMessage;
 use App\Repositories\Admin\LiveChatRepository;
@@ -29,7 +30,8 @@ class LiveChatService
     {
         $conversation = $this->liveChats->find($id);
 
-        $this->liveChats->addStaffMessage($conversation, $staffId, $message);
+        $chatMessage = $this->liveChats->addStaffMessage($conversation, $staffId, $message);
+        LiveChatStaffReplyJob::dispatch($conversation->id, $chatMessage->id);
 
         return $this->formatConversation($this->liveChats->loadConversation($conversation));
     }
@@ -66,6 +68,7 @@ class LiveChatService
             'id' => $message->id,
             'sender_type' => $message->sender_type,
             'message' => $message->message,
+            'status' => $message->status,
             'created_at' => $message->created_at?->toIso8601String(),
             'staff' => $message->sender_type === LiveChatMessage::SENDER_STAFF && $message->staff ? [
                 'id' => $message->staff->id,

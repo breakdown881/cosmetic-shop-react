@@ -83,16 +83,23 @@ class CustomerCheckoutTest extends TestCase
                 'discount_code' => $discount->code,
                 'note' => 'Leave at reception',
             ])
-            ->assertCreated()
-            ->assertJsonPath('data.status', 'PENDING')
-            ->assertJsonPath('data.sub_total', 540000)
-            ->assertJsonPath('data.discount_amount', 50000)
-            ->assertJsonPath('data.shipping_fee', 25000)
-            ->assertJsonPath('data.payment_total', 515000)
-            ->assertJsonPath('data.items.0.unit_price', 270000)
-            ->assertJsonPath('data.items.0.qty', 2);
+            ->assertAccepted()
+            ->assertJsonPath('data.status', 'COMPLETED')
+            ->assertJsonPath('data.order.status', 'PENDING')
+            ->assertJsonPath('data.order.sub_total', 540000)
+            ->assertJsonPath('data.order.discount_amount', 50000)
+            ->assertJsonPath('data.order.shipping_fee', 25000)
+            ->assertJsonPath('data.order.payment_total', 515000)
+            ->assertJsonPath('data.order.items.0.unit_price', 270000)
+            ->assertJsonPath('data.order.items.0.qty', 2);
 
-        $orderId = $response->json('data.id');
+        $orderId = $response->json('data.order.id');
+        $this->assertDatabaseHas('customer_checkout_requests', [
+            'id' => $response->json('data.id'),
+            'customer_id' => $customer->id,
+            'order_id' => $orderId,
+            'status' => 'COMPLETED',
+        ]);
         $this->assertDatabaseHas('orders', [
             'id' => $orderId,
             'customer_id' => $customer->id,

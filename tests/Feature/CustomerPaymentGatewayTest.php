@@ -61,7 +61,8 @@ class CustomerPaymentGatewayTest extends TestCase
         $response = $this->actingAs($customer)
             ->withSession(['customer_cart' => [$product->id => 1]])
             ->postJson('/checkout', $this->checkoutPayload(['payment_method' => 2]))
-            ->assertCreated()
+            ->assertAccepted()
+            ->assertJsonPath('data.status', 'COMPLETED')
             ->assertJsonPath('data.payment.gateway', 'vnpay')
             ->assertJsonPath('data.payment.method', 'redirect');
 
@@ -95,7 +96,8 @@ class CustomerPaymentGatewayTest extends TestCase
         $this->actingAs($customer)
             ->withSession(['customer_cart' => [$product->id => 1]])
             ->postJson('/checkout', $this->checkoutPayload(['payment_method' => 3]))
-            ->assertCreated()
+            ->assertAccepted()
+            ->assertJsonPath('data.status', 'COMPLETED')
             ->assertJsonPath('data.payment.gateway', 'momo')
             ->assertJsonPath('data.payment.redirect_url', 'https://test-payment.momo.vn/pay/demo');
 
@@ -118,7 +120,7 @@ class CustomerPaymentGatewayTest extends TestCase
         ]);
     }
 
-    public function test_online_payment_failure_keeps_cart_items(): void
+    public function test_online_payment_failure_marks_checkout_request_failed(): void
     {
         Http::fake([
             'https://test-payment.momo.vn/*' => Http::response([
@@ -133,8 +135,8 @@ class CustomerPaymentGatewayTest extends TestCase
         $this->actingAs($customer)
             ->withSession(['customer_cart' => [$product->id => 1]])
             ->postJson('/checkout', $this->checkoutPayload(['payment_method' => 3]))
-            ->assertStatus(500)
-            ->assertSessionHas('customer_cart', [$product->id => 1]);
+            ->assertAccepted()
+            ->assertJsonPath('data.status', 'FAILED');
 
         $this->assertDatabaseHas('orders', [
             'customer_id' => $customer->id,

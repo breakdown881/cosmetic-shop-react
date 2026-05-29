@@ -70,6 +70,7 @@ Route::patch('/cart/items/{product}', [CustomerCartController::class, 'update'])
 Route::delete('/cart/items/{product}', [CustomerCartController::class, 'destroy'])->name('customer.cart.items.destroy');
 Route::get('/checkout', [CustomerCheckoutController::class, 'show'])->name('customer.checkout.show');
 Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('customer.checkout.store');
+Route::get('/checkout/requests/{checkoutRequest}', [CustomerCheckoutController::class, 'request'])->name('customer.checkout.requests.show');
 Route::get('/orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');
 Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('customer.orders.show');

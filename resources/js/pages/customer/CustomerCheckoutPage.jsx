@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import CustomerLayout from '../../components/customer/CustomerLayout.jsx';
 
+const QUEUED_STATUSES = new Set(['QUEUED', 'PROCESSING']);
+const CHECKOUT_POLL_INTERVAL = 1500;
+const CHECKOUT_POLL_ATTEMPTS = 20;
+
 const currencyFormatter = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND',
@@ -15,6 +19,7 @@ export default function CustomerCheckoutPage({
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [statusMessage, setStatusMessage] = useState('');
     const cart = checkout.cart ?? { items: [], total: 0 };
     const items = cart.items ?? [];
     const feeShips = checkout.feeShips ?? [];
@@ -36,12 +41,20 @@ export default function CustomerCheckoutPage({
 
         try {
             const response = await window.axios.post('/checkout', payload);
-            const order = response.data?.data;
-            const redirectUrl = order?.payment?.redirect_url ?? (order?.id ? `/orders/${order.id}` : '/orders');
+            let checkoutRequest = response.data?.data;
+
+            if (shouldPollCheckoutRequest(checkoutRequest)) {
+                setStatusMessage(checkoutRequest.message ?? 'Your order is queued and will be processed shortly.');
+                checkoutRequest = await pollCheckoutRequest(checkoutRequest.status_url, setStatusMessage);
+            }
+
+            const order = checkoutRequest?.order;
+            const redirectUrl = checkoutRequest?.payment?.redirect_url ?? (order?.id ? `/orders/${order.id}` : '/orders');
 
             window.location.assign(redirectUrl);
         } catch (error) {
-            setErrorMessage(error.response?.data?.message ?? 'Could not place order. Please try again.');
+            setErrorMessage(error.response?.data?.message ?? error.message ?? 'Could not place order. Please try again.');
+            setStatusMessage('');
             setIsSubmitting(false);
         }
     };
@@ -60,6 +73,11 @@ export default function CustomerCheckoutPage({
                             {errorMessage ? (
                                 <p className="react-customer-checkout__error" role="alert">
                                     {errorMessage}
+                                </p>
+                            ) : null}
+                            {statusMessage ? (
+                                <p className="react-customer-checkout__status" role="status">
+                                    {statusMessage}
                                 </p>
                             ) : null}
                             <label>
@@ -133,4 +151,41 @@ export default function CustomerCheckoutPage({
             </section>
         </CustomerLayout>
     );
+}
+
+function shouldPollCheckoutRequest(checkoutRequest) {
+    return checkoutRequest?.status_url && QUEUED_STATUSES.has(checkoutRequest?.status);
+}
+
+async function pollCheckoutRequest(statusUrl, setStatusMessage) {
+    for (let attempt = 0; attempt < CHECKOUT_POLL_ATTEMPTS; attempt += 1) {
+        await wait(CHECKOUT_POLL_INTERVAL);
+
+        const response = await window.axios.get(statusUrl);
+        const checkoutRequest = response.data?.data;
+
+        if (!checkoutRequest) {
+            continue;
+        }
+
+        if (checkoutRequest.status === 'COMPLETED') {
+            return checkoutRequest;
+        }
+
+        if (checkoutRequest.status === 'FAILED') {
+            throw new Error(checkoutRequest.error_message ?? 'Could not place order. Please try again.');
+        }
+
+        if (QUEUED_STATUSES.has(checkoutRequest.status)) {
+            setStatusMessage(checkoutRequest.message ?? 'Your order is being processed. Please wait...');
+        }
+    }
+
+    throw new Error('Order queue is taking longer than expected. Please check your orders later.');
+}
+
+function wait(milliseconds) {
+    return new Promise((resolve) => {
+        window.setTimeout(resolve, milliseconds);
+    });
 }
