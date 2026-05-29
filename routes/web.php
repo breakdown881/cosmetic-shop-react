@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return \App\Support\PublicReactShell::welcome();
+    return app(\App\Support\PublicReactShell::class)->welcome();
 });
 
 Route::prefix('admin')->group(function () {

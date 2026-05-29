@@ -2,27 +2,19 @@
 
 namespace App\Support;
 
-use Illuminate\Support\Facades\Route;
+use App\Services\Customer\CustomerHomeService;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Vite;
 
 class PublicReactShell
 {
-    public static function welcome(): \Illuminate\Http\Response
-    {
-        $props = [
-            'title' => 'Goda Shop React',
-            'description' => 'Frontend đã được chuyển sang React qua Laravel Vite.',
-            'authLinks' => [],
-            'cards' => [
-                ['title' => 'Sản phẩm', 'description' => 'Khám phá danh sách sản phẩm mỹ phẩm.', 'href' => Route::has('product.index') ? route('product.index') : '#'],
-                ['title' => 'Admin', 'description' => 'Quản trị thương hiệu, danh mục và sản phẩm.', 'href' => '/admin'],
-                ['title' => 'React + Laravel', 'description' => 'Laravel cung cấp API, UI render bằng React.', 'href' => '#'],
-            ],
-            'version' => 'Laravel v' . app()->version() . ' (PHP v' . PHP_VERSION . ')',
-        ];
+    public function __construct(private readonly CustomerHomeService $homeService) {}
 
+    public function welcome(): Response
+    {
+        $props = $this->homeService->props();
         $jsonProps = htmlspecialchars(json_encode($props, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG), ENT_QUOTES, 'UTF-8');
-        $vite = Vite::useHotFile(public_path('hot'))(['resources/css/app.css', 'resources/js/public.jsx']);
+        $vite = Vite::useHotFile(public_path('hot'))(['resources/css/public.css', 'resources/js/public.jsx']);
 
         return response(<<<HTML
 <!DOCTYPE html>
@@ -33,8 +25,8 @@ class PublicReactShell
     <title>Goda Shop</title>
     {$vite}
 </head>
-<body class="antialiased">
-    <div id="react-public-shell" data-react-component="PublicWelcomePage" data-props='{$jsonProps}'></div>
+<body class="customer-site antialiased">
+    <div id="react-public-shell" data-react-component="Home" data-props='{$jsonProps}'></div>
 </body>
 </html>
 HTML);

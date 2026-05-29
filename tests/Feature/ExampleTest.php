@@ -16,7 +16,7 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200)
             ->assertSee('id="react-public-shell"', false)
-            ->assertSee('data-react-component="PublicWelcomePage"', false);
+            ->assertSee('data-react-component="Home"', false);
     }
 
     public function test_web_routes_do_not_render_blade_views_for_frontend_shells(): void

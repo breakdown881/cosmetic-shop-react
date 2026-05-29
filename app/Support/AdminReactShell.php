@@ -37,7 +37,7 @@ class AdminReactShell
 
     private static function html(array $options): string
     {
-        $bodyClass = self::escape($options['bodyClass'] ?? '');
+        $bodyClass = self::escape(trim('admin-site ' . ($options['bodyClass'] ?? '')));
         $component = self::escape($options['component']);
         $id = self::escape($options['id']);
         $props = htmlspecialchars(
@@ -47,7 +47,7 @@ class AdminReactShell
         );
         $csrf = self::escape(csrf_token());
         $title = self::escape($options['title']);
-        $vite = Vite::useHotFile(public_path('hot'))(['resources/css/app.css', 'resources/js/admin.jsx']);
+        $vite = Vite::useHotFile(public_path('hot'))(['resources/css/admin.css', 'resources/js/admin.jsx']);
 
         return <<<HTML
 <!DOCTYPE html>

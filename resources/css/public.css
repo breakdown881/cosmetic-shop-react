@@ -1,0 +1,501 @@
+[data-react-component] {
+    min-width: 0;
+}
+
+.react-empty-state {
+    color: #666;
+    margin: 1rem 0;
+}
+
+.react-home {
+    background: linear-gradient(180deg, #fff7fb 0%, #fff 44%, #fff8fb 100%);
+    color: #351528;
+    min-height: 100vh;
+    padding: 1.25rem;
+}
+
+.react-home a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.react-home__topbar {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #f7d5e5;
+    border-radius: 18px;
+    box-shadow: 0 12px 34px rgba(138, 33, 88, 0.08);
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    margin: 0 auto 1rem;
+    max-width: 1180px;
+    padding: 0.9rem 1rem;
+    position: sticky;
+    top: 1rem;
+    z-index: 5;
+}
+
+.react-home__brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+}
+
+.react-home__brand span {
+    color: #d81b72;
+}
+
+.react-home__topbar nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.react-home__topbar nav a {
+    border-radius: 999px;
+    color: #6f405a;
+    font-weight: 700;
+    padding: 0.55rem 0.85rem;
+}
+
+.react-home__topbar nav a:hover,
+.react-home__sidebar nav a:hover {
+    background: #ffe5f0;
+    color: #b50e5b;
+}
+
+.react-home__slider {
+    margin: 0 auto 1.25rem;
+    max-width: 1180px;
+}
+
+.react-home__slide {
+    background: #2e1023;
+    border-radius: 28px;
+    box-shadow: 0 24px 58px rgba(138, 33, 88, 0.16);
+    min-height: 380px;
+    overflow: hidden;
+    position: relative;
+}
+
+.react-home__slide::after {
+    background: linear-gradient(90deg, rgba(46, 16, 35, 0.88), rgba(46, 16, 35, 0.45), rgba(46, 16, 35, 0.06));
+    content: '';
+    inset: 0;
+    position: absolute;
+}
+
+.react-home__slide img {
+    height: 100%;
+    inset: 0;
+    object-fit: cover;
+    position: absolute;
+    width: 100%;
+}
+
+.react-home__slide-content {
+    color: #fff;
+    max-width: 560px;
+    padding: 4.5rem 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.react-home__slide-content h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    line-height: 1.05;
+    margin: 0.5rem 0 1rem;
+}
+
+.react-home__slide-content p {
+    color: #ffeaf3;
+    font-size: 1.1rem;
+    margin: 0 0 1.5rem;
+}
+
+.react-home__eyebrow {
+    color: #d81b72;
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.react-home__slide-content .react-home__eyebrow {
+    color: #ffc5dc;
+}
+
+.react-home__primary-link {
+    background: #fff;
+    border-radius: 999px;
+    color: #b50e5b;
+    display: inline-flex;
+    font-weight: 800;
+    padding: 0.85rem 1.2rem;
+}
+
+.react-home__slider-controls {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 0.85rem;
+}
+
+.react-home__slider-controls button {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #f1bfd4;
+    border-radius: 999px;
+    color: #b50e5b;
+    display: inline-flex;
+    font-weight: 800;
+    height: 34px;
+    justify-content: center;
+    width: 34px;
+}
+
+.react-home__slider-controls button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.react-home__slider-dots {
+    display: flex;
+    gap: 0.45rem;
+}
+
+.react-home__slider-dots button {
+    height: 10px;
+    padding: 0;
+    width: 10px;
+}
+
+.react-home__slider-dots button.active {
+    background: #d81b72;
+    border-color: #d81b72;
+    width: 28px;
+}
+
+.react-home__layout {
+    align-items: start;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 270px minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 1180px;
+}
+
+.react-home__sidebar {
+    display: grid;
+    gap: 1rem;
+    position: sticky;
+    top: 6.5rem;
+}
+
+.react-home__sidebar-card,
+.react-home__featured,
+.react-home__category-section,
+.react-home__error,
+.react-home__skeleton {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #f7d5e5;
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(138, 33, 88, 0.08);
+    padding: 1rem;
+}
+
+.react-home__sidebar-card h2,
+.react-home__section-heading h2 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.react-home__sidebar nav {
+    display: grid;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+}
+
+.react-home__sidebar nav a {
+    align-items: center;
+    border-radius: 14px;
+    color: #6f405a;
+    display: flex;
+    font-weight: 700;
+    justify-content: space-between;
+    padding: 0.7rem 0.8rem;
+}
+
+.react-home__sidebar nav span {
+    background: #ffe5f0;
+    border-radius: 999px;
+    color: #b50e5b;
+    font-size: 0.78rem;
+    padding: 0.15rem 0.45rem;
+}
+
+.react-home__content {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.react-home__section-heading {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.react-home__section-heading > a {
+    background: #fff0f6;
+    border-radius: 999px;
+    color: #b50e5b;
+    font-weight: 800;
+    padding: 0.55rem 0.85rem;
+    white-space: nowrap;
+}
+
+.react-home__empty {
+    margin: 0.75rem 0 0;
+}
+
+.react-home__error {
+    margin: 4rem auto;
+    max-width: 720px;
+}
+
+.react-home__error h1 {
+    margin-top: 0;
+}
+
+.react-home__skeleton {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.react-home__skeleton span {
+    animation: react-home-pulse 1.2s ease-in-out infinite;
+    background: #ffe5f0;
+    border-radius: 16px;
+    height: 88px;
+}
+
+@keyframes react-home-pulse {
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.react-product-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.react-product-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.react-product-card__image {
+    aspect-ratio: 1;
+    background: #fafafa;
+    display: block;
+    overflow: hidden;
+}
+
+.react-product-card__image img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+.react-product-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.react-product-card__name {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.react-product-card__price {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.react-product-card__regular-price {
+    color: #888;
+    text-decoration: line-through;
+}
+
+.react-product-card__sale-price {
+    color: #d71920;
+    font-weight: 700;
+}
+
+.react-product-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.react-product-list__filters {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-bottom: 1rem;
+}
+
+.react-product-list__filters input,
+.react-product-list__filters select {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+}
+
+.react-cart {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.react-cart-item {
+    align-items: center;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 64px 1fr auto 92px auto auto;
+}
+
+.react-cart-item__image {
+    border-radius: 6px;
+    height: 64px;
+    object-fit: cover;
+    width: 64px;
+}
+
+.react-cart-item input {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.375rem 0.5rem;
+}
+
+.react-cart-item button {
+    background: transparent;
+    border: 0;
+    color: #d71920;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.react-cart__total {
+    font-size: 1.125rem;
+    text-align: right;
+}
+
+.react-welcome {
+    background: #f7fafc;
+    color: #1a202c;
+}
+
+.react-welcome__auth {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+}
+
+.react-welcome__main {
+    margin: 0 auto;
+    max-width: 960px;
+    padding: 4rem 1.5rem;
+}
+
+.react-welcome__hero {
+    text-align: center;
+}
+
+.react-welcome__hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.react-welcome__cards {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: 2rem;
+}
+
+.react-welcome__card {
+    background: #fff;
+    border: 1px solid #edf2f7;
+    border-radius: 12px;
+    color: inherit;
+    padding: 1.25rem;
+}
+
+.react-welcome__version {
+    color: #718096;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+@media (max-width: 991px) {
+    .react-home {
+        padding: 0.75rem;
+    }
+
+    .react-home__topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        top: 0.75rem;
+    }
+
+    .react-home__topbar nav {
+        justify-content: flex-start;
+    }
+
+    .react-home__slide {
+        min-height: 320px;
+    }
+
+    .react-home__slide::after {
+        background: linear-gradient(90deg, rgba(46, 16, 35, 0.9), rgba(46, 16, 35, 0.55));
+    }
+
+    .react-home__slide-content {
+        padding: 3rem 1.5rem;
+    }
+
+    .react-home__layout {
+        grid-template-columns: 1fr;
+    }
+
+    .react-home__sidebar {
+        position: static;
+    }
+}
