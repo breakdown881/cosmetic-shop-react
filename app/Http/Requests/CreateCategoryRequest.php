@@ -13,30 +13,33 @@ class CreateCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $category = $this->route('category');
+        $categoryId = is_object($category) ? $category->id : $category;
+
         return [
-            'name'      => 'required|string|max:255|unique:categories,name,' . $this->route('category')?->id,
+            'name' => 'required|string|max:255|unique:categories,name,'.$categoryId,
             'parent_id' => 'nullable|integer|min:1|exists:categories,id',
-            'status'    => 'required',
+            'status' => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required'     => __('translate.required', ['attribute' => 'Name']),
-            'name.max'          => __('translate.max.string', ['attribute' => 'Name', 'max' => 255]),
-            'name.unique'       => __('translate.unique', ['attribute' => 'Name']),
+            'name.required' => __('translate.required', ['attribute' => 'Name']),
+            'name.max' => __('translate.max.string', ['attribute' => 'Name', 'max' => 255]),
+            'name.unique' => __('translate.unique', ['attribute' => 'Name']),
             'parent_id.integer' => __('translate.parentId.integer'),
-            'parent_id.exists'  => __('translate.parentId.integer'),
-            'status.required'   => __('translate.required', ['attribute' => 'Status']),
+            'parent_id.exists' => __('translate.parentId.integer'),
+            'status.required' => __('translate.required', ['attribute' => 'Status']),
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name'      => __('translate.name'),
-            'status'    => __('translate.status'),
+            'name' => __('translate.name'),
+            'status' => __('translate.status'),
         ];
     }
 }
