@@ -1,12 +1,15 @@
 import { useMemo, useState } from 'react';
 import ProductGrid from '../components/product/ProductGrid.jsx';
+import PaginationControls, { lastPageFor, paginateRows } from '../components/common/PaginationControls.jsx';
 
 const normalizeText = (value) => String(value ?? '').toLowerCase();
+const PER_PAGE = 12;
 
 export default function ProductList({ products = [], categories = [], brands = [] }) {
     const [search, setSearch] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [brandId, setBrandId] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const filteredProducts = useMemo(() => {
         const normalizedSearch = normalizeText(search);
@@ -53,7 +56,12 @@ export default function ProductList({ products = [], categories = [], brands = [
                 )}
             </div>
 
-            <ProductGrid products={filteredProducts} />
+            <ProductGrid products={paginateRows(filteredProducts, currentPage, PER_PAGE)} />
+            <PaginationControls
+                currentPage={currentPage}
+                lastPage={lastPageFor(filteredProducts, PER_PAGE)}
+                onPageChange={setCurrentPage}
+            />
         </section>
     );
 }

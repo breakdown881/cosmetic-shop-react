@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import CustomerLayout from '../../components/customer/CustomerLayout.jsx';
+import PaginationControls, { lastPageFor, paginateRows } from '../../components/common/PaginationControls.jsx';
+
+const PER_PAGE = 10;
 
 const currencyFormatter = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -13,6 +17,10 @@ export default function CustomerOrderHistoryPage({
     requiresAuth = false,
     title = 'Đơn hàng của tôi',
 }) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const paginatedOrders = paginateRows(orders, currentPage, PER_PAGE);
+    const lastPage = lastPageFor(orders, PER_PAGE);
+
     return (
         <CustomerLayout auth={auth} navItems={navItems} title={title}>
             <section className="react-customer-orders">
@@ -27,8 +35,9 @@ export default function CustomerOrderHistoryPage({
                         <a href="/products">Continue shopping</a>
                     </div>
                 ) : (
+                    <>
                     <div className="react-customer-orders__list">
-                        {orders.map((order) => (
+                        {paginatedOrders.map((order) => (
                             <article className="react-customer-orders__card" key={order.id}>
                                 <div className="react-customer-orders__card-header">
                                     <div>
@@ -57,6 +66,8 @@ export default function CustomerOrderHistoryPage({
                             </article>
                         ))}
                     </div>
+                        <PaginationControls currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
+                    </>
                 )}
             </section>
         </CustomerLayout>

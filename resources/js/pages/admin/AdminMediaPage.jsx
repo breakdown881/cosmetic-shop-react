@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import PaginationControls, { lastPageFor, paginateRows } from '../../components/common/PaginationControls.jsx';
 import { destroy as destroyRequest, get, post } from '../../services/apiClient.js';
+
+const PER_PAGE = 12;
 
 const normalizeRows = (payload) => Array.isArray(payload?.data) ? payload.data : [];
 
@@ -14,6 +17,7 @@ export default function AdminMediaManager({
     const [selectedFile, setSelectedFile] = useState(null);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const loadRows = async () => {
         if (!apiUrl) {
@@ -23,6 +27,7 @@ export default function AdminMediaManager({
         try {
             const payload = await get(apiUrl);
             setRows(normalizeRows(payload));
+            setCurrentPage(1);
         } catch (requestError) {
             setError(requestError.response?.data?.message ?? 'Could not load media.');
         }
@@ -44,7 +49,7 @@ export default function AdminMediaManager({
     };
 
     const handleCheckAll = (event) => {
-        setCheckedIds(event.target.checked ? rows.map((item) => item.id) : []);
+        setCheckedIds(event.target.checked ? paginatedRows.map((item) => item.id) : []);
     };
 
     const handleCheckOne = (id) => {
@@ -96,7 +101,9 @@ export default function AdminMediaManager({
         await Promise.all(checkedIds.map((id) => deleteOne(id)));
     };
 
-    const isAllChecked = rows.length > 0 && rows.every((item) => checkedIds.includes(item.id));
+    const paginatedRows = paginateRows(rows, currentPage, PER_PAGE);
+    const lastPage = lastPageFor(rows, PER_PAGE);
+    const isAllChecked = paginatedRows.length > 0 && paginatedRows.every((item) => checkedIds.includes(item.id));
 
     return (
         <div className="react-admin-media">
@@ -123,7 +130,7 @@ export default function AdminMediaManager({
                                 </tr>
                             </thead>
                             <tbody>
-                                {rows.map((item) => (
+                                {paginatedRows.map((item) => (
                                     <tr key={item.id}>
                                         <td>
                                             <input
@@ -148,6 +155,9 @@ export default function AdminMediaManager({
                     </div>
 
                     {!rows.length && <p className="react-empty-state">{labels.empty ?? 'Chua co hinh anh.'}</p>}
+                {rows.length > 0 && (
+                    <PaginationControls currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
+                )}
                 </div>
             </div>
 

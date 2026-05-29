@@ -1,4 +1,4 @@
-﻿import { render, screen, waitFor } from '@testing-library/react';
+﻿import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AdminLiveChatPage from './AdminLiveChatPage.jsx';
@@ -60,5 +60,33 @@ describe('AdminLiveChatPage', () => {
         });
 
         expect(screen.getByText('Shop tu van kem duong phuc hoi a.')).toBeInTheDocument();
+    });
+
+    it('paginates long live chat conversation lists', async () => {
+        const user = userEvent.setup();
+        window.axios.get.mockResolvedValueOnce({
+            data: {
+                unread_count: 0,
+                data: Array.from({ length: 11 }, (_, index) => ({
+                    id: index + 1,
+                    customer: { name: `Customer ${index + 1}` },
+                    latest_message: `Message ${index + 1}`,
+                    needs_staff_reply: false,
+                    messages: [{ id: index + 1, sender_type: 'customer', message: `Message ${index + 1}` }],
+                })),
+            },
+        });
+
+        render(<AdminLiveChatPage />);
+
+        const list = document.querySelector('.react-admin-live-chat__list');
+
+        expect(await within(list).findByText('Customer 1')).toBeInTheDocument();
+        expect(within(list).queryByText('Customer 11')).not.toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: 'Next' }));
+
+        expect(within(list).getByText('Customer 11')).toBeInTheDocument();
+        expect(within(list).queryByText('Customer 1')).not.toBeInTheDocument();
     });
 });

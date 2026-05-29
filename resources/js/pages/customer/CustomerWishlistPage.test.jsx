@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import CustomerWishlistPage from './CustomerWishlistPage.jsx';
 
@@ -32,5 +33,28 @@ describe('CustomerWishlistPage', () => {
 
         expect(screen.getByText('Your wishlist is empty.')).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Browse products' })).toHaveAttribute('href', '/products');
+    });
+
+    it('paginates long wishlist product lists', async () => {
+        const user = userEvent.setup();
+        const items = Array.from({ length: 13 }, (_, index) => ({
+            id: index + 1,
+            name: `Wishlist Serum ${index + 1}`,
+            price: 250000,
+            sale_price: 200000,
+            featured_image: '/adm/images/godakeben450x170.jpg',
+            url: `/products/${index + 1}`,
+            removeUrl: `/wishlist/items/${index + 1}`,
+        }));
+
+        render(<CustomerWishlistPage items={items} />);
+
+        expect(screen.getByRole('link', { name: 'Wishlist Serum 1' })).toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: 'Wishlist Serum 13' })).not.toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: 'Next' }));
+
+        expect(screen.getByRole('link', { name: 'Wishlist Serum 13' })).toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: 'Wishlist Serum 1' })).not.toBeInTheDocument();
     });
 });

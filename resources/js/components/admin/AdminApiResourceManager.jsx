@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { destroy as destroyRequest, get, patch, post } from '../../services/apiClient.js';
+import PaginationControls, { lastPageFor, paginateRows } from '../common/PaginationControls.jsx';
 
 const emptyValues = (fields) =>
     fields.reduce((values, field) => ({
@@ -8,6 +9,7 @@ const emptyValues = (fields) =>
     }), {});
 
 const normalizeRows = (payload) => Array.isArray(payload?.data) ? payload.data : [];
+const PER_PAGE = 10;
 
 const formatCell = (row, column) => {
     const value = row[column.key];
@@ -39,9 +41,12 @@ export default function AdminApiResourceManager({
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const visibleColumns = useMemo(() => columns.filter((column) => column.key !== 'id'), [columns]);
     const hasActions = canEdit || canDelete;
+    const paginatedRows = paginateRows(rows, currentPage, PER_PAGE);
+    const lastPage = lastPageFor(rows, PER_PAGE);
 
     const loadRows = async () => {
         setIsLoading(true);
@@ -50,6 +55,7 @@ export default function AdminApiResourceManager({
         try {
             const payload = await get(apiUrl);
             setRows(normalizeRows(payload));
+            setCurrentPage(1);
         } catch (error) {
             setErrorMessage(error.response?.data?.message ?? 'Không tải được dữ liệu.');
         } finally {
@@ -250,7 +256,7 @@ export default function AdminApiResourceManager({
                                 </tr>
                             </thead>
                             <tbody>
-                                {rows.map((row) => (
+                                {paginatedRows.map((row) => (
                                     <tr key={row.id}>
                                         {visibleColumns.map((column) => (
                                             <td key={column.key} className="text-center">{formatCell(row, column)}</td>
@@ -277,6 +283,9 @@ export default function AdminApiResourceManager({
 
                     {isLoading && <p>Đang tải...</p>}
                     {!isLoading && rows.length === 0 && <p className="react-empty-state">{labels.empty ?? 'Không có dữ liệu.'}</p>}
+                    {!isLoading && rows.length > 0 && (
+                        <PaginationControls currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
+                    )}
                 </div>
             </div>
         </div>

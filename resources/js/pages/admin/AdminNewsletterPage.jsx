@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import PaginationControls, { lastPageFor, paginateRows } from '../../components/common/PaginationControls.jsx';
 import { get, post } from '../../services/apiClient.js';
+
+const PER_PAGE = 10;
 
 const normalizeRows = (payload) => Array.isArray(payload?.data) ? payload.data : [];
 
@@ -10,6 +13,7 @@ export default function AdminNewsletterManager({
 }) {
     const [body, setBody] = useState('');
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
     const [message, setMessage] = useState('');
     const [rows, setRows] = useState([]);
     const [subject, setSubject] = useState('');
@@ -18,6 +22,7 @@ export default function AdminNewsletterManager({
         try {
             const payload = await get(apiUrl);
             setRows(normalizeRows(payload));
+            setCurrentPage(1);
         } catch (requestError) {
             setError(requestError.response?.data?.message ?? 'Could not load subscribers.');
         }
@@ -26,6 +31,9 @@ export default function AdminNewsletterManager({
     useEffect(() => {
         loadRows();
     }, [apiUrl]);
+
+    const paginatedRows = paginateRows(rows, currentPage, PER_PAGE);
+    const lastPage = lastPageFor(rows, PER_PAGE);
 
     const sendNewsletter = async (event) => {
         event.preventDefault();
@@ -87,7 +95,7 @@ export default function AdminNewsletterManager({
                             </tr>
                         </thead>
                         <tbody>
-                            {rows.map((row) => (
+                            {paginatedRows.map((row) => (
                                 <tr key={row.id}>
                                     <td>{row.email}</td>
                                     <td>{row.created_at}</td>
@@ -98,6 +106,9 @@ export default function AdminNewsletterManager({
                 </div>
 
                 {!rows.length && <p className="react-empty-state">{labels.empty ?? 'No subscribers.'}</p>}
+                {rows.length > 0 && (
+                    <PaginationControls currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
+                )}
             </div>
         </div>
     );

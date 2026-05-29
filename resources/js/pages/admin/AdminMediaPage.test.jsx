@@ -73,4 +73,27 @@ describe('AdminMediaManager', () => {
         expect(window.axios.post.mock.calls[0][0]).toBe('/admin/api/media');
         expect(window.axios.post.mock.calls[0][1]).toBeInstanceOf(FormData);
     });
+
+    it('paginates long media lists', async () => {
+        const user = userEvent.setup();
+        window.axios.get.mockResolvedValueOnce({
+            data: {
+                data: Array.from({ length: 13 }, (_, index) => ({
+                    id: index + 1,
+                    src: `/images/${index + 1}.jpg`,
+                    alt: `Image ${index + 1}`,
+                })),
+            },
+        });
+
+        render(<AdminMediaManager apiUrl="/admin/api/media" labels={{ delete: 'Delete', image: 'Image' }} />);
+
+        expect(await screen.findByAltText('Image 1')).toBeInTheDocument();
+        expect(screen.queryByAltText('Image 13')).not.toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: 'Next' }));
+
+        expect(screen.getByAltText('Image 13')).toBeInTheDocument();
+        expect(screen.queryByAltText('Image 1')).not.toBeInTheDocument();
+    });
 });

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { destroy as destroyRequest, get, patch, post } from '../../services/apiClient.js';
+import PaginationControls, { lastPageFor, paginateRows } from '../../components/common/PaginationControls.jsx';
 
 const emptyOrder = {
     customer_id: '',
@@ -23,6 +24,7 @@ const money = new Intl.NumberFormat('vi-VN', {
 });
 
 const normalizeRows = (payload) => Array.isArray(payload?.data) ? payload.data : [];
+const PER_PAGE = 10;
 
 export default function AdminOrderManager({
     apiUrl,
@@ -46,9 +48,13 @@ export default function AdminOrderManager({
     const [isLoading, setIsLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const productById = useMemo(() => new Map(products.map((product) => [String(product.id), product])), [products]);
     const discountByCode = useMemo(() => new Map(discounts.map((discount) => [discount.code, discount])), [discounts]);
+    const paginatedRows = paginateRows(rows, currentPage, PER_PAGE);
+    const lastPage = lastPageFor(rows, PER_PAGE);
+
     const feeShipById = useMemo(() => new Map(feeships.map((feeShip) => [String(feeShip.id), feeShip])), [feeships]);
 
     const totals = useMemo(() => {
@@ -79,6 +85,7 @@ export default function AdminOrderManager({
         try {
             const payload = await get(apiUrl);
             setRows(normalizeRows(payload));
+            setCurrentPage(1);
         } catch (requestError) {
             setError(requestError.response?.data?.message ?? 'Could not load orders.');
         } finally {
@@ -360,7 +367,7 @@ export default function AdminOrderManager({
                                 </tr>
                             </thead>
                             <tbody>
-                                {rows.map((row) => (
+                                {paginatedRows.map((row) => (
                                     <tr key={row.id}>
                                         <td className="text-center">{row.id}</td>
                                         <td className="text-center">{row.customer_name}</td>
@@ -388,6 +395,9 @@ export default function AdminOrderManager({
                     </div>
                     {isLoading && <p>Loading...</p>}
                     {!isLoading && rows.length === 0 && <p className="react-empty-state">No orders.</p>}
+                    {!isLoading && rows.length > 0 && (
+                        <PaginationControls currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
+                    )}
                 </div>
             </div>
         </div>

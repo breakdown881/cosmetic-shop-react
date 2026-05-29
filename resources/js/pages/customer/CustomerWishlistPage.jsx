@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import CustomerLayout from '../../components/customer/CustomerLayout.jsx';
+import PaginationControls, { lastPageFor, paginateRows } from '../../components/common/PaginationControls.jsx';
+
+const PER_PAGE = 12;
 
 const currencyFormatter = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -13,6 +17,10 @@ export default function CustomerWishlistPage({
     navItems = [],
     title = 'Wishlist',
 }) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const paginatedItems = paginateRows(items, currentPage, PER_PAGE);
+    const lastPage = lastPageFor(items, PER_PAGE);
+
     return (
         <CustomerLayout auth={auth} navItems={navItems} title={title}>
             <section className="react-customer-wishlist">
@@ -22,8 +30,9 @@ export default function CustomerWishlistPage({
                         <a href="/products">Browse products</a>
                     </div>
                 ) : (
+                    <>
                     <div className="react-customer-wishlist__grid">
-                        {items.map((item) => (
+                        {paginatedItems.map((item) => (
                             <article className="react-customer-wishlist__card" key={item.id}>
                                 <img src={item.featured_image} alt={item.name} />
                                 <div>
@@ -38,6 +47,8 @@ export default function CustomerWishlistPage({
                             </article>
                         ))}
                     </div>
+                        <PaginationControls currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
+                    </>
                 )}
             </section>
         </CustomerLayout>

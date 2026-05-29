@@ -42,4 +42,33 @@ describe('AdminNewsletterManager', () => {
         }, {}));
         expect(screen.getByText('Newsletter sent.')).toBeInTheDocument();
     });
+
+    it('paginates long subscriber lists', async () => {
+        const user = userEvent.setup();
+        window.axios.get.mockResolvedValueOnce({
+            data: {
+                data: Array.from({ length: 11 }, (_, index) => ({
+                    id: index + 1,
+                    email: `subscriber-${index + 1}@example.test`,
+                    created_at: '2026-05-28 10:00:00',
+                })),
+            },
+        });
+
+        render(
+            <AdminNewsletterManager
+                apiUrl="/admin/api/newsletters"
+                sendUrl="/admin/api/newsletters/send"
+                labels={{ body: 'Body', email: 'Email', send: 'Send', subject: 'Subject' }}
+            />,
+        );
+
+        expect(await screen.findByText('subscriber-1@example.test')).toBeInTheDocument();
+        expect(screen.queryByText('subscriber-11@example.test')).not.toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: 'Next' }));
+
+        expect(screen.getByText('subscriber-11@example.test')).toBeInTheDocument();
+        expect(screen.queryByText('subscriber-1@example.test')).not.toBeInTheDocument();
+    });
 });

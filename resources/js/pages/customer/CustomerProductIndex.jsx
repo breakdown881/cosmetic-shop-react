@@ -1,6 +1,7 @@
 import CustomerLayout from '../../components/customer/CustomerLayout.jsx';
 import ProductFilters from '../../components/customer/ProductFilters.jsx';
 import ProductGrid from '../../components/product/ProductGrid.jsx';
+import PaginationControls from '../../components/common/PaginationControls.jsx';
 
 export default function CustomerProductIndex({
     auth = null,
@@ -25,6 +26,12 @@ export default function CustomerProductIndex({
                 <ProductGrid
                     products={productRows}
                     emptyMessage="No products match your filters."
+                />
+
+                <PaginationControls
+                    currentPage={products.meta?.currentPage ?? 1}
+                    lastPage={products.meta?.lastPage ?? 1}
+                    links={products.links ?? {}}
                 />
             </section>
         </CustomerLayout>

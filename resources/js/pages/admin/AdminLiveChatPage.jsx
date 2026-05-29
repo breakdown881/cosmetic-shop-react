@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import PaginationControls, { lastPageFor, paginateRows } from '../../components/common/PaginationControls.jsx';
 import { get, post } from '../../services/apiClient.js';
+
+const PER_PAGE = 10;
 
 export default function AdminLiveChatPage() {
     const [inbox, setInbox] = useState({ unread_count: 0, data: [] });
@@ -8,6 +11,7 @@ export default function AdminLiveChatPage() {
     const [reply, setReply] = useState('');
     const [error, setError] = useState('');
     const [isSending, setIsSending] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         let cancelled = false;
@@ -33,6 +37,9 @@ export default function AdminLiveChatPage() {
             cancelled = true;
         };
     }, []);
+
+    const paginatedConversations = paginateRows(inbox.data ?? [], currentPage, PER_PAGE);
+    const lastPage = lastPageFor(inbox.data ?? [], PER_PAGE);
 
     const selectConversation = (conversation) => {
         setSelectedId(conversation.id);
@@ -79,7 +86,7 @@ export default function AdminLiveChatPage() {
 
             <div className="row">
                 <aside className="col-md-4 react-admin-live-chat__list">
-                    {inbox.data.map((conversation) => (
+                    {paginatedConversations.map((conversation) => (
                         <button
                             type="button"
                             className={`react-admin-live-chat__conversation ${selectedId === conversation.id ? 'active' : ''}`}
@@ -92,6 +99,9 @@ export default function AdminLiveChatPage() {
                         </button>
                     ))}
                     {!inbox.data.length && <p className="react-empty-state">Chưa có tin nhắn tư vấn.</p>}
+                    {!!inbox.data.length && (
+                        <PaginationControls currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
+                    )}
                 </aside>
 
                 <section className="col-md-8 react-admin-live-chat__thread">

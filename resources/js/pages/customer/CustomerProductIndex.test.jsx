@@ -53,4 +53,22 @@ describe('CustomerProductIndex', () => {
 
         expect(screen.getByText('No products match your filters.')).toBeInTheDocument();
     });
+
+    it('renders pagination links for paginated product lists', () => {
+        render(
+            <CustomerProductIndex
+                {...baseProps}
+                products={{
+                    ...baseProps.products,
+                    meta: { currentPage: 2, lastPage: 3, total: 25 },
+                    links: { prev: '/products?page=1', next: '/products?page=3' },
+                }}
+            />,
+        );
+
+        expect(screen.getByRole('navigation', { name: 'Pagination' })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Previous' })).toHaveAttribute('href', '/products?page=1');
+        expect(screen.getByRole('link', { name: '2' })).toHaveAttribute('aria-current', 'page');
+        expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/products?page=3');
+    });
 });
